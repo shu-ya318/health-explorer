@@ -8,26 +8,19 @@ import {db} from '../lib/firebaseConfig';
 import { collection, doc, getDocs, getDoc, query, where , QueryDocumentSnapshot} from 'firebase/firestore';
 import {FirebaseInstitutionData} from "../lib/types.js";
 import Pagination from '../components/Pagination';
-
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+    
 
 const SearchPage: React.FC = (): React.ReactElement | null  => {
-    // const router = useRouter();
-
-    /*單機構
-    interface MedicalInstitution {
-        id: string;
-        image: string[];
-        name: string;
-        view: number;
-    }*/
-          
-    
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY; 
     const cancers = ['子宮頸癌', '乳癌', '大腸癌', '口腔癌', '肺癌'];
     
     const searchInputRef = useRef<HTMLInputElement>(null);
-
     const [selectedCancer, setSelectedCancer] = useState('');
     const [isOpen, setIsOpen] = useState(false);
+
+    const [loading,setLoading] = useState(true);
 
     const [institutionsData, setInstitutionsData] = useState<FirebaseInstitutionData[]>([]);
     const [searchResults, setSearchResults] = useState<FirebaseInstitutionData[]>([]);
@@ -58,6 +51,7 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
             } catch (error) {
             console.error("Failed to fetch data:", error);
             }
+            setLoading(false);
         };
         loadData();
     }, []);
@@ -139,29 +133,46 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                             </div>
                         </div>
                         {/*卡片盒+分頁按鈕*/}
-                         <div id="institutions-grid" className="h-auto m-auto grid grid-cols-4 gap-6 p-4 justify-center items-start box-border">
-                            {currentPosts.map((institution, index) => (
-                                <Link key={index} href={`/Search/${encodeURIComponent(institution.hosp_name)}`}>
-                                    <div className="h-[320px]  flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-lg">
-                                        <div className="relative">
-                                            <Image src="/images/placeholder.png" alt="institution" width={250} height={200} className="w-full object-cover object-center" />
-                                            <Image src="/images/placeholder.png" alt="collection"  width={30} height={30} className="absolute top-1.5 right-1.5  z-[300]" />
-                                        </div>   
-                                        <div className="w-full h-[30px]  text-black text-left font-bold m-[10px]">{institution.hosp_name}</div>
-                                        <div className="w-full h-[30px]  flex  items-center justify-end">
-                                            <Image src="/images/placeholder.png" alt="Lindln" width={15} height={15} />
-                                            <span className="ml-2 text-black mr-[10px]">觀看數:6</span>
-                                      </div>
-                                    </div>
-                                </Link>
-                            ))}
+                        <div id="institutions-grid" className="h-auto m-auto grid grid-cols-4 gap-6 p-4 justify-center items-start box-border">
+                            {loading ? (
+                                Array.from({ length: postsPerPage }, (_, index) => (
+                                    <Skeleton key={index} height={320} width={250} className="m-[10px]" />
+                                ))
+                            ) : (
+                                currentPosts.map((institution, index) => (
+                                    <Link key={index} href={`/Search/${encodeURIComponent(institution.hosp_name)}`}>
+                                        <div className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-lg">
+                                            <div className="relative">
+                                                <Image 
+                                                    src={`https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(institution.hosp_addr)}&zoom=15&size=250x200&key=${apiKey}`} 
+                                                    alt="institution" 
+                                                    width={250} 
+                                                    height={200} 
+                                                    className="w-full object-cover object-center" 
+                                                    unoptimized={true}
+                                                />
+                                                <Image className="absolute top-1.5 right-1.5 z-[300]" src="/images/placeholder.png" alt="collection" width={30} height={30} />
+                                            </div>
+                                            <div className="w-full h-[30px] text-black text-left font-bold m-[10px]">{institution.hosp_name}</div>
+                                            <div className="w-full h-[30px] flex items-center justify-end">
+                                                <Image src="/images/placeholder.png" alt="Lindln" width={15} height={15} />
+                                                <span className="ml-2 text-black mr-[10px]">觀看數:6</span>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ))
+                            )}
                         </div>
-                        <Pagination
-                            postsPerPage={postsPerPage}
-                            totalPosts={currentData.length}
-                            paginate={paginate}
-                            currentPage={currentPage}
-                        />
+                        {loading ? (
+                            <Skeleton height={40} width={528} className="my-[40px]" />
+                        ) : (
+                            <Pagination
+                                postsPerPage={postsPerPage}
+                                totalPosts={currentData.length}
+                                paginate={paginate}
+                                currentPage={currentPage}
+                            />
+                        )}
                     </div>
                 </div>
             </main>

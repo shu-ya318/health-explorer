@@ -6,9 +6,21 @@ import { useRouter } from 'next/navigation';
 import { db } from '../../lib/firebaseConfig';
 import { collection, doc, getDocs, getDoc, query, where, QueryDocumentSnapshot } from 'firebase/firestore';
 import { FirebaseInstitutionData } from '../../lib/types.js';
+// import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+// import type { NextApiRequest, NextApiResponse } from 'next';
+// 暫用靜態圖
+
+
+/*type ResponseData = {
+    lat?: number;
+    lng?: number;
+    error?: string;
+  };*/
 
 
 const Institution: React.FC = (): React.ReactElement | null  => {
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY; 
+
     const router = useRouter();
     // const pathname = usePathname();  會錯誤地取得null
     const [institutionData, setInstitutionData] = useState<FirebaseInstitutionData| null>(null);
@@ -16,7 +28,7 @@ const Institution: React.FC = (): React.ReactElement | null  => {
 
     useEffect(() => {
         const pathSegments = window.location.pathname.split('/');
-        const encodedHospName = pathSegments.pop() || ''; //pathSegments[pathSegments.length - 1];
+        const encodedHospName = pathSegments.pop() || '';
         const hosp_name = decodeURIComponent(encodedHospName); 
 
         const fetchInstitutionInfo = async () => {
@@ -38,39 +50,46 @@ const Institution: React.FC = (): React.ReactElement | null  => {
         {institutionData && (
             <>
                 <main className="w-full h-auto flex justify-center items-center flex-grow  bg-[#e6e6e6]" >
-                    <div className="w-[1200px] flex flex-col  "> 
+                    <div className="w-[1200px] flex flex-col  mt-[50px]"> 
                         {/*簡介*/}
                         <div className="w-full h-[400px] flex justify-between mt-5 px-[20px]">
-                            <Image src="/images/person-cane-solid.svg" alt="icon" width={450} height={400} className="border-solid border  border-[#6898a5]"/>
-                            <form className="w-[600px] h-full flex flex-col justify-around border  border-[#6898a5] rounded-md p-[20px]">
+                            <Image 
+                                src={`https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(institutionData.hosp_addr)}&zoom=15&size=250x200&key=${apiKey}`} 
+                                alt="institution" 
+                                width={450} 
+                                height={400} 
+                                className="border-solid border  border-[#6898a5]" 
+                                unoptimized={true}
+                            />
+                            <form className="w-[600px] h-full flex flex-col justify-around border  border-[#6898a5] rounded-md p-[10px]">
                                 <div className="w-full flex  items-center justify-end">
                                     <Image src="/images/placeholder.png" alt="collection"  width={30} height={30} className="mb-[10px]" />
                                 </div>
-                                <div className="w-full flex  h-[24px] text-base text-black mb-[40px]">
+                                <div className="w-full flex  h-[24px] text-base text-black mb-[25px]">
                                     <strong className="mx-[20px]">名稱:</strong>
                                     <span className="">{institutionData.hosp_name}</span>
                                 </div>
-                                <div className="w-full flex  h-[24px] text-base text-black mb-[40px]">
+                                <div className="w-full flex  h-[24px] text-base text-black mb-[25px]">
                                     <strong className="mx-[20px]">電話:</strong>
                                     <span className="">{institutionData.tel}</span>
                                 </div>
-                                <div className="w-full flex  h-[24px] text-base text-black mb-[40px]">
+                                <div className="w-full flex  h-[24px] text-base text-black mb-[25px]">
                                     <strong className="mx-[20px]">行政區:</strong>
                                     <span className="">{institutionData.area}</span>
                                 </div>
-                                <div className="w-full flex  h-[24px] text-base text-black mb-[40px]">
+                                <div className="w-full flex  h-[24px] text-base text-black mb-[25px]">
                                     <strong className="mx-[20px]">地址:</strong>
                                     <span className="">{institutionData.hosp_addr}</span>
                                 </div>
-                                <div className="w-full flex  h-[24px] text-base text-black mb-[40px]">
+                                <div className="w-full flex  h-[24px] text-base text-black mb-[25px]">
                                     <strong className="mx-[20px]">科別:</strong>
                                     <span className="">{institutionData.division}</span>
                                 </div>
-                                <div className="w-full flex  h-[24px] text-base text-black mb-[40px]">
+                                <div className="w-full flex  h-[24px] text-base text-black mb-[25px]">
                                     <strong className="mx-[20px]">癌症篩檢服務:</strong>
                                     <span className="">{institutionData.cancer_screening}</span>
                                 </div>
-                                <button className="m-auto w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-9  mt-5 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]">
+                                <button className="m-auto w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-9 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]">
                                     加入收藏
                                 </button>
                             </form>
@@ -96,7 +115,7 @@ const Institution: React.FC = (): React.ReactElement | null  => {
                                     <div className="w-full h-[30px]  text-black text-left font-bold m-[10px]">名稱</div>
                                     <div className="w-full h-[30px]  flex  items-center justify-end">
                                         <Image src="/images/placeholder.png" alt="Lindln" width={15} height={15} />
-                                        <div className="ml-2 text-black mr-[10px]">觀看數:取點擊累加器值</div>
+                                        <div className="ml-2 text-black mr-[10px]">觀看數:6</div>
                                     </div>
                                 </div>
                                 <div className="h-[320px]  flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-lg">
