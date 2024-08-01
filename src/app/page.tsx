@@ -25,12 +25,6 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
   ];
 
 
-  /*<button 
-  type="button" 
-  className="bg-[#24657d] rounded-md my-2.5 px-2.5  h-9  mt-10 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]" >
-  開始搜尋
-</button> */
-
   return (       
     <>
       <div className="relative w-full h-[640px] bg-[url('/images/homeBanner.webp')] bg-cover bg-center">

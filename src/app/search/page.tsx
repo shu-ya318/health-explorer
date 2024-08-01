@@ -2,7 +2,7 @@
 import {useState, useEffect, useRef, ChangeEvent} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';   
 import organizeInstitutionData  from "../api/fetchOpenData";
 import {db} from '../lib/firebaseConfig';
 import { collection, doc, getDocs, getDoc, query, where , QueryDocumentSnapshot} from 'firebase/firestore';
@@ -42,7 +42,7 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
             await organizeInstitutionData();    //先初始化插入資料，之後取值
 
             try {
-            const querySnapshot = await getDocs(collection(db, "medicalInstitutions"));
+            const querySnapshot = await getDocs(collection(db, 'medicalInstitutions'));
             const data = querySnapshot.docs.map(doc => {
                 const docData = doc.data();
                 return {
@@ -141,17 +141,19 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                         {/*卡片盒+分頁按鈕*/}
                          <div id="institutions-grid" className="h-auto m-auto grid grid-cols-4 gap-6 p-4 justify-center items-start box-border">
                             {currentPosts.map((institution, index) => (
-                               <div key={index} className="h-[320px]  flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-lg">
-                                <div className="relative">
-                                    <Image src="/images/placeholder.png" alt="institution" width={250} height={200} className="w-full object-cover object-center" />
-                                    <Image src="/images/placeholder.png" alt="collection"  width={30} height={30} className="absolute top-1.5 right-1.5  z-[300]" />
-                                </div>   
-                                <div className="w-full h-[30px]  text-black text-left font-bold m-[10px]">{institution.hosp_name}</div>
-                                <div className="w-full h-[30px]  flex  items-center justify-end">
-                                    <Image src="/images/placeholder.png" alt="Lindln" width={15} height={15} />
-                                    <span className="ml-2 text-black mr-[10px]">觀看數:6</span>
-                               </div>
-                           </div>
+                                <Link key={index} href={`/Search/${encodeURIComponent(institution.hosp_name)}`}>
+                                    <div className="h-[320px]  flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-lg">
+                                        <div className="relative">
+                                            <Image src="/images/placeholder.png" alt="institution" width={250} height={200} className="w-full object-cover object-center" />
+                                            <Image src="/images/placeholder.png" alt="collection"  width={30} height={30} className="absolute top-1.5 right-1.5  z-[300]" />
+                                        </div>   
+                                        <div className="w-full h-[30px]  text-black text-left font-bold m-[10px]">{institution.hosp_name}</div>
+                                        <div className="w-full h-[30px]  flex  items-center justify-end">
+                                            <Image src="/images/placeholder.png" alt="Lindln" width={15} height={15} />
+                                            <span className="ml-2 text-black mr-[10px]">觀看數:6</span>
+                                      </div>
+                                    </div>
+                                </Link>
                             ))}
                         </div>
                         <Pagination

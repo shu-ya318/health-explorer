@@ -3,5 +3,6 @@ export interface FirebaseInstitutionData {
     tel?: string;
     area?: string;
     hosp_addr: string;
-    division?: string
-  }
+    division?: string;
+    cancer_screening?: string
+}
