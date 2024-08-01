@@ -349,7 +349,7 @@ function getTelByHospAttrType(hospAttrType: string): string {
 
 async function fetchAndFormatData(url: string, formatFunction: (item: any) => FirebaseInstitutionData, apiKey: string, page: number = 0) {
   try {
-    const paginatedUrl = `${url}?page=0&size=10`;
+    const paginatedUrl = `${url}?page=0&size=1`;
     const response = await fetch(paginatedUrl);
     if (!response.ok) {
       throw new Error(`Error fetching data from ${url}: ${response.statusText}`);
@@ -442,9 +442,7 @@ export default async function organizeInstitutionData() {
     }
   } catch (error:any) {
     console.error('An error occurred while processing data:', error.message);
-  } finally {
-    console.log('Data processing completed.');
-  }
+  } 
 
   return results;
 }

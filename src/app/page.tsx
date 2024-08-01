@@ -2,18 +2,17 @@
 import {useState, useEffect} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';                //主應用程式勿用'next/router';
 import organizeInstitutionData  from "./api/fetchOpenData";
 
 
 const HomePage: React.FC = (): React.ReactElement | null  => {
-  //const router = useRouter();
-  //滿版 改掉高600?
+  const router = useRouter();
 
   const searches = [
     { description: "依行政區", image: "/images/building-solid.svg" },
     { description: "依科別", image: "/images/stethoscope-solid.svg" },
-    { description: "依病症", image: "/images/person-cane-solid.svg" },
+    { description: "依癌篩項目", image: "/images/person-cane-solid.svg" },
     { description: "依機構類型", image: "/images/hospital-regular.svg" }
   ];
 
@@ -26,6 +25,12 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
   ];
 
 
+  /*<button 
+  type="button" 
+  className="bg-[#24657d] rounded-md my-2.5 px-2.5  h-9  mt-10 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]" >
+  開始搜尋
+</button> */
+
   return (       
     <>
       <div className="relative w-full h-[640px] bg-[url('/images/homeBanner.webp')] bg-cover bg-center">
@@ -34,11 +39,6 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
             <h1 className="text-center text-[50px] font-bold text-white">健康探索者</h1>
             <h3 className="text-center text-[30px] font-medium text-white">診救健康醫起來</h3>
           </div>
-          <button 
-            type="button" 
-            className="bg-[#24657d] rounded-md my-2.5 px-2.5  h-9  mt-10 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]" >
-            開始搜尋
-          </button>
         </div>
       </div>
 
@@ -55,7 +55,8 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
           </div>
           <button 
             type="button" 
-            className="w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-9  mt-5 mb-5 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]" >
+            className="w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-9  mt-5 mb-5 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]"
+            onClick={()=>router.push('/Search')} >
             搜尋更多
           </button>
         </div>

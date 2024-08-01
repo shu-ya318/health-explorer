@@ -1,5 +1,5 @@
 'use client';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef, ChangeEvent} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -8,6 +8,7 @@ import {db} from '../lib/firebaseConfig';
 import { collection, doc, getDocs, getDoc, query, where , QueryDocumentSnapshot} from 'firebase/firestore';
 import {FirebaseInstitutionData} from "../lib/types.js";
 import Pagination from '../components/Pagination';
+
 
 const SearchPage: React.FC = (): React.ReactElement | null  => {
     // const router = useRouter();
@@ -22,17 +23,22 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
           
     
     const cancers = ['子宮頸癌', '乳癌', '大腸癌', '口腔癌', '肺癌'];
+    
+    const searchInputRef = useRef<HTMLInputElement>(null);
 
-    const [institutionsData, setInstitutionsData] = useState<FirebaseInstitutionData[]>([]);
     const [selectedCancer, setSelectedCancer] = useState('');
     const [isOpen, setIsOpen] = useState(false);
+
+    const [institutionsData, setInstitutionsData] = useState<FirebaseInstitutionData[]>([]);
+    const [searchResults, setSearchResults] = useState<FirebaseInstitutionData[]>([]);
+    const [currentData, setCurrentData] = useState<FirebaseInstitutionData[]>([]);    //避用條件渲染，綁定多狀態判斷操作
+
     const [currentPage, setCurrentPage] = useState<number>(1);
     const postsPerPage = 12;
     
 
     useEffect(() => {
-        const loadData = async () => {
-          
+        const loadData = async (): Promise<void> => {
             await organizeInstitutionData();    //先初始化插入資料，之後取值
 
             try {
@@ -48,7 +54,7 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                 } as FirebaseInstitutionData;
             });
             setInstitutionsData(data);
-            console.log("Loaded data:", data);
+            setCurrentData(data); 
             } catch (error) {
             console.error("Failed to fetch data:", error);
             }
@@ -56,10 +62,27 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
         loadData();
     }, []);
 
+
+    const handleSearch = async (): Promise<void> => {
+        const searchTerm = searchInputRef.current?.value.trim();
+        if (searchTerm) {
+            const filteredData = institutionsData.filter( (institution) =>{
+                return institution.hosp_name.includes(searchTerm)           //要傳入institution，且return
+            });
+            setSearchResults(filteredData);
+            setCurrentData(filteredData);
+            //在內部馬上console.log(searchResults); 仍顯示初始值  (改外部會取得正確值)
+        } else {
+            setSearchResults(institutionsData);
+            setCurrentData(institutionsData);
+        }
+        setCurrentPage(1);
+    };
+
+
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentPosts = institutionsData.slice(indexOfFirstPost, indexOfLastPost);
-
+    const currentPosts = currentData.slice(indexOfFirstPost, indexOfLastPost);
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
 
@@ -71,12 +94,15 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                     <div className="w-full h-10 my-20"> 
                         <div className="flex flex-row max-w-screen-md h-full mx-auto"> 
                             <input
-                                id="search-input"
                                 className="flex-grow h-full px-4 text-lg font-bold text-gray-500 border-solid border-2 border-[#6898a5] shadow-[0_0_3px_#AABBCC] rounded-l-md"
                                 type="text"
                                 placeholder="輸入關鍵字搜尋"
+                                ref={searchInputRef}
                             />
-                            <button id="search-button" className="flex w-32 h-full bg-[#24657d] hover:bg-[#7199a1] hover:text-black items-center  justify-center font-bold">
+                            <button 
+                                className="flex w-32 h-full bg-[#24657d] hover:bg-[#7199a1] hover:text-black items-center  justify-center font-bold"
+                                onClick={handleSearch}
+                            >
                                 <Image className="w-auto h-auto" src="/images/search.png" alt="Search" width={40} height={40}/>
                                 搜尋
                             </button>
@@ -112,7 +138,7 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                             )}
                             </div>
                         </div>
-                        {/*卡片盒*/}
+                        {/*卡片盒+分頁按鈕*/}
                          <div id="institutions-grid" className="h-auto m-auto grid grid-cols-4 gap-6 p-4 justify-center items-start box-border">
                             {currentPosts.map((institution, index) => (
                                <div key={index} className="h-[320px]  flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-lg">
@@ -130,7 +156,7 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                         </div>
                         <Pagination
                             postsPerPage={postsPerPage}
-                            totalPosts={institutionsData.length}
+                            totalPosts={currentData.length}
                             paginate={paginate}
                             currentPage={currentPage}
                         />
