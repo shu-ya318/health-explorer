@@ -1,6 +1,7 @@
 import { FirebaseInstitutionData } from '../lib/types';
 import {db} from '../lib/firebaseConfig';
-import { collection, doc, setDoc, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, doc, writeBatch, setDoc, addDoc, getDocs, getDoc, query, where } from 'firebase/firestore';
+
 
 // (一)取得資料: 1.自行輸入: 定義實際資料   2.API:  定義資料的統一格式 -> 定義新增屬性 作為 新增欄位內容 -> 定義call API函式，呼叫前2個函式   
 const cervicalCancerData: FirebaseInstitutionData[] = [
@@ -71,130 +72,129 @@ const cervicalCancerData: FirebaseInstitutionData[] = [
       hosp_addr: "新北市淡水區民生路45號",
     },
 ];
-
 const formatFunctions: { [key: string]: (item: any) => FirebaseInstitutionData } = {
-    'HealthCenter': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.district,
-        hosp_addr: item.hosp_addr
-    }),
-   'Hospital': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr
-    }),
-     'Pediatrics': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
-    }),
-    'ObstetricsAndGynecology': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
-    }),
-    'GeneralDentistry': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
-    }),
-    'ENT': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
-    }),
-    'Dermatology': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
-    }),
-    'Ophthalmology': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
-    }),
-    'Orthopedics': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-    }),
-    'Psychiatry': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.district,
-        hosp_addr: item.hosp_addr,
-    }),
-    'PsychologicalCounselingAndTherapy': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr
-    }),
-    'FamilyMedicine': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
-    }),
-    'Urology': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
-    }),
-    'InternalMedicine': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
-    }),
-    'Surgery': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
-    }),
-    'CervicalCancer': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-    }),
-    'ColorectalCancer': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-    }),
-    'OralCancer': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-    }),
-    'BreastCancer': (item: any) => ({
-        hosp_name: item.hosp_attr_type,
-        hosp_addr: item.hosp_addr,
-    })
+  'HealthCenter': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.district,
+      hosp_addr: item.hosp_addr
+  }),
+ 'Hospital': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.area,
+      hosp_addr: item.hosp_addr
+  }),
+   'Pediatrics': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.area,
+      hosp_addr: item.hosp_addr,
+      division: item.division
+  }),
+  'ObstetricsAndGynecology': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.area,
+      hosp_addr: item.hosp_addr,
+      division: item.division
+  }),
+  'GeneralDentistry': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.area,
+      hosp_addr: item.hosp_addr,
+      division: item.division
+  }),
+  'ENT': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.area,
+      hosp_addr: item.hosp_addr,
+      division: item.division
+  }),
+  'Dermatology': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.area,
+      hosp_addr: item.hosp_addr,
+      division: item.division
+  }),
+  'Ophthalmology': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.area,
+      hosp_addr: item.hosp_addr,
+      division: item.division
+  }),
+  'Orthopedics': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.area,
+      hosp_addr: item.hosp_addr,
+  }),
+  'Psychiatry': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.district,
+      hosp_addr: item.hosp_addr,
+  }),
+  'PsychologicalCounselingAndTherapy': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.district,
+      hosp_addr: item.hosp_addr
+  }),
+  'FamilyMedicine': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.area,
+      hosp_addr: item.hosp_addr,
+      division: item.division
+  }),
+  'Urology': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.area,
+      hosp_addr: item.hosp_addr,
+      division: item.division
+  }),
+  'InternalMedicine': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.area,
+      hosp_addr: item.hosp_addr,
+      division: item.division
+  }),
+  'Surgery': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.area,
+      hosp_addr: item.hosp_addr,
+      division: item.division
+  }),
+  'CervicalCancer': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.area,
+      hosp_addr: item.hosp_addr,
+  }),
+  'ColorectalCancer': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.district,
+      hosp_addr: item.hosp_addr,
+  }),
+  'OralCancer': (item: any) => ({
+      hosp_name: item.hosp_name,
+      tel: item.tel,
+      area: item.town,
+      hosp_addr: item.hosp_addr,
+  }),
+  'BreastCancer': (item: any) => ({
+      hosp_name: item.hosp_attr_type,
+      hosp_addr: item.hosp_addr,
+  })
 };
 function addManualFields(item: FirebaseInstitutionData, apiKey: string): FirebaseInstitutionData {
     switch (apiKey) {
@@ -225,8 +225,8 @@ function addManualFields(item: FirebaseInstitutionData, apiKey: string): Firebas
                 division: '心理諮詢科'
             };
         case 'BreastCancer':
-            const area = getAreaByHospAttrType(item.hosp_attr_type);
-            const tel = getTelByHospAttrType(item.hosp_attr_type);
+            const area = getAreaByHospAttrType(item.hosp_name) || '未知區域';
+            const tel = getTelByHospAttrType(item.hosp_name)  || '未知電話';
             return { 
                 ...item,
                 area,
@@ -347,57 +347,104 @@ function getTelByHospAttrType(hospAttrType: string): string {
     return telMapping[hospAttrType] || 'Unknown Tel';
 }
 
-async function fetchAndFormatData(url: string, formatFunction: (item: any) => FirebaseInstitutionData, apiKey: string) {
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Error fetching data from ${url}: ${response.statusText}`);
-      }
-  
-      const data = await response.json();
-      return data.map((item: FirebaseInstitutionData) => {
-        const formattedItem = formatFunction(item);
-        return addManualFields(formattedItem, apiKey);
-      });
-    } catch (error) {
-      console.error(`Failed to fetch and format data from ${url}:`, error);
-      return [];
+async function fetchAndFormatData(url: string, formatFunction: (item: any) => FirebaseInstitutionData, apiKey: string, page: number = 0) {
+  try {
+    const paginatedUrl = `${url}?page=0&size=10`;
+    const response = await fetch(paginatedUrl);
+    if (!response.ok) {
+      throw new Error(`Error fetching data from ${url}: ${response.statusText}`);
     }
+
+    const data = await response.json();
+    return data.map((item: FirebaseInstitutionData) => {
+      const formattedItem = formatFunction(item);
+      return addManualFields(formattedItem, apiKey);
+    });
+  } catch (error) {
+    console.error(`Failed to fetch and format data from ${url}:`, error);
+    return [];
+  }
 }
 
 // (二)連接firebase: 判斷建立或更新
 async function saveOrUpdateData(data: FirebaseInstitutionData[]) {
-    for (const item of data) {
-      const docRef = doc(db, "hospitals", item.hosp_name);
-      const docSnap = await getDocs(docRef);
+  const batch = writeBatch(db);
+  for (const item of data) {
+    const docRef = doc(db, 'medicalInstitutions', item.hosp_name);
+
+    const docSnap = await getDoc(docRef);
+
   
-      if (docSnap.exists()) {
-        await setDoc(docRef, item, { merge: true });
-      } else {
-        await setDoc(docRef, item);
+  /*需要更新既有資料時  
+  if (docSnap.exists()) {
+      batch.set(docRef, item, { merge: true });
+    } else {
+      batch.set(docRef, item);
+    }
+  } */
+  /*不更新資料 */
+    if (!docSnap.exists()) { 
+      batch.set(docRef, item);
       }
     }
-  }
 
-// (三)放到父函式，遍歷每個API來執行同操作邏輯
-async function organizeInstitutionData() {
-    const apiUrls = [     //修正
-      { url: '/api/datasets/2553bb1a-bcbb-4284-8b24-acfefe966f1e/json', key: 'HealthCenter' },
+  try {
+    await batch.commit();
+  } catch (error) {
+    console.error(`Failed to save/update data: ${error}`);
+  }
+}
+
+
+// (三)放到父函式，處理自行定義資料+遍歷每個API來執行同操作邏輯 。 await 均接收完當前API資料+插入資料庫才繼續
+export default async function organizeInstitutionData() {   
+    const apiUrls = [
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/2553bb1a-bcbb-4284-8b24-acfefe966f1e/json', 'key': 'HealthCenter' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/85bfcaa8-9932-4d06-a2ec-731171191883/json', 'key': 'Hospital' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/d041976e-de7a-473a-8667-daa9833d777a/json', 'key': 'Pediatrics' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/77ae6d31-3a9c-49ec-9299-bcd4e19571ef/json', 'key': 'ObstetricsAndGynecology' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/248e3ecc-975f-494f-8fdb-1d1a177b8c72/json', 'key': 'GeneralDentistry' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/44fc194a-9964-4f5a-ac0d-de7cf49660ce/json', 'key': 'ENT' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/407c317b-3253-45cc-8755-89c1480e5a55/json', 'key': 'Dermatology' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/48a4da9c-3a1b-4247-afde-47abb1ed6a4d/json', 'key': 'Ophthalmology' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/1c770555-c917-4d96-9e6e-9601c496b8ed/json', 'key': 'Orthopedics' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/6556714e-4eb1-4645-a6de-7f2402527a91/json', 'key': 'Psychiatry' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/f86e3560-7922-4f0f-b5ee-9ecccf80e2e6/json', 'key': 'PsychologicalCounselingAndTherapy' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/9e1c1aba-4e0b-4d5a-8755-efa1f09abe65/json', 'key': 'FamilyMedicine' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/9e36f533-38e9-49fe-99fe-b711cfcbe4c5/json', 'key': 'Urology' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/e8244d31-e0e5-459d-87ba-3c188706fbee/json', 'key': 'InternalMedicine' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/e922e439-a892-4bd3-b756-5a9afb3812b6/json', 'key': 'Surgery' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/08e4e0e8-c32e-4ef7-a262-68ab9debdce7/json', 'key': 'CervicalCancer' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/85eeec59-b584-4d97-ba83-8786eb2536a4/json', 'key': 'ColorectalCancer' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/4aa54765-a471-4412-a314-468f892a1794/json', 'key': 'OralCancer' },
+      { 'url': 'https://data.ntpc.gov.tw/api/datasets/435dae21-f8b9-449b-b9bd-0283a9541f68/json', 'key': 'BreastCancer' }
     ];
-  
+
+    let results: any[] = [];
+
+  try {
     await saveOrUpdateData(cervicalCancerData);
 
     for (const { url, key } of apiUrls) {
-      const formatFunction = formatFunctions[key];
-      if (!formatFunction) {
-        console.warn(`No format function found for API key: ${key}`);
-        continue;
-      }
-  
-      const formattedData = await fetchAndFormatData(url, formatFunction, key);
-      await saveOrUpdateData(formattedData);
+        const formatFunction = formatFunctions[key];
+        if (!formatFunction) {
+          console.warn(`No format function found for API key: ${key}`);
+          continue;
+        }
+        try {
+            const formattedData = await fetchAndFormatData(url, formatFunction, key);
+            results.push({ key, data: formattedData });
+            await saveOrUpdateData(formattedData);
+        } catch (error:any) {
+          console.error(`Error fetching data for ${key}:`, error.message);
+          results.push({ key, data: { error: `Failed to fetch: ${error.message}` } });
+        }
     }
-    
+  } catch (error:any) {
+    console.error('An error occurred while processing data:', error.message);
+  } finally {
+    console.log('Data processing completed.');
+  }
+
+  return results;
 }
-  
-organizeInstitutionData();

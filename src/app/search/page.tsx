@@ -3,31 +3,65 @@ import {useState, useEffect} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
-
+import organizeInstitutionData  from "../api/fetchOpenData";
+import {db} from '../lib/firebaseConfig';
+import { collection, doc, getDocs, getDoc, query, where , QueryDocumentSnapshot} from 'firebase/firestore';
+import {FirebaseInstitutionData} from "../lib/types.js";
+import Pagination from '../components/Pagination';
 
 const SearchPage: React.FC = (): React.ReactElement | null  => {
     // const router = useRouter();
 
-    //單機構
+    /*單機構
     interface MedicalInstitution {
         id: string;
         image: string[];
         name: string;
         view: number;
-    }
-    interface MedicalInstitutionProps {
-        institution: MedicalInstitution;
-    }
+    }*/
+          
     
-    const cancers = [
-        '子宮頸癌', '乳癌', '大腸癌', '口腔癌', '肺癌'
-    ];
+    const cancers = ['子宮頸癌', '乳癌', '大腸癌', '口腔癌', '肺癌'];
 
+    const [institutionsData, setInstitutionsData] = useState<FirebaseInstitutionData[]>([]);
     const [selectedCancer, setSelectedCancer] = useState('');
     const [isOpen, setIsOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const postsPerPage = 12;
     
-    
+
+    useEffect(() => {
+        const loadData = async () => {
+          
+            await organizeInstitutionData();    //先初始化插入資料，之後取值
+
+            try {
+            const querySnapshot = await getDocs(collection(db, "medicalInstitutions"));
+            const data = querySnapshot.docs.map(doc => {
+                const docData = doc.data();
+                return {
+                hosp_name: docData.hosp_name || '',
+                tel: docData.tel || '',
+                area: docData.area || '',
+                hosp_addr: docData.hosp_addr || '',
+                division: docData.division || ''
+                } as FirebaseInstitutionData;
+            });
+            setInstitutionsData(data);
+            console.log("Loaded data:", data);
+            } catch (error) {
+            console.error("Failed to fetch data:", error);
+            }
+        };
+        loadData();
+    }, []);
+
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = institutionsData.slice(indexOfFirstPost, indexOfLastPost);
+
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
 
     return (       
         <>
@@ -53,13 +87,14 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                         </div>
                     </div>
                     {/*渲資*/}
-                    <div className="w-full flex flex-col items-start pl-[15px]">
+                    <div className="h-auto w-full flex flex-col items-start pl-[15px]">
                         <hr className="w-full border-solid border border-[#acb8b6] my-[30px]"/>
                         {/*選標籤*/}
                         <div className="mx-w-screen-md h-9 flex justify-center mb-[20px] ml-[15px]">
                             <div className="w-[150px] bg-2 bg-[#e6e6e6]  rounded-l-md text-black text-center py-1">排序:</div>
                             <button className="w-36 bg-[#ffffff]  border border-[#e6e6e6] hover:bg-[#acb8b6]  hover:text-[#ffffff] text-[#707070] text-center py-1">熱門度</button>
                             <div className="relative w-36">
+
                             <button
                                 onClick={() => setIsOpen(!isOpen)}
                                 className="bg-[#ffffff] border border-[#e6e6e6] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070] text-center py-1 w-full h-full"
@@ -78,49 +113,32 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                             </div>
                         </div>
                         {/*卡片盒*/}
-                        <div id="institutions-grid" className="h-auto m-auto grid grid-cols-4 gap-[30px] p-[15px] justify-center items-start box-border">
-                            {/*遍歷，看資庫長度+取實值*/}
-                            <div className="h-[320px]  flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-lg">
+                         <div id="institutions-grid" className="h-auto m-auto grid grid-cols-4 gap-6 p-4 justify-center items-start box-border">
+                            {currentPosts.map((institution, index) => (
+                               <div key={index} className="h-[320px]  flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-lg">
                                 <div className="relative">
                                     <Image src="/images/placeholder.png" alt="institution" width={250} height={200} className="w-full object-cover object-center" />
                                     <Image src="/images/placeholder.png" alt="collection"  width={30} height={30} className="absolute top-1.5 right-1.5  z-[300]" />
                                 </div>   
-                                <div className="w-full h-[30px]  text-black text-left font-bold m-[10px]">名稱</div>
+                                <div className="w-full h-[30px]  text-black text-left font-bold m-[10px]">{institution.hosp_name}</div>
                                 <div className="w-full h-[30px]  flex  items-center justify-end">
                                     <Image src="/images/placeholder.png" alt="Lindln" width={15} height={15} />
-                                    <div className="ml-2 text-black mr-[10px]">觀看數:6</div>
-                                </div>
-                            </div>
+                                    <span className="ml-2 text-black mr-[10px]">觀看數:6</span>
+                               </div>
+                           </div>
+                            ))}
                         </div>
-
-                    </div>
-                    {/*分頁按鈕欄位*/}
-                    <div className="w-full flex justify-center h-[40px] my-[40px]">
-                        <div className="w-[88px] flex justify-between h-full">
-                            <button id="first-page" className="border-solid border  border-[#6898a5]  hover:bg-[#6898a5] rounded-md w-[40px] p-[10px]">
-                                <Image src="/images/placeholder.png" alt="first-page" width={20} height={20} />
-                            </button>
-                            <button id="prev-page" className="border-solid border  border-[#6898a5]  hover:bg-[#6898a5] rounded-md w-[40px] p-[10px]">
-                                <Image src="/images/placeholder.png" alt="first-page" width={20} height={20} />
-                            </button>
-                        </div>
-                        <div className="w-[528px] h-full flex justify-between px-[10px]  mx-[24px]">
-                            {/*各頁按鈕，遍歷 看資庫 page長度   1次顯11個*/}
-                            <button className="bg-[#e6e6e6]  rounded-md  hover:bg-[#acb8b6]  w-[40px] p-[10px]">+1</button>
-                        </div>
-                        <div className="w-[88px] flex justify-between h-full">
-                            <button id="last-page" className="border-solid border  border-[#6898a5]  hover:bg-[#6898a5] rounded-md w-[40px] p-[10px]">
-                                <Image src="/images/placeholder.png" alt="first-page" width={20} height={20} />
-                            </button>
-                            <button id="next-page" className="border-solid border  border-[#6898a5]  hover:bg-[#6898a5] rounded-md w-[40px] p-[10px]">
-                                <Image src="/images/placeholder.png" alt="first-page" width={20} height={20} />
-                            </button>
-                        </div>
+                        <Pagination
+                            postsPerPage={postsPerPage}
+                            totalPosts={institutionsData.length}
+                            paginate={paginate}
+                            currentPage={currentPage}
+                        />
                     </div>
                 </div>
             </main>
         </>
     )
-}
+};
 
 export default SearchPage;
