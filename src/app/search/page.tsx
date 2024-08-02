@@ -121,7 +121,6 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
     };
 
 
-
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
     const currentPosts = currentData.slice(indexOfFirstPost, indexOfLastPost);
@@ -156,13 +155,16 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                         </div>
                     </div>
                     {/*癌篩分類*/}
-                    <div className="max-w-screen-md h-[200px] flex justify-between items-center mb-[60px] mx-auto px-[10px] rounded-lg border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC] "> 
-                    {cancerCategory.map((cancer, index) => (
-                        <div key={index} className="flex flex-col justify-between  p-[10px] text-[#0e4b66]">
-                            <div className="w-full h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
-                            <div className="text-center text-lg font-bold py-5 ">{cancer.description}</div>
+                    <div className="max-w-screen-md h-[200px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[10px] rounded-lg border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC] "> 
+                        <div className="text-[#0e4b66] text-center font-bold text-2xl mt-[10px]">依癌篩服務</div>
+                        <div  className="flex w-full justify-between  ">
+                            {cancerCategory.map((cancer, index) => (
+                                <div key={index} className="flex flex-col justify-between  p-[5px] text-[#0e4b66]">
+                                    <div className="w-full h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
+                                    <div className="text-center text-lg font-bold py-5 ">{cancer.description}</div>
+                                </div>
+                            ))}
                         </div>
-                    ))}
                     </div>
                     {/*渲資*/}
                     <div className="h-auto w-full flex flex-col items-start">
@@ -264,7 +266,7 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                             )}
                         </div>
                         {loading ? (
-                            <Skeleton height={40} width={528} className="my-[40px]" />
+                            <Skeleton height={50} width={1280} className="my-[40px] mx-[20px]" />
                         ) : (
                             <Pagination
                                 postsPerPage={postsPerPage}

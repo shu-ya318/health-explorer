@@ -47,15 +47,15 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
   useEffect(() => {
     setTimeout(() => {
       setOpenLoading(false);
-    }, 3000);
+    }, 2000);
   }, []);
-
 
   useEffect(() => {
     AOS.init({
-      duration : 2000
+      duration : 1000
     });
   }, []);
+
 
   if (openLoading) {
     return (
@@ -92,7 +92,8 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
             <button 
               type="button" 
               className="w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-9  mt-5 mb-5 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]"
-              onClick={()=>router.push('/Search')} >
+              onClick={()=>router.push('/Search')} 
+            >
               搜尋更多
             </button>
           </div>
