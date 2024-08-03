@@ -3,7 +3,8 @@ import {useState, useEffect, useRef, ChangeEvent} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';   
-import organizeInstitutionData  from "../api/fetchOpenData";
+import { setupInstitutionData }  from "../contexts/InstitutionsContext";
+//import { organizeInstitutionData }  from "../api/fetchOpenData";
 import {db} from '../lib/firebaseConfig';
 import { collection, doc, getDocs, getDoc, query, where , QueryDocumentSnapshot} from 'firebase/firestore';
 import {FirebaseInstitutionData} from "../lib/types.js";
@@ -56,7 +57,8 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
 
     useEffect(() => {
         const loadData = async (): Promise<void> => {
-            await organizeInstitutionData();    //先初始化插入資料，之後取值
+            await setupInstitutionData();
+            //await organizeInstitutionData();
 
             try {
             const querySnapshot = await getDocs(collection(db, 'medicalInstitutions'));
