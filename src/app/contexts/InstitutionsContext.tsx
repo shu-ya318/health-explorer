@@ -78,7 +78,7 @@ const cervicalCancerData: FirebaseInstitutionData[] = [
 
 const formatFunctions: { [key: string]: (item: any) => FirebaseInstitutionData } = {
     '衛生所': (item: any) => ({
-      hosp_name: item.hosp_name,
+      hosp_name: `新北市${item.hosp_name.substring(0, 3)}${item.hosp_name.substring(3)}`,
       tel: item.tel,
       area: item.district,
       hosp_addr: item.hosp_addr
@@ -222,13 +222,33 @@ const apiUrls = [
     { 'url': 'https://data.ntpc.gov.tw/api/datasets/4aa54765-a471-4412-a314-468f892a1794/json', 'key': '口腔癌' },
     { 'url': 'https://data.ntpc.gov.tw/api/datasets/435dae21-f8b9-449b-b9bd-0283a9541f68/json', 'key': '乳癌' }
 ];
-
+function addManualFields(item: FirebaseInstitutionData, apiKey: string): FirebaseInstitutionData {
+    switch (apiKey) {
+        case '骨科':
+            return { 
+                ...item, 
+                division: '骨科'
+            };
+        case '精神科':
+            return { 
+                ...item, 
+                division: '精神科'
+            };
+        case '心理諮商及心理治療科':
+            return { 
+                ...item, 
+                division: '心理諮商及心理治療科'
+            };
+        default:
+            return item;
+    }
+}
 
 async function fetchAndFormatData() {
     let institutionData: FirebaseInstitutionData[] = [];
 
     for (const { url, key } of apiUrls) {
-        const paginatedUrl = `${url}?page=0&size=1`;
+        const paginatedUrl = `${url}?page=0&size=54`;
         try {
             const response = await fetch(paginatedUrl);
             if (!response.ok) {
@@ -243,21 +263,23 @@ async function fetchAndFormatData() {
             }
 
             for (const item of data) {
-                const formattedItem = formatFunction(item);
+                let formattedItem = formatFunction(item);
+                formattedItem = addManualFields(formattedItem, key);
                 const existingEntry = institutionData.find(entry => entry.hosp_name === formattedItem.hosp_name);
                 if (['子宮頸癌', '大腸癌', '口腔癌', '乳癌'].includes(key)) {
-                    if (existingEntry) {
-                        existingEntry.division = existingEntry.division ? `${existingEntry.division}, ${key}` : key;
-                    } else {
-                        institutionData.push(formattedItem);
-                    }
-                } else {
                     if (existingEntry) {
                         existingEntry.cancer_screening = existingEntry.cancer_screening ? `${existingEntry.cancer_screening}, ${key}` : key;
                     } else {
                         institutionData.push(formattedItem);
                     }
+                } else {
+                    if (existingEntry) {
+                        existingEntry.division = existingEntry.division ? `${existingEntry.division}, ${key}` : key;
+                    } else {
+                        institutionData.push(formattedItem);
+                    }
                 }
+
             }
         } catch (error) {
             console.error(`Error fetching data for key ${key}:`, error);
@@ -274,6 +296,7 @@ async function fetchAndFormatData() {
 
     return institutionData;
 }
+
 
  // (二)資料加入firebase
  /*async function checkMultipleEntries() {
