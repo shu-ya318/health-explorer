@@ -3,7 +3,7 @@ import {useState, useEffect} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';                //主應用程式勿用'next/router';
-import organizeInstitutionData  from "./api/fetchOpenData";
+import { setupInstitutionData }  from "./contexts/InstitutionsContext";
 import 'animate.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; 
@@ -27,19 +27,19 @@ interface Cancer {
 const HomePage: React.FC = (): React.ReactElement | null  => {
   const router = useRouter();
 
-   //可能改 搜尋頁標籤?
+ 
   const searches = [
     { description: "依行政區", image: "/images/building-solid.svg" },
     { description: "依科別", image: "/images/stethoscope-solid.svg" },
-    { description: "依癌篩項目", image: "/images/person-cane-solid.svg" },
+    { description: "依癌篩項目", image: "/images/magnifying-glass-plus-solid.svg" },
     { description: "依機構類型", image: "/images/hospital-regular.svg" }
   ];
   const cancers = [
-    { title: "子宮頸癌", target:'30歲以上婦女', frequency:'每年1次', image: "/images/building-solid.svg" },
-    { title: "卵巢癌", target:'45至69歲婦女、40-44歲二等血親乳癌史', frequency:'每2年1次', image: "/images/building-solid.svg" },
-    { title: "大腸癌", target:'50至74歲民眾', frequency:'每2年1次', image: "/images/building-solid.svg" },
-    { title: "口腔癌", target:'30歲以上有嚼檳榔(含已戒檳榔)或吸菸之民眾、18歲以上有嚼檳榔(含已戒檳榔)之原住民', frequency:'每2年1次', image: "/images/building-solid.svg" },
-    { title: "肺癌", target:'具肺癌家族史或重度吸菸史之民眾', frequency:'每2年1次', image: "/images/building-solid.svg" }
+    { title: "子宮頸癌", image:"/images/cervicalCancer.png"},
+    { title: "卵巢癌", image: "/images/breastCancer.png" },
+    { title: "大腸癌", image:"/images/colorectalCancer.png"},
+    { title: "口腔癌", image:"/images/oralCancer.png"},
+    { title: "肺癌", image:"/images/lungCancer.png"}
   ];
   const [openLoading, setOpenLoading] = useState<boolean>(true);
 
@@ -79,19 +79,19 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
         </div>
 
         <div className="flex flex-col justify-center items-center bg-gradient-to-b  from-[#eff4f5] via-[#c8d6da] to-[#a7bdc1]">
-          <div  data-aos="fade-right" className="max-w-[1200px] w-[92%] bg-white/50 backdrop-blur-[3px] rounded-[10px] shadow-[0_0_5px_rgb(0,0,0)] flex flex-col justify-between items-center p-[20px] my-20">
-            <div className="text-[30px] font-bold mb-[30px] text-[#014c68]">醫療機構搜尋</div>
+          <div  data-aos="fade-right" className="max-w-[1200px] w-[92%] bg-white backdrop-blur-[10px] rounded-[10px] shadow-[0_0_8px_rgb(0,0,0)] flex flex-col justify-between items-center p-[20px] my-20">
+            <div className="text-[30px] font-bold mb-[30px] text-[#003E3E]">醫療機構搜尋</div>
             <div className="grid grid-cols-4 gap-40">
               {searches.map((search, index) => (
-                  <div key={index} className="flex flex-col justify-between  p-[10px] text-[#0e4b66]">
+                  <div key={index} className="flex flex-col justify-between  p-[10px] text-[#336666]">
                     <div className="w-full h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${search.image})` }}></div>
-                    <div className="text-center text-lg font-bold py-10 ">{search.description}</div>
+                    <div className="text-center text-2xl font-bold py-10 text-[#013f5b]">{search.description}</div>
                   </div>
               ))}
             </div>
             <button 
               type="button" 
-              className="w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-9  mt-5 mb-5 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]"
+              className="w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-11  mt-5 mb-5 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]"
               onClick={()=>router.push('/Search')} 
             >
               搜尋更多
@@ -100,33 +100,19 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
         </div>
 
         <div className="flex flex-col justify-center items-center bg-gradient-to-b  from-[#a7bdc1] via-[#c8d6da] to-[#eff4f5]">
-          <div data-aos="fade-left" className="max-w-[1200px] w-[92%] bg-white/50 backdrop-blur-[3px] rounded-[10px] shadow-[0_0_5px_rgb(0,0,0)] flex flex-col justify-between items-center p-[20px] my-20">
-            <div  className="text-[30px] font-bold mb-[30px] text-[#014c68]">癌症篩檢資訊</div>
+          <div data-aos="fade-left" className="max-w-[1200px] w-[92%] bg-white backdrop-blur-[10px] rounded-[10px] shadow-[0_0_8px_rgb(0,0,0)] flex flex-col justify-between items-center p-[20px] my-20">
+            <div  className="text-[30px] font-bold mb-[30px] text-[#003E3E]">癌症篩檢資訊</div>
             <div className="grid grid-cols-5 gap-20">
               {cancers.map((cancer, index) => (
                   <div key={index} className="flex flex-col justify-between  p-[10px]">
-                    <div className="w-full h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
-                    <div className="w-full text-center text-lg text-[#0e4b66] font-bold py-10 ">{cancer.title}</div>
-                    <ul className="w-full flex flex-col justify-center">
-                      <li key={index} className="flex items-center mb-2">
-                        <div className="mr-2">
-                          <Image src="/images/person-cane-solid.svg" alt="icon" width={10} height={10} />
-                        </div>
-                        <span className="text-black">{cancer.frequency}</span>
-                      </li>
-                      <li key={index} className="flex items-center mb-2 text-black">
-                        <div className="mr-2">
-                          <Image src="/images/person-cane-solid.svg" alt="icon" width={10} height={10} />
-                        </div>
-                        <span>{cancer.target}</span>
-                      </li>
-                    </ul>
+                    <div className="w-[120px] h-[150px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
+                    <div className="w-full text-center text-2xl text-[#013f5b] font-bold py-10 ">{cancer.title}</div>
                   </div>
                 ))}
             </div>
             <button 
                 type="button" 
-                className="w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-9  mt-10 mb-5 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]" >
+                className="w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-11  mt-5 mb-5 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]" >
                 查詢更多
             </button>
           </div>

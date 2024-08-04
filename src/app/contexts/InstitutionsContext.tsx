@@ -248,7 +248,7 @@ async function fetchAndFormatData() {
     let institutionData: FirebaseInstitutionData[] = [];
 
     for (const { url, key } of apiUrls) {
-        const paginatedUrl = `${url}?page=0&size=54`;
+        const paginatedUrl = `${url}?page=0&size=10`;
         try {
             const response = await fetch(paginatedUrl);
             if (!response.ok) {
@@ -299,11 +299,6 @@ async function fetchAndFormatData() {
 
 
  // (二)資料加入firebase
- /*async function checkMultipleEntries() {
-    const querySnapshot = await getDocs(collection(db, 'medicalInstitutions'));
-    return querySnapshot.size > 1;
-}*/
-
 async function createFirestoreData(institutionData: FirebaseInstitutionData[]) {
     const batch = writeBatch(db);
     institutionData.forEach(item => {

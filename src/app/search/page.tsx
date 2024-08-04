@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';   
 import { setupInstitutionData }  from "../contexts/InstitutionsContext";
-//import { organizeInstitutionData }  from "../api/fetchOpenData";
 import {db} from '../lib/firebaseConfig';
 import { collection, doc, getDocs, getDoc, query, where , QueryDocumentSnapshot} from 'firebase/firestore';
 import {FirebaseInstitutionData} from "../lib/types.js";
@@ -15,13 +14,13 @@ import 'react-loading-skeleton/dist/skeleton.css';
 
 const SearchPage: React.FC = (): React.ReactElement | null  => {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY; 
-    const cancerCategory = [
-        { description: '子宮頸癌', image: "/images/building-solid.svg" },
-        { description: '乳癌', image: "/images/stethoscope-solid.svg" },
-        { description: '大腸癌', image: "/images/person-cane-solid.svg" },
-        { description: '口腔癌', image: "/images/hospital-regular.svg" },
-        { description: '肺癌', image: "/images/hospital-regular.svg" }
-    ];
+    const cancers = [
+        { title: "子宮頸癌", image:"/images/cervicalCancer.png"},
+        { title: "卵巢癌", image: "/images/breastCancer.png" },
+        { title: "大腸癌", image:"/images/colorectalCancer.png"},
+        { title: "口腔癌", image:"/images/oralCancer.png"},
+        { title: "肺癌", image:"/images/lungCancer.png"}
+      ];
     const institutions = [
         '衛生所', '診所', '醫院'
     ];
@@ -136,34 +135,32 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                     {/*搜  flex-row */}
                     <div className="w-full h-10 mt-[60px]  mb-[30px]"> 
                         <div className="flex max-w-screen-md h-full mx-auto"> 
-                            <input
-                                className="flex-grow h-full px-4 text-lg font-bold text-gray-500 border-solid border-2 border-[#6898a5] shadow-[0_0_3px_#AABBCC] rounded-l-md"
-                                type="text"
-                                placeholder="輸入關鍵字搜尋"
-                                ref={searchInputRef}
-                            />
-                            <Image className="absolute top-1.5 right-1.5 z-10" src="/images/placeholder.png" alt="close" width={15} height={15} />
+                            <div className="flex relative w-full h-full ">
+                                <input
+                                    className="flex-grow h-full px-4 text-lg font-bold text-gray-500 border-solid border-2 border-[#6898a5] shadow-[0_0_3px_#AABBCC] rounded-l-md"
+                                    type="text"
+                                    placeholder="輸入關鍵字搜尋"
+                                    ref={searchInputRef}
+                                />
+                                <Image className="absolute top-2 right-10 z-10" src="/images/xmark-solid.svg" alt="close" width={15} height={15} />
+                            </div>
                             <button 
-                                className="flex w-32 h-full bg-[#24657d] hover:bg-[#7199a1] hover:text-black items-center  justify-center font-bold"
+                                className="flex w-32 h-full bg-[#24657d] hover:bg-[#7199a1] hover:text-black rounded-r-md items-center  justify-center font-bold"
                                 onClick={handleSearch}
                             >
                                 <Image className="w-auto h-auto" src="/images/search.png" alt="Search" width={40} height={40}/>
                                 搜尋
                             </button>
-                            <button id="search-advanced" className="flex  w-32 h-full bg-[#e6e6e6] text-[#6898a5] rounded-r-md border-solid border border-[#6898a5] hover:bg-[#acb8b6] hover:text-white items-center   justify-center font-bold">
-                                <Image className="w-auto h-auto" src="/images/search.png" alt="Search" width={25} height={40}/>
-                                進階搜尋
-                            </button>
                         </div>
                     </div>
                     {/*癌篩分類*/}
-                    <div className="max-w-screen-md h-[200px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[10px] rounded-lg border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC] "> 
-                        <div className="text-[#0e4b66] text-center font-bold text-2xl mt-[10px]">依癌篩服務</div>
-                        <div  className="flex w-full justify-between  ">
-                            {cancerCategory.map((cancer, index) => (
-                                <div key={index} className="flex flex-col justify-between  p-[5px] text-[#0e4b66]">
-                                    <div className="w-full h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
-                                    <div className="text-center text-lg font-bold py-5 ">{cancer.description}</div>
+                    <div className="max-w-screen-md h-[220px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[10px] rounded-lg border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC] "> 
+                        <div className="text-[#003E3E] text-center font-bold text-2xl mt-[5px]">依癌篩資格搜尋</div>
+                        <div  className="flex w-full justify-between mb-[20px]">
+                            {cancers.map((cancer, index) => (
+                                <div key={index} className="flex flex-col justify-between   text-[#0e4b66]">
+                                    <div className="w-full h-[125px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
+                                    <div className="text-center text-lg text-[#013f5b] font-bold mb-[5px]">{cancer.title}</div>
                                 </div>
                             ))}
                         </div>
@@ -184,7 +181,7 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                                     className="flex justify-around items-center  font-bold bg-[#ffffff] border border-[#e6e6e6] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070] text-center py-1 w-full h-full"
                                 >
                                     依機構
-                                    <Image src="/images/placeholder.png" alt="Lindln" width={10} height={10} />
+                                    <Image src="/images/down_small_line.svg" alt="institution" width={25} height={25} />
                                 </button>
                                 {isOpenInstitutions && (
                                     <ul className="flex flex-col  absolute z-20 bg-[#ffffff] border border-[#e6e6e6] w-[145px]">
@@ -205,7 +202,7 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                                     className="flex justify-around items-center  font-bold bg-[#ffffff] border border-[#e6e6e6] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070] text-center py-1 w-full h-full"
                                 >
                                     依科別
-                                    <Image src="/images/placeholder.png" alt="Lindln" width={10} height={10} />
+                                    <Image src="/images/down_small_line.svg" alt="division" width={25} height={25} />
                                 </button>
                                 {isOpenDivisions && (
                                     <ul className="grid grid-cols-3 absolute z-20 bg-[#ffffff] border border-[#e6e6e6] w-[500px]">
@@ -223,7 +220,7 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                                     className="flex justify-around items-center  font-bold bg-[#ffffff] border border-[#e6e6e6] rounded-r-md hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070] text-center py-1 w-full h-full"
                                 >
                                     依行政區
-                                    <Image src="/images/placeholder.png" alt="Lindln" width={10} height={10} />
+                                    <Image src="/images/down_small_line.svg" alt="district" width={25} height={25} />
                                 </button>
                                 {isOpenDistricts && (
                                     <ul className="grid grid-cols-3 absolute z-20 bg-[#ffffff] border border-[#e6e6e6] w-[500px]">
@@ -255,12 +252,18 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                                                     className="w-full object-cover object-center" 
                                                     unoptimized={true}
                                                 />
-                                                <Image className="absolute top-1.5 right-1.5 z-10" src="/images/placeholder.png" alt="collection" width={30} height={30} />
+                                                <Image 
+                                                    className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full" 
+                                                    src="/images/heart_line.svg" 
+                                                    alt="collection" 
+                                                    width={40} 
+                                                    height={40} 
+                                                />
                                             </div>
                                             <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[5px]">{institution.hosp_name}</div>
                                             <div className="w-full h-[30px] flex items-center justify-end">
-                                                <Image src="/images/placeholder.png" alt="Lindln" width={15} height={15} />
-                                                <span className="ml-2 text-black mr-[10px] mt-[10px]">觀看數:6</span>
+                                                <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
+                                                <span className="ml-2 text-black mr-[10px] mt-[5px]">觀看數:6</span>
                                             </div>
                                         </div>
                                     </Link>

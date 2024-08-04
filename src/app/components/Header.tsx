@@ -20,7 +20,7 @@ const Header: React.FC = () => {
     <header className="bg-[#24657d] flex justify-center text-white  items-center">
       <div className="w-11/12 max-w-[1200px] flex justify-between items-center px-5 h-14  text-base">
           <div className="flex items-center text-white no-underline font-bold cursor-pointer">
-              <Image src="/favicon.ico" alt="Logo" width={25} height={25} className="mr-2.5" />
+              <Image src="/images/LOGO.webp" alt="Logo" width={47} height={47} className="mr-2.5" />
               <Link href='/' className="hover:text-[#acb8b6]">健康探索者</Link>
           </div>
           <div className="flex items-center text-white no-underline font-bold cursor-pointer">

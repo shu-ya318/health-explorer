@@ -57,16 +57,16 @@ const Pagination: React.FC<PaginationProps> = ({ postsPerPage, totalPosts, pagin
                 <button
                     onClick={handleFirstPage}
                     disabled={currentPage === 1}
-                    className={`border-solid border border-[#6898a5] ${currentPage === 1 ? 'bg-gray-300' : 'hover:bg-[#6898a5]'} rounded-md w-[40px] p-[10px]`}
+                    className={`border-solid border border-[#6898a5]  ${currentPage === 1 ? 'bg-gray-300' : 'hover:bg-[#abb9b9]'} rounded-md w-[40px] p-[10px]`}
                 >
-                    <Image src="/images/placeholder.png" alt="First Page" width={20} height={20} />
+                    <Image src="/images/angles-left-solid.svg" alt="First Page" width={20} height={20} />
                 </button>
                 <button
                     onClick={handlePrevbtn}
                     disabled={currentPage === 1}
                     className={`border-solid border border-[#6898a5] ${currentPage === 1 ? 'bg-gray-300' : 'hover:bg-[#6898a5]'} rounded-md w-[40px] p-[10px]`}
                 >
-                    <Image src="/images/placeholder.png" alt="Previous Page" width={20} height={20} />
+                    <Image src="/images/angle-left-solid.svg" className="ml-[3px]" alt="Previous Page" width={12} height={12} />
                 </button>
             </div>
             <div className="w-[528px] h-full flex justify-start px-[10px] mx-[24px]">
@@ -88,14 +88,14 @@ const Pagination: React.FC<PaginationProps> = ({ postsPerPage, totalPosts, pagin
                     disabled={currentPage === pageNumbers[pageNumbers.length - 1]}
                     className={`border-solid border border-[#6898a5] ${currentPage === pageNumbers[pageNumbers.length - 1] ? 'bg-gray-300' : 'hover:bg-[#6898a5]'} rounded-md w-[40px] p-[10px]`}
                 >
-                    <Image src="/images/placeholder.png" alt="Next Page" width={20} height={20} />
+                    <Image src="/images/angle-right-solid.svg" className="ml-[3px]" alt="Next Page" width={12} height={12} />
                 </button>
                 <button
                     onClick={handleLastPage}
                     disabled={currentPage === pageNumbers[pageNumbers.length - 1]}
                     className={`border-solid border border-[#6898a5] ${currentPage === pageNumbers[pageNumbers.length - 1] ? 'bg-gray-300' : 'hover:bg-[#6898a5]'} rounded-md w-[40px] p-[10px]`}
                 >
-                    <Image src="/images/placeholder.png" alt="Last Page" width={20} height={20} />
+                    <Image src="/images/angles-right-solid.svg" alt="Last Page" width={20} height={20} />
                 </button>
             </div>
         </div>
