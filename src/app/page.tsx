@@ -2,8 +2,8 @@
 import {useState, useEffect} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';                //主應用程式勿用'next/router';
-import { setupInstitutionData }  from "./contexts/InstitutionsContext";
+import { useRouter } from 'next/navigation';
+import { useInstitutions }  from "./contexts/InstitutionsContext";
 import 'animate.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; 
@@ -29,10 +29,10 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
 
  
   const searches = [
-    { description: "依行政區", image: "/images/building-solid.svg" },
-    { description: "依科別", image: "/images/stethoscope-solid.svg" },
-    { description: "依癌篩項目", image: "/images/magnifying-glass-plus-solid.svg" },
-    { description: "依機構類型", image: "/images/hospital-regular.svg" }
+    { description: '依行政區', filter: '蘆洲區', image: '/images/building-solid.svg' },
+    { description: '依科別', filter: '家庭醫學科', image: '/images/stethoscope-solid.svg' },
+    { description: '依癌篩項目', filter: '肺癌', image: '/images/magnifying-glass-plus-solid.svg' },
+    { description: '依機構類型', filter: '診所', image: '/images/hospital-regular.svg' }
   ];
   const cancers = [
     { title: "子宮頸癌", image:"/images/cervicalCancer.png"},
@@ -41,6 +41,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
     { title: "口腔癌", image:"/images/oralCancer.png"},
     { title: "肺癌", image:"/images/lungCancer.png"}
   ];
+
   const [openLoading, setOpenLoading] = useState<boolean>(true);
 
 
@@ -55,6 +56,12 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
       duration : 1000
     });
   }, []);
+
+
+  const handleSearchClick = (filter: string) => {
+    router.push(`/Search?filter=${filter}`);
+  };
+
 
 
   if (openLoading) {
@@ -83,7 +90,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
             <div className="text-[30px] font-bold mb-[30px] text-[#003E3E]">醫療機構搜尋</div>
             <div className="grid grid-cols-4 gap-40">
               {searches.map((search, index) => (
-                  <div key={index} className="flex flex-col justify-between  p-[10px] text-[#336666]">
+                  <div key={index} className="flex flex-col justify-between  p-[10px] text-[#336666]" onClick={() => handleSearchClick(search.filter)}>
                     <div className="w-full h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${search.image})` }}></div>
                     <div className="text-center text-2xl font-bold py-10 text-[#013f5b]">{search.description}</div>
                   </div>

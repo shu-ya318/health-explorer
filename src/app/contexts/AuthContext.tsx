@@ -40,9 +40,6 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 
-export const useAuth = () => useContext(AuthContext);
-
-
 export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<CustomUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -103,3 +100,5 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
     </AuthContext.Provider>
   );
 }
+
+export const useAuth = () => useContext(AuthContext);

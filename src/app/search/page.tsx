@@ -1,9 +1,9 @@
 'use client';
-import {useState, useEffect, useRef, ChangeEvent} from 'react';
+import {useState, useEffect,useCallback , useRef, ChangeEvent} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';   
-import { setupInstitutionData }  from "../contexts/InstitutionsContext";
+import { useRouter, useSearchParams, usePathname} from 'next/navigation';   
+import { useInstitutions }  from "../contexts/InstitutionsContext";
 import {db} from '../lib/firebaseConfig';
 import { collection, doc, getDocs, getDoc, query, where , QueryDocumentSnapshot} from 'firebase/firestore';
 import {FirebaseInstitutionData} from "../lib/types.js";
@@ -39,14 +39,15 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
         '貢寮區', '金山區', '萬里區', '烏來區'
     ];
     
+
+    const router = useRouter();
     const searchInputRef = useRef<HTMLInputElement>(null);
     const [isOpenInstitutions, setIsOpenInstitutions] = useState(false);
     const [isOpenDivisions, setIsOpenDivisions] = useState(false);
     const [isOpenDistricts, setIsOpenDistricts] = useState(false);
 
-    const [loading,setLoading] = useState(true);
 
-    const [institutionsData, setInstitutionsData] = useState<FirebaseInstitutionData[]>([]);
+    const { institutionData, loading } = useInstitutions();
     const [searchResults, setSearchResults] = useState<FirebaseInstitutionData[]>([]);
     const [currentData, setCurrentData] = useState<FirebaseInstitutionData[]>([]);    //此元件專渲染用  //避用條件渲染，綁定多狀態判斷操作
 
@@ -55,45 +56,23 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
     
 
     useEffect(() => {
-        const loadData = async (): Promise<void> => {
-            await setupInstitutionData();
-            //await organizeInstitutionData();
+        setCurrentData(institutionData); 
+    }, [institutionData]);
 
-            try {
-            const querySnapshot = await getDocs(collection(db, 'medicalInstitutions'));
-            const data = querySnapshot.docs.map(doc => {
-                const docData = doc.data();
-                return {
-                hosp_name: docData.hosp_name || '',
-                tel: docData.tel || '',
-                area: docData.area || '',
-                hosp_addr: docData.hosp_addr || '',
-                division: docData.division || ''
-                } as FirebaseInstitutionData;
-            });
-            setInstitutionsData(data);
-            setCurrentData(data); 
-            } catch (error) {
-            console.error("Failed to fetch data:", error);
-            }
-            setLoading(false);
-        };
-        loadData();
-    }, []);
 
 
     const handleSearch = async (): Promise<void> => {
         const searchTerm = searchInputRef.current?.value.trim();
         if (searchTerm) {
-            const filteredData = institutionsData.filter( (institution) =>{
+            const filteredData = institutionData.filter( (institution) =>{
                 return institution.hosp_name.includes(searchTerm)           //要傳入institution，且return
             });
             setSearchResults(filteredData);
             setCurrentData(filteredData);
             //在內部馬上console.log(searchResults); 仍顯示初始值  (改外部會取得正確值)
         } else {
-            setSearchResults(institutionsData);
-            setCurrentData(institutionsData);
+            setSearchResults(institutionData);
+            setCurrentData(institutionData);
         }
         setCurrentPage(1);
     };
@@ -115,7 +94,7 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
         setIsOpenDistricts(!isOpenDistricts);
     };
     const handleInstitutionSelect = (institutionName: string): void => {
-        const filteredInstitutions = institutionsData.filter(institution => institution.hosp_name.includes(institutionName));
+        const filteredInstitutions = institutionData.filter(institution => institution.hosp_name.includes(institutionName));
         setCurrentData(filteredInstitutions);
         setCurrentPage(1);
         setIsOpenInstitutions(false);
@@ -240,8 +219,8 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                                     <Skeleton key={index} height={320} width={250} className="m-[10px]" />
                                 ))
                             ) : (
-                                currentPosts.map((institution, index) => (
-                                    <Link key={index} href={`/Search/${encodeURIComponent(institution.hosp_name)}`}>
+                                currentPosts.map((institution) => (
+                                    <Link key={institution.hosp_name} href={`/Search/${encodeURIComponent(institution.hosp_name)}`}>
                                         <div className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
                                             <div className="relative">
                                                 <Image 
