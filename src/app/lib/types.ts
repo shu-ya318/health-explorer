@@ -6,3 +6,9 @@ export interface FirebaseInstitutionData {
     division?: string;
     cancer_screening?: string
 }
+
+
+export interface FirebaseInstitutionDataExtended extends FirebaseInstitutionData {
+    lat?: number;
+    lng?: number;
+}

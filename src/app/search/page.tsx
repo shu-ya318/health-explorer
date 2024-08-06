@@ -2,10 +2,8 @@
 import {useState, useEffect,useCallback , useRef, ChangeEvent} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter, useSearchParams, usePathname} from 'next/navigation';   
-import { useInstitutions }  from "../contexts/InstitutionsContext";
-import {db} from '../lib/firebaseConfig';
-import { collection, doc, getDocs, getDoc, query, where , QueryDocumentSnapshot} from 'firebase/firestore';
+import {useRouter, useSearchParams} from 'next/navigation';   
+import {useInstitutions }  from "../contexts/InstitutionsContext";
 import {FirebaseInstitutionData} from "../lib/types.js";
 import Pagination from '../components/Pagination';
 import Skeleton from 'react-loading-skeleton';
@@ -15,12 +13,12 @@ import 'react-loading-skeleton/dist/skeleton.css';
 const SearchPage: React.FC = (): React.ReactElement | null  => {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY; 
     const cancers = [
-        { title: "子宮頸癌", image:"/images/cervicalCancer.png"},
-        { title: "卵巢癌", image: "/images/breastCancer.png" },
-        { title: "大腸癌", image:"/images/colorectalCancer.png"},
-        { title: "口腔癌", image:"/images/oralCancer.png"},
-        { title: "肺癌", image:"/images/lungCancer.png"}
-      ];
+        { filter: '子宮頸癌', image:"/images/cervicalCancer.png"},
+        { filter: '乳癌', image: "/images/breastCancer.png" },
+        { filter: '大腸癌', image:"/images/colorectalCancer.png"},
+        { filter: '口腔癌', image:"/images/oralCancer.png"},
+        { filter: '肺癌', image:"/images/lungCancer.png"}
+    ];
     const institutions = [
         '衛生所', '診所', '醫院'
     ];
@@ -39,15 +37,16 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
         '貢寮區', '金山區', '萬里區', '烏來區'
     ];
     
-
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const filter = searchParams.get('filter');
+
     const searchInputRef = useRef<HTMLInputElement>(null);
     const [isOpenInstitutions, setIsOpenInstitutions] = useState(false);
     const [isOpenDivisions, setIsOpenDivisions] = useState(false);
     const [isOpenDistricts, setIsOpenDistricts] = useState(false);
 
-
-    const { institutionData, loading } = useInstitutions();
+    const {institutionData, loading, views, incrementView} = useInstitutions();
     const [searchResults, setSearchResults] = useState<FirebaseInstitutionData[]>([]);
     const [currentData, setCurrentData] = useState<FirebaseInstitutionData[]>([]);    //此元件專渲染用  //避用條件渲染，綁定多狀態判斷操作
 
@@ -59,6 +58,18 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
         setCurrentData(institutionData); 
     }, [institutionData]);
 
+    useEffect(() => {
+        let filteredData = institutionData;
+        if (filter) {
+            filteredData = institutionData.filter(institution =>
+                institution.hosp_name.includes(filter) ||
+                institution.division?.includes(filter) ||
+                institution.area?.includes(filter) ||
+                institution.cancer_screening?.includes(filter)
+            );
+        }
+        setCurrentData(filteredData);
+    }, [filter, institutionData]);
 
 
     const handleSearch = async (): Promise<void> => {
@@ -74,6 +85,20 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
             setSearchResults(institutionData);
             setCurrentData(institutionData);
         }
+        setCurrentPage(1);
+    };
+    const DeleteSearch = () => {
+        if (searchInputRef.current) {
+            searchInputRef.current.value = "";
+        }
+    }
+    
+
+    const handleCancerFilter = (cancerType: string) => {
+        const filteredInstitutions = institutionData.filter(institution =>
+            institution.cancer_screening?.includes(cancerType)
+        );
+        setCurrentData(filteredInstitutions);
         setCurrentPage(1);
     };
 
@@ -101,6 +126,11 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
     };
 
 
+    const handleIncrement = (hosp_name: string) => {
+        incrementView(hosp_name);
+    };
+
+
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
     const currentPosts = currentData.slice(indexOfFirstPost, indexOfLastPost);
@@ -121,7 +151,9 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                                     placeholder="輸入關鍵字搜尋"
                                     ref={searchInputRef}
                                 />
-                                <Image className="absolute top-2 right-10 z-10" src="/images/xmark-solid.svg" alt="close" width={15} height={15} />
+                                <button className="hover:scale-110 absolute top-2 right-10 z-10" onClick={DeleteSearch}>
+                                    <Image className="" src="/images/xmark-solid.svg" alt="close" width={15} height={15} />
+                                </button>                               
                             </div>
                             <button 
                                 className="flex w-32 h-full bg-[#24657d] hover:bg-[#7199a1] hover:text-black rounded-r-md items-center  justify-center font-bold"
@@ -133,20 +165,25 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                         </div>
                     </div>
                     {/*癌篩分類*/}
-                    <div className="max-w-screen-md h-[220px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[10px] rounded-lg border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC] "> 
+                    <div className="max-w-screen-md h-[220px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[20px] rounded-lg border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC] "> 
                         <div className="text-[#003E3E] text-center font-bold text-2xl mt-[5px]">依癌篩資格搜尋</div>
                         <div  className="flex w-full justify-between mb-[20px]">
                             {cancers.map((cancer, index) => (
-                                <div key={index} className="flex flex-col justify-between   text-[#0e4b66]">
-                                    <div className="w-full h-[125px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
-                                    <div className="text-center text-lg text-[#013f5b] font-bold mb-[5px]">{cancer.title}</div>
-                                </div>
+                                <button 
+                                    key={index} 
+                                    className="w-2/12 flex flex-col justify-between text-[#0e4b66] transition-transform duration-300 hover:scale-110 hover:shadow-lg hover:shadow-gray-400"
+                                    onClick={() => handleCancerFilter(cancer.filter)}
+                                >
+                                    <div className="w-full h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
+                                    <hr className="w-9/12 mx-auto border-solid border-2 border-[#acb8b6]"/>
+                                    <div className="w-full text-center text-lg text-[#013f5b] font-bold mb-[15px]">{cancer.filter}</div>
+                                </button>
                             ))}
                         </div>
                     </div>
                     {/*渲資*/}
                     <div className="h-auto w-full flex flex-col items-start">
-                        <p className="text-black ">共有{currentData.length}個搜尋結果</p>
+                        <p className="text-black ">共有<strong>{currentData.length}</strong>個搜尋結果</p>
                         <hr className="w-full border-solid border border-[#acb8b6] my-[10px]"/>
                         {/*選標籤*/}
                         <div className="mx-w-screen-md h-9 flex justify-center mb-[20px]">
@@ -220,7 +257,11 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                                 ))
                             ) : (
                                 currentPosts.map((institution) => (
-                                    <Link key={institution.hosp_name} href={`/Search/${encodeURIComponent(institution.hosp_name)}`}>
+                                    <Link 
+                                        key={institution.hosp_name} 
+                                        href={`/Search/${encodeURIComponent(institution.hosp_name)}`}
+                                        onClick={(e)=> {e.preventDefault(); handleIncrement(institution.hosp_name);}}
+                                    >
                                         <div className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
                                             <div className="relative">
                                                 <Image 
@@ -239,10 +280,10 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
                                                     height={40} 
                                                 />
                                             </div>
-                                            <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[5px]">{institution.hosp_name}</div>
+                                            <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{institution.hosp_name}</div>
                                             <div className="w-full h-[30px] flex items-center justify-end">
                                                 <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
-                                                <span className="ml-2 text-black mr-[10px] mt-[5px]">觀看數:6</span>
+                                                <span className="ml-2 text-black mr-[10px] mt-[5px]">觀看數:{views[institution.hosp_name]}</span>
                                             </div>
                                         </div>
                                     </Link>
