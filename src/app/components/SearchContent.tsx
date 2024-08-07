@@ -1,77 +1,144 @@
 import { FirebaseInstitutionData} from '../lib/types.js';
+import {useInstitutions }  from "../contexts/InstitutionsContext";
+import {useState, useEffect , useRef, ChangeEvent} from 'react';
+import {useRouter, useSearchParams} from 'next/navigation';   
 import Pagination from '../components/Pagination';
 import Image from 'next/image';
 import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-interface SearchContentProps {
-    searchInputRef: React.RefObject<HTMLInputElement>;
-    deleteSearch: () => void; 
-    handleSearch: () => Promise<void>;
-    cancers: { filter: string; image: string }[];
-    handleCancerFilter: (cancerType: string) => void;
 
-    handleInstitutionsClick: () => void; // 新增
-    handleDivisionsClick: () => void; // 新增
-    handleDistrictsClick: () => void; // 新增
-    handleInstitutionSelect: (institutionName: string) => void; // 新增
-    isOpenInstitutions: boolean; // 新增
-    isOpenDivisions: boolean; // 新增
-    isOpenDistricts: boolean; // 新增
-    institutions: string[]; // 新增
-    divisions: string[]; // 新增
-    districts: string[]; // 新增
+const SearchContent: React.FC = (): React.ReactElement | null  => {
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY; 
+    const cancers = [
+        { filter: '子宮頸癌', image:"/images/cervicalCancer.png"},
+        { filter: '乳癌', image: "/images/breastCancer.png" },
+        { filter: '大腸癌', image:"/images/colorectalCancer.png"},
+        { filter: '口腔癌', image:"/images/oralCancer.png"},
+        { filter: '肺癌', image:"/images/lungCancer.png"}
+    ];
+    const institutions = [
+        '衛生所', '診所', '醫院'
+    ];
+    const divisions = [
+        '婦產科', '牙醫一般科', '耳鼻喉科',
+        '皮膚科', '眼科', '骨科',
+        '精神', '心理諮商及心理治療', '家庭醫學科',
+        '泌尿科', '內科', '外科'
+    ];
+    const districts = [
+        '板橋區', '三重區', '中和區', '永和區', '新莊區',
+        '新店區', '樹林區', '鶯歌區', '三峽區', '淡水區',
+        '汐止區', '瑞芳區', '土城區', '蘆洲區', '五股區',
+        '泰山區', '林口區', '深坑區', '石碇區', '坪林區',
+        '三芝區', '石門區', '八里區', '平溪區', '雙溪區',
+        '貢寮區', '金山區', '萬里區', '烏來區'
+    ];
     
-    institutionData: FirebaseInstitutionData[];
-    loading: boolean;
-    views: Record<string, number>;
-    incrementView: (hosp_name: string, url: string) => void; 
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const filter = searchParams.get('filter');
 
-    currentPosts: FirebaseInstitutionData[];
-    handleIncrement: (hosp_name: string, url: string) => void;
-    currentData: FirebaseInstitutionData[];
-    paginate: (pageNumber: number) => void;
-    currentPage: number;
-    postsPerPage: number;
-    totalPosts: number;
+    const searchInputRef = useRef<HTMLInputElement>(null);
 
-    logMessage: string;
-}
+    const [isOpenInstitutions, setIsOpenInstitutions] = useState(false);
+    const [isOpenDivisions, setIsOpenDivisions] = useState(false);
+    const [isOpenDistricts, setIsOpenDistricts] = useState(false);
 
-const SearchContent: React.FC<SearchContentProps> = ({
-    searchInputRef,
-    deleteSearch,
-    handleSearch,
-    cancers,
-    handleCancerFilter,
+    const {institutionData, loading, views, incrementView} = useInstitutions();
+    const [searchResults, setSearchResults] = useState<FirebaseInstitutionData[]>([]);
+    const [currentData, setCurrentData] = useState<FirebaseInstitutionData[]>([]);    //此元件專渲染用  //避用條件渲染，綁定多狀態判斷操作
 
-    handleInstitutionsClick,
-    handleDivisionsClick,
-    handleDistrictsClick,
-    handleInstitutionSelect,
-    isOpenInstitutions,
-    isOpenDivisions,
-    isOpenDistricts,
-    institutions,
-    divisions,
-    districts,
-
-    institutionData,
-    loading,
-    views,
-    incrementView,
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const postsPerPage = 12;
     
-    handleIncrement,
-    currentPosts, 
-    currentData,
-    paginate,
-    currentPage,
-    postsPerPage,
-    totalPosts,
 
-    logMessage
-}) => {
+    useEffect(() => {
+        setCurrentData(institutionData); 
+    }, [institutionData]);
+
+    useEffect(() => {
+        let filteredData = institutionData;
+        if (filter) {
+            filteredData = institutionData.filter(institution =>
+                institution.hosp_name.includes(filter) ||
+                institution.division?.includes(filter) ||
+                institution.area?.includes(filter) ||
+                institution.cancer_screening?.includes(filter)
+            );
+        }
+        setCurrentData(filteredData);
+    }, [filter, institutionData]);
+
+
+    const handleSearch = async (): Promise<void> => {
+        const searchTerm = searchInputRef.current?.value.trim();
+        if (searchTerm) {
+            const filteredData = institutionData.filter( (institution) =>{
+                return institution.hosp_name.includes(searchTerm)           //要傳入institution，且return
+            });
+            setSearchResults(filteredData);
+            setCurrentData(filteredData);
+            //內部馬上console.log(searchResults); 仍顯示初始值  (改外部會取得正確值)
+        } else {
+            setSearchResults(institutionData);
+            setCurrentData(institutionData);
+        }
+        setCurrentPage(1);
+    };
+    const deleteSearch = () => {
+        if (searchInputRef.current) {
+            searchInputRef.current.value = "";
+        }
+    }
+    
+
+    const handleCancerFilter = (cancerType: string) => {
+        const filteredInstitutions = institutionData.filter(institution =>
+            institution.cancer_screening?.includes(cancerType)
+        );
+        setCurrentData(filteredInstitutions);
+        setCurrentPage(1);
+    };
+
+
+    const handleInstitutionsClick = (): void => {
+        setIsOpenInstitutions(!isOpenInstitutions);
+        setIsOpenDivisions(false);
+        setIsOpenDistricts(false);
+    };
+    const handleDivisionsClick = (): void => {
+        setIsOpenInstitutions(false);
+        setIsOpenDivisions(!isOpenDivisions);
+        setIsOpenDistricts(false);
+    };
+    const handleDistrictsClick = (): void => {
+        setIsOpenInstitutions(false);
+        setIsOpenDivisions(false);
+        setIsOpenDistricts(!isOpenDistricts);
+    };
+    const handleInstitutionSelect = (institutionName: string): void => {
+        const filteredInstitutions = institutionData.filter(institution => institution.hosp_name.includes(institutionName));
+        setCurrentData(filteredInstitutions);
+        setCurrentPage(1);
+        setIsOpenInstitutions(false);
+    };
+
+
+    const handleIncrement = (hosp_name: string, url: string) => {
+        incrementView(hosp_name);
+        window.location.href = url; 
+    };
+
+
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = currentData.slice(indexOfFirstPost, indexOfLastPost);
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+
+
     return (
         <main className="w-full h-auto flex flex-col justify-center items-center flex-grow bg-[#ffffff]" >
                 <div className="w-[1280px]">
@@ -100,7 +167,6 @@ const SearchContent: React.FC<SearchContentProps> = ({
                     </div>
                     {/*癌篩分類*/}
                     <div className="max-w-screen-md h-[220px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[20px] rounded-lg border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC] "> 
-                    <p className="text-black">Log Message: {logMessage}</p>
                         <div className="text-[#003E3E] text-center font-bold text-2xl mt-[5px]">依癌篩資格搜尋</div>
                         <div  className="flex w-full justify-between mb-[20px]">
                             {cancers.map((cancer, index) => (

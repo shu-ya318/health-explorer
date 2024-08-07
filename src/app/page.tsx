@@ -26,7 +26,6 @@ interface Cancer {
 
 const HomePage: React.FC = (): React.ReactElement | null  => {
   const router = useRouter();
-
  
   const searches = [
     { description: '依行政區', filter: '蘆洲區', image: '/images/building-solid.svg' },
@@ -44,11 +43,12 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
 
   const [openLoading, setOpenLoading] = useState<boolean>(true);
 
-
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setOpenLoading(false);
     }, 2000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {

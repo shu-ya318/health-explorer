@@ -13,8 +13,6 @@ interface InstitutionsContextType {
     loading: boolean;
     views: Record<string, number>;
     incrementView: (hosp_name: string) => void;
-
-    logMessage: string; // 新增 logMessage 屬性
 }
 
 const defaultInstitutionContextValue: InstitutionsContextType = {
@@ -23,8 +21,6 @@ const defaultInstitutionContextValue: InstitutionsContextType = {
     loading: true,
     views: {},
     incrementView: () => {},
-
-    logMessage: "test"  // 新增 logMessage，並提供一個初始值
 };
 
 const InstitutionsContext = createContext<InstitutionsContextType>(defaultInstitutionContextValue);
@@ -42,8 +38,6 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
     });
     const [loading,setLoading] = useState<boolean>(true);
 
-    const [logMessage, setLogMessage] = useState<string>('測試');
-    console.log(logMessage);
     /*
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,  // !   非空 斷言
@@ -147,7 +141,7 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
 
 
     return (
-        <InstitutionsContext.Provider value={{institutionData, setInstitutionData, loading, views, incrementView, logMessage}}>
+        <InstitutionsContext.Provider value={{institutionData, setInstitutionData, loading, views, incrementView}}>
             {children}
         </InstitutionsContext.Provider>
     );
