@@ -2,9 +2,9 @@ import { FirebaseInstitutionData} from '../lib/types.js';
 import {useInstitutions }  from "../contexts/InstitutionsContext";
 import {useState, useEffect , useRef, ChangeEvent} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';   
-import Pagination from '../components/Pagination';
 import Image from 'next/image';
 import Link from 'next/link';
+import Pagination from '../components/Pagination';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
