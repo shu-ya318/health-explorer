@@ -73,7 +73,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
   if (openLoading) {
     return (
       <div className="flex justify-center items-center h-screen" style={{ backgroundColor: '#24657d' }}>
-        <PuffLoader size="300" color="#FFFFFF"/>
+        <PuffLoader size="300px" color="#FFFFFF"/>
       </div>
     );
   }

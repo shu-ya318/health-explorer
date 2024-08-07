@@ -1,11 +1,12 @@
 'use client';
+import { InstitutionsProvider } from '../../contexts/InstitutionsContext';
 import {useState, useEffect, useMemo} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'; 
 import {useInstitutions }  from "../../contexts/InstitutionsContext";
 import { FirebaseInstitutionData, FirebaseInstitutionDataExtended } from '../../lib/types.js';
-import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
+// import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { motion, AnimatePresence } from "framer-motion"; 
@@ -40,7 +41,7 @@ const Institution: React.FC = (): React.ReactElement | null  => {
         }
     }, [institutionData, loading]);
 
-
+/*
     const mapCenter = useMemo(() => {
         if (institutionDetails && institutionDetails.lat !== undefined && institutionDetails.lng !== undefined) { //因可選參屬性,多檢查非空值
             return { lat: institutionDetails.lat, lng: institutionDetails.lng };
@@ -52,6 +53,13 @@ const Institution: React.FC = (): React.ReactElement | null  => {
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
         libraries: ['places']
     });
+*/
+
+
+    const handleIncrement = (hosp_name: string, url: string) => {
+        incrementView(hosp_name);
+        window.location.href = url; 
+    };
 
 
     const handleNext = () => {
@@ -75,6 +83,7 @@ const Institution: React.FC = (): React.ReactElement | null  => {
 
 
     return(
+        <InstitutionsProvider>  
         <>
             {institutionDetails ? (
              <AnimatePresence>
@@ -114,6 +123,7 @@ const Institution: React.FC = (): React.ReactElement | null  => {
                                     {/*地圖*/}
                                     <hr className="w-full border border-[#acb8b6] my-[30px]"/>
                                     <h3 className="text-2xl text-black underline decoration-[#6898a5] decoration-4 font-bold mt-[5px] mb-[30px]">地圖實景</h3>
+                                    {/*
                                     {loading ? (
                                         <Skeleton height={450} width={1200} className="my-[40px] mx-auto" />
                                     ) : (
@@ -131,6 +141,7 @@ const Institution: React.FC = (): React.ReactElement | null  => {
                                             />
                                         </GoogleMap>
                                     )}
+                                    */}
                                     {/*輪播薦*/}
                                     <hr className="w-full border-solid border border-[#acb8b6] my-[30px]"/>
                                     {loading ? (
@@ -146,13 +157,20 @@ const Institution: React.FC = (): React.ReactElement | null  => {
                                                 className={`flex justify-center items-center w-9 h-full ${isAtStart ? 'opacity-50 cursor-not-allowed' : ''}`}
                                             >
                                                 <Image src="/images/left_arrow.png" alt="left-arrow-icon" width={46} height={46} />
-                                            </button>
-                                            {displayedInstitutions.map(institution => (
-                                                <Link key={institution.hosp_name} href={`/Search/${encodeURIComponent(institution.hosp_name)}`}>
+                                            </button>  
+                                            {displayedInstitutions.map(institution => (   
+                                                <Link 
+                                                key={institution.hosp_name} 
+                                                href={`/Search/${encodeURIComponent(institution.hosp_name)}`}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    handleIncrement(institution.hosp_name, `/Search/${encodeURIComponent(institution.hosp_name)}`);
+                                                }}
+                                            >
                                                 <div className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
-                                                    <div className="relative">
+                                                    <div className="relative">     {/* 圖片連結 `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(institution.hosp_addr)}&zoom=15&size=250x200&key=${apiKey}`   */}
                                                         <Image 
-                                                            src={`https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(institution.hosp_addr)}&zoom=15&size=250x200&key=${apiKey}`} 
+                                                            src={`http://www.google.com/intl/zh-TW/privacy}`} 
                                                             alt="institution" 
                                                             width={250} 
                                                             height={200} 
@@ -170,10 +188,10 @@ const Institution: React.FC = (): React.ReactElement | null  => {
                                                     <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{institution.hosp_name}</div>
                                                     <div className="w-full h-[30px] flex items-center justify-end">
                                                         <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
-                                                        <span className="ml-2 text-black mr-[10px] mt-[5px]">觀看數:view</span>
+                                                        <span className="ml-2 text-black mr-[10px] mt-[5px]">觀看數:{views[institution.hosp_name]}</span>
                                                     </div>
                                                 </div>
-                                                </Link>
+                                            </Link>
                                             ))}
                                             <button
                                                 id="right-arrow"
@@ -206,6 +224,7 @@ const Institution: React.FC = (): React.ReactElement | null  => {
             </div>
         )}
         </>
+        </InstitutionsProvider>
     )
 }
 

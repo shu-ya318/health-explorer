@@ -12,3 +12,4 @@ export interface FirebaseInstitutionDataExtended extends FirebaseInstitutionData
     lat?: number;
     lng?: number;
 }
+

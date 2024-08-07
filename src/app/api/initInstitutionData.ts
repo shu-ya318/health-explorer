@@ -245,7 +245,7 @@ async function fetchAndFormatData() {
     let institutionData: FirebaseInstitutionData[] = [];
 
     for (const { url, key } of apiUrls) {
-        const paginatedUrl = `${url}?page=0&size=29`;
+        const paginatedUrl = `${url}?page=0&size=1`;
         try {
             const response = await fetch(paginatedUrl);
             if (!response.ok) {
@@ -314,6 +314,6 @@ export async function initInstitutionData(){
         return;
     } 
     const institutionData = await fetchAndFormatData(); 
-    console.log(institutionData); 
+    //console.log(institutionData); 
     await createFirestoreData(institutionData);
 }
