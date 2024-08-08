@@ -169,7 +169,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                                 alt="institution" 
                                                                 width={250} 
                                                                 height={200} 
-                                                                className="w-full object-cover object-center" 
+                                                                className="w-full h-[200px]  object-cover object-center"  
                                                                 unoptimized={true}
                                                             />
                                                         )}

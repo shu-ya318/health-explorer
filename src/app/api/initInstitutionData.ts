@@ -221,6 +221,11 @@ const apiUrls = [
 ];
 function addManualFields(item: FirebaseInstitutionData, apiKey: string): FirebaseInstitutionData {
     switch (apiKey) {
+        case '衛生所':
+            return { 
+                ...item, 
+                division: '家庭醫學科'
+            };
         case '骨科':
             return { 
                 ...item, 
@@ -245,7 +250,7 @@ async function fetchAndFormatData() {
     let institutionData: FirebaseInstitutionData[] = [];
 
     for (const { url, key } of apiUrls) {
-        const paginatedUrl = `${url}?page=0&size=1`;
+        const paginatedUrl = `${url}?page=0&size=1300`;
         try {
             const response = await fetch(paginatedUrl);
             if (!response.ok) {
@@ -314,5 +319,6 @@ export async function initInstitutionData(){
         return;
     } 
     const institutionData = await fetchAndFormatData(); 
+    console.log(institutionData);
     await createFirestoreData(institutionData);
 }

@@ -60,52 +60,64 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
 
     useEffect(() => {
         async function handleInstitutionData() {
-          if (!isDataLoaded && isLoaded ) {
-            setLoading(true);
-            try {
-              await initInstitutionData();
-              const geocoder = new google.maps.Geocoder();
-              const querySnapshot = await getDocs(collection(db, 'medicalInstitutions'));
-              const storage = getStorage(); 
-            
-              const data = await Promise.all(querySnapshot.docs.map(async doc => {
-                const docData = doc.data();
-                const response = await geocoder.geocode({ address: docData.hosp_addr });
-                const location = response.results[0].geometry.location;
-                const imageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(docData.hosp_addr)}&zoom=15&size=250x200&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
-                const imageResp = await fetch(imageUrl);
-                const imageBlob = await imageResp.blob();
-                const imageRef = ref(storage, 'institutionImages/' + docData.hosp_name);
-                await uploadBytes(imageRef, imageBlob);
-                const mapUrl = await getDownloadURL(imageRef);
-                
-                return {
-                    hosp_name: docData.hosp_name || '',
-                    tel: docData.tel || '',
-                    area: docData.area || '',
-                    hosp_addr: docData.hosp_addr || '',
-                    division: docData.division || '',
-                    cancer_screening: docData.cancer_screening || '',
-                    lat: location.lat(),
-                    lng: location.lng(),
-                    map: mapUrl 
-                } as FirebaseInstitutionData;
-              }));
-
-              localStorage.setItem('institutionData', JSON.stringify(data));
-              setInstitutionData(data);
-              if (data.length > 0) {
-                setIsDataLoaded(true);
-              }
-            } catch (error) {
-              console.error("Failed to fetch institution data:", error);
-            } finally {
-              setLoading(false);
+            if (!isDataLoaded && isLoaded) {
+                setLoading(true);
+                const newData: FirebaseInstitutionData[] = [];
+                try {
+                    await initInstitutionData();
+                    const geocoder = new google.maps.Geocoder();
+                    const querySnapshot = await getDocs(collection(db, 'medicalInstitutions'));
+                    const storage = getStorage();
+                    
+                    const promises = querySnapshot.docs.map(async doc => {
+                        try {
+                            const docData = doc.data();
+                            const response = await geocoder.geocode({ address: docData.hosp_addr });
+                            const location = response.results[0].geometry.location;
+                            const imageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(docData.hosp_addr)}&zoom=15&size=250x200&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+                            let imageBlob;
+                            try {
+                                const imageResp = await fetch(imageUrl);
+                                imageBlob = await imageResp.blob();
+                            } catch (fetchError) {
+                                console.error("Failed to fetch Google Static Map, using placeholder instead for", docData.hosp_addr, fetchError);
+                                imageBlob = await fetch('/images/placeholder.png').then(res => res.blob());
+                            }
+                            const imageRef = ref(storage, 'institutionImages/' + (docData.hosp_name || 'unknown'));
+                            await uploadBytes(imageRef, imageBlob);
+                            const mapUrl = await getDownloadURL(imageRef);
+    
+                            newData.push({
+                                hosp_name: docData.hosp_name || '',
+                                tel: docData.tel || '',
+                                area: docData.area || '',
+                                hosp_addr: docData.hosp_addr || '',
+                                division: docData.division || '',
+                                cancer_screening: docData.cancer_screening || '',
+                                lat: location.lat(),
+                                lng: location.lng(),
+                                map: mapUrl
+                            } as FirebaseInstitutionData);
+                        } catch (error) {
+                            console.error("Error processing document:", doc.id, error);
+                        }
+                    });
+                    await Promise.all(promises);
+    
+                    if (newData.length > 0) {
+                        localStorage.setItem('institutionData', JSON.stringify(newData));
+                        setInstitutionData(newData);
+                        setIsDataLoaded(true);
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch institution data:", error);
+                } finally {
+                    setLoading(false);
+                }
             }
-          }
         }
         handleInstitutionData();
-      }, [isDataLoaded, isLoaded]);               
+    }, [isDataLoaded, isLoaded]);           
 
 
     useEffect(() => {
