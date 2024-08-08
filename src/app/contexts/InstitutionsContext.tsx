@@ -5,6 +5,7 @@ import { initInstitutionData }from '../api/initInstitutionData';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebaseConfig';
 import { useLoadScript, useGoogleMap } from '@react-google-maps/api';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 
 interface InstitutionsContextType {
@@ -65,11 +66,19 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
               await initInstitutionData();
               const geocoder = new google.maps.Geocoder();
               const querySnapshot = await getDocs(collection(db, 'medicalInstitutions'));
+              const storage = getStorage(); 
+            
               const data = await Promise.all(querySnapshot.docs.map(async doc => {
                 const docData = doc.data();
                 const response = await geocoder.geocode({ address: docData.hosp_addr });
                 const location = response.results[0].geometry.location;
-                const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(docData.hosp_addr)}&zoom=15&size=250x200&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+                const imageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(docData.hosp_addr)}&zoom=15&size=250x200&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+                const imageResp = await fetch(imageUrl);
+                const imageBlob = await imageResp.blob();
+                const imageRef = ref(storage, 'institutionImages/' + docData.hosp_name);
+                await uploadBytes(imageRef, imageBlob);
+                const mapUrl = await getDownloadURL(imageRef);
+                
                 return {
                     hosp_name: docData.hosp_name || '',
                     tel: docData.tel || '',
@@ -79,9 +88,10 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
                     cancer_screening: docData.cancer_screening || '',
                     lat: location.lat(),
                     lng: location.lng(),
-                    map: mapUrl
+                    map: mapUrl 
                 } as FirebaseInstitutionData;
               }));
+
               localStorage.setItem('institutionData', JSON.stringify(data));
               setInstitutionData(data);
               if (data.length > 0) {
@@ -101,7 +111,7 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
     useEffect(() => {
         if (Object.keys(views).length === 0 && institutionData.length > 0) {
             const initialViews = institutionData.reduce((acc: Record<string, number>, institution: FirebaseInstitutionData) => {
-                acc[institution.hosp_name] = 1; // 僅首次初始化為預設值1 (如:localStorage清空紀錄)
+                acc[institution.hosp_name] = 1;
                 return acc;
             }, {});
         setViews(initialViews);
