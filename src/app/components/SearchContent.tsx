@@ -42,6 +42,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
 
     const searchInputRef = useRef<HTMLInputElement>(null);
 
+    const [sortByViews, setSortByViews] = useState<boolean>(false);
     const [isOpenInstitutions, setIsOpenInstitutions] = useState(false);
     const [isOpenDivisions, setIsOpenDivisions] = useState(false);
     const [isOpenDistricts, setIsOpenDistricts] = useState(false);
@@ -52,11 +53,12 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
 
     const [currentPage, setCurrentPage] = useState<number>(1);
     const postsPerPage = 12;
-    
+
 
     useEffect(() => {
         setCurrentData(institutionData); 
     }, [institutionData]);
+
 
     useEffect(() => {
         let filteredData = institutionData as FirebaseInstitutionDataExtended[];
@@ -70,6 +72,20 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
         }
         setCurrentData(filteredData);
     }, [filter, institutionData]);
+
+
+    useEffect(() => {
+        let data = [...institutionData];
+        if (sortByViews) {
+            data.sort((a, b) => (views[b.hosp_name] || 0) - (views[a.hosp_name] || 0));
+        }
+        setCurrentData(data);
+    }, [institutionData, sortByViews, views]);
+
+    const handleSortByViews = (): void => {
+        setSortByViews(!sortByViews);
+        setCurrentPage(1);
+    };
 
 
     const handleSearch = async (): Promise<void> => {
@@ -103,26 +119,22 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     };
 
 
-    const handleInstitutionsClick = (): void => {
-        setIsOpenInstitutions(!isOpenInstitutions);
-        setIsOpenDivisions(false);
-        setIsOpenDistricts(false);
+    const toggleDropdowns = (type: 'institutions' | 'divisions' | 'districts'): void => {
+        setIsOpenInstitutions(type === 'institutions' ? !isOpenInstitutions : false);
+        setIsOpenDivisions(type === 'divisions' ? !isOpenDivisions : false);
+        setIsOpenDistricts(type === 'districts' ? !isOpenDistricts : false);
     };
-    const handleDivisionsClick = (): void => {
-        setIsOpenInstitutions(false);
-        setIsOpenDivisions(!isOpenDivisions);
-        setIsOpenDistricts(false);
-    };
-    const handleDistrictsClick = (): void => {
-        setIsOpenInstitutions(false);
-        setIsOpenDivisions(false);
-        setIsOpenDistricts(!isOpenDistricts);
-    };
-    const handleInstitutionSelect = (institutionName: string): void => {
-        const filteredInstitutions = institutionData.filter(institution => institution.hosp_name.includes(institutionName));
-        setCurrentData(filteredInstitutions);
+    const handleSelectFilter = (filterType: 'institution' | 'division' | 'district', value: string): void => {
+        const filteredData = institutionData.filter(institution =>
+            filterType === 'institution' ? institution.hosp_name.includes(value) :
+            filterType === 'division' ? institution.division?.includes(value) :
+            institution.area?.includes(value)
+        );
+        setCurrentData(filteredData);
         setCurrentPage(1);
         setIsOpenInstitutions(false);
+        setIsOpenDivisions(false);
+        setIsOpenDistricts(false);
     };
 
 
@@ -136,7 +148,6 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
     const currentPosts = currentData.slice(indexOfFirstPost, indexOfLastPost);
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
 
 
     return (
@@ -182,30 +193,34 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                             ))}
                         </div>
                     </div>
-                    {/*渲資*/}
+                    
+                                    依行政區{/*渲資*/}
                     <div className="h-auto w-full flex flex-col items-start">
                         <p className="text-black ">共有<strong>{currentData.length}</strong>個搜尋結果</p>
                         <hr className="w-full border-solid border border-[#acb8b6] my-[10px]"/>
                         {/*選標籤*/}
                         <div className="mx-w-screen-md h-9 flex justify-center mb-[20px]">
                             <div className="w-[150px] bg-2 bg-[#e6e6e6]  rounded-l-md text-black text-center py-1">排序:</div>
-                            <button className="font-bold w-36 bg-[#ffffff]  border border-[#e6e6e6] hover:bg-[#acb8b6]  hover:text-[#ffffff] text-[#707070] text-center py-1">
+                            <button 
+                                className="font-bold w-36 bg-[#ffffff]  border border-[#e6e6e6] hover:bg-[#acb8b6]  hover:text-[#ffffff] text-[#707070] text-center py-1"
+                                onClick={handleSortByViews}
+                            >
                                 熱門度
                             </button>
                             <div className="relative w-36">
                                 <button
-                                    onClick={handleInstitutionsClick}
-                                    className="flex justify-around items-center  font-bold bg-[#ffffff] border border-[#e6e6e6] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070] text-center py-1 w-full h-full"
+                                    onClick={() => toggleDropdowns('institutions')}
+                                    className={`flex justify-around items-center font-bold border border-[#e6e6e6] ${isOpenInstitutions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#ffffff] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
                                 >
                                     依機構
                                     <Image src="/images/down_small_line.svg" alt="institution" width={25} height={25} />
                                 </button>
                                 {isOpenInstitutions && (
-                                    <ul className="flex flex-col  absolute z-20 bg-[#ffffff] border border-[#e6e6e6] w-[145px]">
+                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] p-[10px]">
                                         {institutions.map((institution) => (
                                             <li key={institution} 
-                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]"
-                                                onClick={() => handleInstitutionSelect(institution)} 
+                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-2 border-solid border border-[#e6e6e6] rounded-md  cursor-pointer "
+                                                onClick={() => handleSelectFilter('institution', institution)} 
                                             >
                                                 {institution}
                                             </li>
@@ -215,7 +230,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                             </div>
                             <div className="relative w-36">
                                 <button
-                                    onClick={handleDivisionsClick}
+                                    onClick={() => toggleDropdowns('divisions')}
                                     className="flex justify-around items-center  font-bold bg-[#ffffff] border border-[#e6e6e6] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070] text-center py-1 w-full h-full"
                                 >
                                     依科別
@@ -224,7 +239,11 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                 {isOpenDivisions && (
                                     <ul className="grid grid-cols-3 absolute z-20 bg-[#ffffff] border border-[#e6e6e6] w-[500px]">
                                         {divisions.map((division) => (
-                                            <li key={division} className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]">
+                                            <li 
+                                                key={division} 
+                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]" 
+                                                onClick={() => handleSelectFilter('division', division)}
+                                            >
                                                 {division}
                                             </li>
                                         ))}
@@ -233,7 +252,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                             </div>
                             <div className="relative w-36">
                                 <button
-                                    onClick={handleDistrictsClick}
+                                    onClick={() => toggleDropdowns('districts')}
                                     className="flex justify-around items-center  font-bold bg-[#ffffff] border border-[#e6e6e6] rounded-r-md hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070] text-center py-1 w-full h-full"
                                 >
                                     依行政區
@@ -242,7 +261,11 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                 {isOpenDistricts && (
                                     <ul className="grid grid-cols-3 absolute z-20 bg-[#ffffff] border border-[#e6e6e6] w-[500px]">
                                         {districts.map((district) => (
-                                            <li key={district} className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]">
+                                            <li 
+                                                key={district} 
+                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]" 
+                                                onClick={() => handleSelectFilter('district', district)}
+                                                >
                                                 {district}
                                             </li>
                                         ))}
