@@ -31,12 +31,24 @@ interface InstitutionsProviderProps {
 
 
 export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ children }) => {
-    const [institutionData, setInstitutionData] = useState<FirebaseInstitutionData[]>([]);
+    const [isDataLoaded, setIsDataLoaded] = useState<boolean>(() => {
+        const loaded = localStorage.getItem('isDataLoaded');
+        console.log('Loaded from localStorage (isDataLoaded):', loaded); 
+        return loaded === 'true';
+    });
+    const [institutionData, setInstitutionData] = useState<FirebaseInstitutionData[]>(() => {
+        const storedData = localStorage.getItem('institutionData');
+        const parsedData = storedData ? JSON.parse(storedData) : [];
+        console.log("Loaded institutionData from localStorage:", parsedData);  // 在這裡添加console.log來查看數據
+        return parsedData;
+    });
+    const [loading,setLoading] = useState<boolean>(false);
+
     const [views, setViews] = useState<Record<string, number>>(() => {                    //單純預設值為1，重載頁面會重置
         const savedViews = localStorage.getItem('views');
         return savedViews ? JSON.parse(savedViews) : {};
     });
-    const [loading,setLoading] = useState<boolean>(true);
+
 
     /*
     const { isLoaded } = useLoadScript({
@@ -44,39 +56,61 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
         libraries: ['places']
     });
     */
+   
+    //切換 setLoading(false); 否則條件渲染UI無限加載中  //依賴條件勿 為印值 而寫[initInstitutionData]、[loading] ->無限執讀取firestore
+    useEffect(() => {
+        localStorage.setItem('isDataLoaded', isDataLoaded.toString());
+        console.log('isDataLoaded set in localStorage:', isDataLoaded);
+    }, [isDataLoaded]);
 
-    //切換 setLoading(false); 否則條件渲染UI無限加載中
     useEffect(() => {
         async function handleInstitutionData() {
-            await initInstitutionData();
+            console.log("useEffect triggered with isDataLoaded:", isDataLoaded);
+          if (!isDataLoaded) {
+            console.log("Data loading started");
             setLoading(true);
-
-                try {
-                    const querySnapshot = await getDocs(collection(db, 'medicalInstitutions'));
-
-                    const data = await Promise.all(querySnapshot.docs.map(async doc => {
-                        const docData = doc.data();
-
-                        return {
-                            hosp_name: docData.hosp_name || '',
-                            tel: docData.tel || '',
-                            area: docData.area || '',
-                            hosp_addr: docData.hosp_addr || '',
-                            division: docData.division || '',
-                            cancer_screening: docData.cancer_screening || '',
-                        } as FirebaseInstitutionData;
-                    }));
-
-                    setInstitutionData(data);
-                } catch (error) {
-                    console.error("Failed to fetch institution data:", error);
-                } finally {
-                    setLoading(false);
-                }
+            try {
+              await initInstitutionData();
+              const querySnapshot = await getDocs(collection(db, 'medicalInstitutions'));
+              const data = await Promise.all(querySnapshot.docs.map(async doc => {
+                const docData = doc.data();
+                return {
+                  hosp_name: docData.hosp_name || '',
+                  tel: docData.tel || '',
+                  area: docData.area || '',
+                  hosp_addr: docData.hosp_addr || '',
+                  division: docData.division || '',
+                  cancer_screening: docData.cancer_screening || '',
+                } as FirebaseInstitutionData;
+              }));
+              console.log("Data loaded:", data);
+              localStorage.setItem('institutionData', JSON.stringify(data));
+              setInstitutionData(data);
+              if (data.length > 0) {
+                setIsDataLoaded(true);
+                console.log("Loading completed, isDataLoaded set to true");
+              }
+            } catch (error) {
+              console.error("Failed to fetch institution data:", error);
+            } finally {
+              setLoading(false);
+              //不適合 console.log(loading);
             }
+          }
+        }
         handleInstitutionData();
-    }, []);                 //依賴條件勿 為印值 而寫[initInstitutionData]、[loading] ->無限執讀取firestore 
-    /*
+      }, [isDataLoaded]);               
+      
+      useEffect(() => {
+        console.log("institutionData updated:", institutionData);
+    }, [institutionData]);
+
+    useEffect(() => {
+        console.log("Current loading status:", loading);
+      }, [loading]);
+
+    
+    /* 地圖經緯度
     useEffect(() => {
         async function handleInstitutionData() {
             await initInstitutionData();
@@ -146,6 +180,7 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
         </InstitutionsContext.Provider>
     );
 };
+
 
 export const useInstitutions = (): InstitutionsContextType => {
     const context = useContext(InstitutionsContext);

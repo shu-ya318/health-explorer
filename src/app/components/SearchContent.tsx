@@ -128,7 +128,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
 
     const handleIncrement = (hosp_name: string, url: string) => {
         incrementView(hosp_name);
-        window.location.href = url; 
+        router.push(url); 
     };
 
 

@@ -26,18 +26,14 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
         const pathSegments = window.location.pathname.split('/');
         const encodedHospName = pathSegments.pop() || '';
         const hosp_name = decodeURIComponent(encodedHospName); 
-        console.log(institutionData);
         if (!loading) {
-        console.log(institutionData);
             const matchedData = institutionData.find(data => data.hosp_name === hosp_name);
             setInstitutionDetails(matchedData || null);
-            console.log(matchedData);
             if (matchedData) {
                 const filteredData = institutionData.filter(data =>
                     data.area === matchedData.area && data.division === matchedData.division && data.hosp_name !== hosp_name
                 );
                 setComparableInstitutions(filteredData);
-                console.log(filteredData);
                 setCarouselIndex(0);
             }
         }
@@ -60,7 +56,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
 
     const handleIncrement = (hosp_name: string, url: string) => {
         incrementView(hosp_name);
-        window.location.href = url; 
+        router.push(url); 
     };
 
 
