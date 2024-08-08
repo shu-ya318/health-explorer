@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import {useState, useEffect, useMemo} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-// import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
+import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { motion, AnimatePresence } from "framer-motion"; 
@@ -18,7 +18,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
     const router = useRouter();
     const {institutionData, loading, views, incrementView} = useInstitutions();
     const [institutionDetails, setInstitutionDetails] = useState<FirebaseInstitutionDataExtended | null>(null);  //不型別定義[ ]，因接收內容為單物件、也不定義{ }
-    const [comparableInstitutions, setComparableInstitutions] = useState<FirebaseInstitutionData[]>([]);
+    const [comparableInstitutions, setComparableInstitutions] = useState<FirebaseInstitutionDataExtended[]>([]);
     const [carouselIndex, setCarouselIndex] = useState(0);
 
 
@@ -39,7 +39,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
         }
     }, [institutionData, loading]);
 
-    /*
+    
     const mapCenter = useMemo(() => {
         if (institutionDetails && institutionDetails.lat !== undefined && institutionDetails.lng !== undefined) { //因可選參屬性,多檢查非空值
             return { lat: institutionDetails.lat, lng: institutionDetails.lng };
@@ -51,7 +51,6 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
         libraries: ['places']
     });
-    */
 
 
     const handleIncrement = (hosp_name: string, url: string) => {
@@ -120,7 +119,6 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                     {/*地圖*/}
                                     <hr className="w-full border border-[#acb8b6] my-[30px]"/>
                                     <h3 className="text-2xl text-black underline decoration-[#6898a5] decoration-4 font-bold mt-[5px] mb-[30px]">地圖實景</h3>
-                                    {/*
                                     {loading ? (
                                         <Skeleton height={450} width={1200} className="my-[40px] mx-auto" />
                                     ) : (
@@ -133,12 +131,11 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                         >
                                             <Marker
                                                 position={mapCenter}
+                                                icon="/images/hospital_fill.svg"
                                                 onLoad={() => console.log("Marker Loaded")}
-                                                icon="/images/heart_line.svg"
                                             />
                                         </GoogleMap>
                                     )}
-                                    */}
                                     {/*輪播薦*/}
                                     <hr className="w-full border-solid border border-[#acb8b6] my-[30px]"/>
                                     {loading ? (
@@ -165,15 +162,17 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                 }}
                                             >
                                                 <div className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
-                                                    <div className="relative">     {/* 圖片連結 `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(institution.hosp_addr)}&zoom=15&size=250x200&key=${apiKey}`   */}
-                                                        <Image 
-                                                            src={`http://www.google.com/intl/zh-TW/privacy}`} 
-                                                            alt="institution" 
-                                                            width={250} 
-                                                            height={200} 
-                                                            className="w-full object-cover object-center" 
-                                                            unoptimized={true}
-                                                        />
+                                                    <div className="relative">
+                                                        {institution.map && (
+                                                            <Image 
+                                                                src={institution.map} 
+                                                                alt="institution" 
+                                                                width={250} 
+                                                                height={200} 
+                                                                className="w-full object-cover object-center" 
+                                                                unoptimized={true}
+                                                            />
+                                                        )}
                                                         <Image 
                                                             className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full" 
                                                             src="/images/heart_line.svg" 

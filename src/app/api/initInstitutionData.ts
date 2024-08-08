@@ -314,6 +314,5 @@ export async function initInstitutionData(){
         return;
     } 
     const institutionData = await fetchAndFormatData(); 
-    //console.log(institutionData); 
     await createFirestoreData(institutionData);
 }

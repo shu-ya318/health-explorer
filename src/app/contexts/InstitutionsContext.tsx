@@ -4,7 +4,7 @@ import { FirebaseInstitutionData} from '../lib/types';
 import { initInstitutionData }from '../api/initInstitutionData';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebaseConfig';
-// import { useLoadScript, useGoogleMap } from '@react-google-maps/api';
+import { useLoadScript, useGoogleMap } from '@react-google-maps/api';
 
 
 interface InstitutionsContextType {
@@ -33,123 +33,69 @@ interface InstitutionsProviderProps {
 export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ children }) => {
     const [isDataLoaded, setIsDataLoaded] = useState<boolean>(() => {
         const loaded = localStorage.getItem('isDataLoaded');
-        console.log('Loaded from localStorage (isDataLoaded):', loaded); 
         return loaded === 'true';
     });
     const [institutionData, setInstitutionData] = useState<FirebaseInstitutionData[]>(() => {
         const storedData = localStorage.getItem('institutionData');
         const parsedData = storedData ? JSON.parse(storedData) : [];
-        console.log("Loaded institutionData from localStorage:", parsedData);  // 在這裡添加console.log來查看數據
         return parsedData;
     });
     const [loading,setLoading] = useState<boolean>(false);
 
-    const [views, setViews] = useState<Record<string, number>>(() => {                    //單純預設值為1，重載頁面會重置
+    const [views, setViews] = useState<Record<string, number>>(() => { //單純預設值為1，重載頁面會重置
         const savedViews = localStorage.getItem('views');
         return savedViews ? JSON.parse(savedViews) : {};
     });
 
-
-    /*
     const { isLoaded } = useLoadScript({
-        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,  // !   非空 斷言
+        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
         libraries: ['places']
     });
-    */
+
    
-    //切換 setLoading(false); 否則條件渲染UI無限加載中  //依賴條件勿 為印值 而寫[initInstitutionData]、[loading] ->無限執讀取firestore
     useEffect(() => {
         localStorage.setItem('isDataLoaded', isDataLoaded.toString());
-        console.log('isDataLoaded set in localStorage:', isDataLoaded);
     }, [isDataLoaded]);
 
     useEffect(() => {
         async function handleInstitutionData() {
-            console.log("useEffect triggered with isDataLoaded:", isDataLoaded);
-          if (!isDataLoaded) {
-            console.log("Data loading started");
+          if (!isDataLoaded && isLoaded ) {
             setLoading(true);
             try {
               await initInstitutionData();
+              const geocoder = new google.maps.Geocoder();
               const querySnapshot = await getDocs(collection(db, 'medicalInstitutions'));
               const data = await Promise.all(querySnapshot.docs.map(async doc => {
                 const docData = doc.data();
+                const response = await geocoder.geocode({ address: docData.hosp_addr });
+                const location = response.results[0].geometry.location;
+                const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(docData.hosp_addr)}&zoom=15&size=250x200&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
                 return {
-                  hosp_name: docData.hosp_name || '',
-                  tel: docData.tel || '',
-                  area: docData.area || '',
-                  hosp_addr: docData.hosp_addr || '',
-                  division: docData.division || '',
-                  cancer_screening: docData.cancer_screening || '',
+                    hosp_name: docData.hosp_name || '',
+                    tel: docData.tel || '',
+                    area: docData.area || '',
+                    hosp_addr: docData.hosp_addr || '',
+                    division: docData.division || '',
+                    cancer_screening: docData.cancer_screening || '',
+                    lat: location.lat(),
+                    lng: location.lng(),
+                    map: mapUrl
                 } as FirebaseInstitutionData;
               }));
-              console.log("Data loaded:", data);
               localStorage.setItem('institutionData', JSON.stringify(data));
               setInstitutionData(data);
               if (data.length > 0) {
                 setIsDataLoaded(true);
-                console.log("Loading completed, isDataLoaded set to true");
               }
             } catch (error) {
               console.error("Failed to fetch institution data:", error);
             } finally {
               setLoading(false);
-              //不適合 console.log(loading);
             }
           }
         }
         handleInstitutionData();
-      }, [isDataLoaded]);               
-      
-      useEffect(() => {
-        console.log("institutionData updated:", institutionData);
-    }, [institutionData]);
-
-    useEffect(() => {
-        console.log("Current loading status:", loading);
-      }, [loading]);
-
-    
-    /* 地圖經緯度
-    useEffect(() => {
-        async function handleInstitutionData() {
-            await initInstitutionData();
-            setLoading(true);
-
-            if (isLoaded) {
-                try {
-                    const querySnapshot = await getDocs(collection(db, 'medicalInstitutions'));
-                    const geocoder = new google.maps.Geocoder();
-
-                    const data = await Promise.all(querySnapshot.docs.map(async doc => {
-                        const docData = doc.data();
-                        // const response = await geocoder.geocode({ address: docData.hosp_addr });
-                        // const location = response.results[0].geometry.location;
-
-                        return {
-                            hosp_name: docData.hosp_name || '',
-                            tel: docData.tel || '',
-                            area: docData.area || '',
-                            hosp_addr: docData.hosp_addr || '',
-                            division: docData.division || '',
-                            cancer_screening: docData.cancer_screening || '',
-                            // lat: location.lat(),
-                            // lng: location.lng()
-                        } as FirebaseInstitutionData;
-                    }));
-
-                    setInstitutionData(data);
-                } catch (error) {
-                    console.error("Failed to fetch institution data:", error);
-                } finally {
-                    setLoading(false);
-                }
-            }
-        }
-
-        handleInstitutionData();
-    }, [isLoaded]);
-    */
+      }, [isDataLoaded, isLoaded]);               
 
 
     useEffect(() => {

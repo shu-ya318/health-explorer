@@ -1,4 +1,4 @@
-import { FirebaseInstitutionData} from '../lib/types.js';
+import { FirebaseInstitutionData, FirebaseInstitutionDataExtended} from '../lib/types.js';
 import {useInstitutions }  from "../contexts/InstitutionsContext";
 import {useState, useEffect , useRef, ChangeEvent} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';   
@@ -47,8 +47,8 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     const [isOpenDistricts, setIsOpenDistricts] = useState(false);
 
     const {institutionData, loading, views, incrementView} = useInstitutions();
-    const [searchResults, setSearchResults] = useState<FirebaseInstitutionData[]>([]);
-    const [currentData, setCurrentData] = useState<FirebaseInstitutionData[]>([]);    //此元件專渲染用  //避用條件渲染，綁定多狀態判斷操作
+    const [searchResults, setSearchResults] = useState<FirebaseInstitutionDataExtended[]>([]);
+    const [currentData, setCurrentData] = useState<FirebaseInstitutionDataExtended[]>([]);    //此元件專渲染用  //避用條件渲染，綁定多狀態判斷操作
 
     const [currentPage, setCurrentPage] = useState<number>(1);
     const postsPerPage = 12;
@@ -59,7 +59,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     }, [institutionData]);
 
     useEffect(() => {
-        let filteredData = institutionData;
+        let filteredData = institutionData as FirebaseInstitutionDataExtended[];
         if (filter) {
             filteredData = institutionData.filter(institution =>
                 institution.hosp_name.includes(filter) ||
@@ -267,15 +267,17 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                         }}
                                     >
                                         <div className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
-                                            <div className="relative">     {/* 圖片連結 `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(institution.hosp_addr)}&zoom=15&size=250x200&key=${apiKey}`   */}
-                                                <Image 
-                                                    src={`http://www.google.com/intl/zh-TW/privacy}`} 
-                                                    alt="institution" 
-                                                    width={250} 
-                                                    height={200} 
-                                                    className="w-full object-cover object-center" 
-                                                    unoptimized={true}
-                                                />
+                                            <div className="relative"> 
+                                                {institution.map && (
+                                                    <Image 
+                                                        src={institution.map} 
+                                                        alt="institution" 
+                                                        width={250} 
+                                                        height={200} 
+                                                        className="w-full object-cover object-center" 
+                                                        unoptimized={true}
+                                                    />
+                                                )}
                                                 <Image 
                                                     className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full" 
                                                     src="/images/heart_line.svg" 
