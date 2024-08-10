@@ -1,67 +1,214 @@
-import { FirebaseInstitutionData, FirebaseInstitutionDataExtended} from '../lib/types.js';
-import {useInstitutions }  from "../contexts/InstitutionsContext";
-import {useState, useEffect , useRef, ChangeEvent} from 'react';
+//import {useInstitutions }  from "../contexts/InstitutionsContext";
+import {useState, useEffect,useCallback , useRef, ChangeEvent} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';   
 import Image from 'next/image';
 import Link from 'next/link';
-import Pagination from '../components/Pagination';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { FirebaseInstitutionData} from '../lib/types.js';
+import { db } from '../lib/firebaseConfig';
+import { collection, query, where, orderBy, startAfter, limit, getDocs, DocumentSnapshot } from 'firebase/firestore';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+
+
+const cancers = [
+    { filter: '子宮頸癌', image:"/images/cervicalCancer.png"},
+    { filter: '乳癌', image: "/images/breastCancer.png" },
+    { filter: '大腸癌', image:"/images/colorectalCancer.png"},
+    { filter: '口腔癌', image:"/images/oralCancer.png"},
+    { filter: '肺癌', image:"/images/lungCancer.png"}
+];
+const institutions = [
+    '衛生所', '診所', '醫院'
+];
+const divisions = [
+    '婦產科', '牙醫一般科', '耳鼻喉科',
+    '皮膚科', '眼科', '骨科',
+    '精神', '心理諮商及心理治療', '家庭醫學科',
+    '泌尿科', '內科', '外科'
+];
+const districts = [
+    '板橋區', '三重區', '中和區', '永和區', '新莊區',
+    '新店區', '樹林區', '鶯歌區', '三峽區', '淡水區',
+    '汐止區', '瑞芳區', '土城區', '蘆洲區', '五股區',
+    '泰山區', '林口區', '深坑區', '石碇區', '坪林區',
+    '三芝區', '石門區', '八里區', '平溪區', '雙溪區',
+    '貢寮區', '金山區', '萬里區', '烏來區'
+];
 
 
 const SearchContent: React.FC = (): React.ReactElement | null  => {
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY; 
-    const cancers = [
-        { filter: '子宮頸癌', image:"/images/cervicalCancer.png"},
-        { filter: '乳癌', image: "/images/breastCancer.png" },
-        { filter: '大腸癌', image:"/images/colorectalCancer.png"},
-        { filter: '口腔癌', image:"/images/oralCancer.png"},
-        { filter: '肺癌', image:"/images/lungCancer.png"}
-    ];
-    const institutions = [
-        '衛生所', '診所', '醫院'
-    ];
-    const divisions = [
-        '婦產科', '牙醫一般科', '耳鼻喉科',
-        '皮膚科', '眼科', '骨科',
-        '精神', '心理諮商及心理治療', '家庭醫學科',
-        '泌尿科', '內科', '外科'
-    ];
-    const districts = [
-        '板橋區', '三重區', '中和區', '永和區', '新莊區',
-        '新店區', '樹林區', '鶯歌區', '三峽區', '淡水區',
-        '汐止區', '瑞芳區', '土城區', '蘆洲區', '五股區',
-        '泰山區', '林口區', '深坑區', '石碇區', '坪林區',
-        '三芝區', '石門區', '八里區', '平溪區', '雙溪區',
-        '貢寮區', '金山區', '萬里區', '烏來區'
-    ];
-    
     const router = useRouter();
     const searchParams = useSearchParams();
     const filter = searchParams.get('filter');
 
     const searchInputRef = useRef<HTMLInputElement>(null);
 
-    const [sortByViews, setSortByViews] = useState<boolean>(false);
+    //const [sortByViews, setSortByViews] = useState<boolean>(false);
     const [isOpenInstitutions, setIsOpenInstitutions] = useState(false);
     const [isOpenDivisions, setIsOpenDivisions] = useState(false);
     const [isOpenDistricts, setIsOpenDistricts] = useState(false);
+    
 
-    const {institutionData, loading, views, incrementView} = useInstitutions();
-    const [searchResults, setSearchResults] = useState<FirebaseInstitutionDataExtended[]>([]);
-    const [currentData, setCurrentData] = useState<FirebaseInstitutionDataExtended[]>([]);    //此元件專渲染用  //避用條件渲染，綁定多狀態判斷操作
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
+    const observer = useRef<IntersectionObserver>();
+    const lastElementRef = useRef<HTMLDivElement>(null);
+    const [currentData, setCurrentData] = useState<FirebaseInstitutionData[]>([]);
 
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const postsPerPage = 12;
+
+    /*const fetchMoreData = useCallback(async () => {
+        if (loading || (!lastVisible && !isInitialLoad)) return;
+    
+        setLoading(true);
+        try {
+            const nextQuery = query(
+                collection(db, "medicalInstitutions"),
+                orderBy("hosp_name"),
+                lastVisible ? startAfter(lastVisible) : limit(20), 
+                limit(20)
+            );
+            const documentSnapshots = await getDocs(nextQuery);
+    
+            if (documentSnapshots.docs.length > 0) {
+                const newDataPromises = documentSnapshots.docs.map(async doc => {
+                    const data = doc.data() as FirebaseInstitutionData;
+                    try {
+                        const imageRef = ref(getStorage(), `institutionImages/${data.hosp_name || 'unknown'}.png`);
+                        const imageUrl = await getDownloadURL(imageRef);
+                        return { ...data, imageUrl };
+                    } catch (error) {
+                        console.error('Failed to load image:', error);
+                        return { ...data, imageUrl: '/images/placeholder.png' };
+                    }
+                });
+                const newData = await Promise.all(newDataPromises);
+    
+                setCurrentData(prev => [...prev, ...newData]);
+                setLastVisible(documentSnapshots.docs[documentSnapshots.docs.length - 1]);
+            } else {
+                if (observer.current && lastElementRef.current) {
+                    observer.current.unobserve(lastElementRef.current);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+        setLoading(false);
+    }, [loading, lastVisible, isInitialLoad, observer, lastElementRef]);  
 
 
     useEffect(() => {
-        setCurrentData(institutionData); 
-    }, [institutionData]);
+        if (isInitialLoad) {
+            fetchMoreData();
+            setIsInitialLoad(false);
+        }
+
+        const observer = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && !loading && lastVisible) {
+                fetchMoreData();
+            }
+        }, { threshold: 1.0 });
+
+        if (lastElementRef.current) {
+            observer.observe(lastElementRef.current);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [lastVisible, loading, fetchMoreData, isInitialLoad]); 
+*/
+    
+    const fetchMoreData = useCallback(async () => {
+        if (loading || (!lastVisible && !isInitialLoad)) return;
+
+        setLoading(true);
+        try {
+            const nextQuery = query(
+                collection(db, 'medicalInstitutions'),
+                orderBy('hosp_name'),
+                lastVisible ? startAfter(lastVisible) : limit(20), 
+                limit(20)
+            );
+            const documentSnapshots = await getDocs(nextQuery);
+
+            if (documentSnapshots.docs.length > 0) {
+                const newDataPromises = documentSnapshots.docs.map(async doc => {
+                    const data = doc.data() as FirebaseInstitutionData;
+                    try {
+                        const imageRef = ref(getStorage(), `institutionImages/${data.hosp_name || 'unknown'}.png`);
+                        const imageUrl = await getDownloadURL(imageRef);
+                        return { ...data, imageUrl };
+                    } catch (error) {
+                        console.error('Failed to load image:', error);
+                        return { ...data, imageUrl: '/images/placeholder.png' };
+                    }
+                });
+                const newData = await Promise.all(newDataPromises);
+
+                setCurrentData(prev => [...prev, ...newData]);
+                setLastVisible(documentSnapshots.docs[documentSnapshots.docs.length - 1]);
+            } else {
+                if (observer.current && lastElementRef.current) {
+                    observer.current.unobserve(lastElementRef.current);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+        setLoading(false);
+    }, [loading, lastVisible, isInitialLoad]);
+
+    useEffect(() => {
+        if (isInitialLoad) {
+            fetchMoreData();
+            setIsInitialLoad(false);
+        }
+
+        const observer = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && !loading && lastVisible) {
+                fetchMoreData();
+            }
+        }, { threshold: 1.0 });
+
+        if (lastElementRef.current) {
+            observer.observe(lastElementRef.current);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [lastVisible, loading, fetchMoreData, isInitialLoad]); 
+
+
+    const deleteSearch = () => {
+        if (searchInputRef.current) {
+            searchInputRef.current.value = "";
+        }
+    }
+    /*  無法搜尋至少完整包含searchTerm的值 ，需搭配外部套件 Algolia
+    const handleSearch = async () => {
+        const searchTerm = searchInputRef.current?.value.trim();
+        if (!searchTerm) return;
+    
+        setLoading(true);
+        const searchQuery = query(
+            collection(db, 'medicalInstitutions'),
+            where('hosp_name', '>=', searchTerm),
+            limit(20)
+        );
+        const querySnapshot = await getDocs(searchQuery);
+        const searchData = querySnapshot.docs.map(doc => ({ ...doc.data() as FirebaseInstitutionData, id: doc.id }));
+        setCurrentData(searchData);
+        setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+        setLoading(false);
+    };
 
 
     useEffect(() => {
-        let filteredData = institutionData as FirebaseInstitutionDataExtended[];
+        let filteredData = institutionData as FirebaseInstitutionData[];
         if (filter) {
             filteredData = institutionData.filter(institution =>
                 institution.hosp_name.includes(filter) ||
@@ -73,42 +220,6 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
         setCurrentData(filteredData);
     }, [filter, institutionData]);
 
-
-    useEffect(() => {
-        let data = [...institutionData];
-        if (sortByViews) {
-            data.sort((a, b) => (views[b.hosp_name] || 0) - (views[a.hosp_name] || 0));
-        }
-        setCurrentData(data);
-    }, [institutionData, sortByViews, views]);
-
-    const handleSortByViews = (): void => {
-        setSortByViews(!sortByViews);
-        setCurrentPage(1);
-    };
-
-
-    const handleSearch = async (): Promise<void> => {
-        const searchTerm = searchInputRef.current?.value.trim();
-        if (searchTerm) {
-            const filteredData = institutionData.filter( (institution) =>{
-                return institution.hosp_name.includes(searchTerm)           //要傳入institution，且return
-            });
-            setSearchResults(filteredData);
-            setCurrentData(filteredData);
-            //內部馬上console.log(searchResults); 仍顯示初始值  (改外部會取得正確值)
-        } else {
-            setSearchResults(institutionData);
-            setCurrentData(institutionData);
-        }
-        setCurrentPage(1);
-    };
-    const deleteSearch = () => {
-        if (searchInputRef.current) {
-            searchInputRef.current.value = "";
-        }
-    }
-    
 
     const handleCancerFilter = (cancerType: string) => {
         const filteredInstitutions = institutionData.filter(institution =>
@@ -136,18 +247,27 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
         setIsOpenDivisions(false);
         setIsOpenDistricts(false);
     };
+*/
 
+    /*觀看數 useEffect(() => {
+        let data = [...institutionData];
+        if (sortByViews) {
+            data.sort((a, b) => (views[b.hosp_name] || 0) - (views[a.hosp_name] || 0));
+        }
+        setCurrentData(data);
+    }, [institutionData, sortByViews, views]);
 
-    const handleIncrement = (hosp_name: string, url: string) => {
+    const handleSortByViews = (): void => {
+        setSortByViews(!sortByViews);
+        setCurrentPage(1);
+    };
+*/
+
+    /*const handleIncrement = (hosp_name: string, url: string) => {
         incrementView(hosp_name);
         router.push(url); 
     };
-
-
-    const indexOfLastPost = currentPage * postsPerPage;
-    const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentPosts = currentData.slice(indexOfFirstPost, indexOfLastPost);
-    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+    */
 
 
     return (
@@ -162,14 +282,17 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                     type="text"
                                     placeholder="輸入關鍵字搜尋"
                                     ref={searchInputRef}
-                                />
-                                <button className="hover:scale-110 absolute top-2 right-10 z-10" onClick={deleteSearch}>
+                                />  
+                                <button 
+                                    className="hover:scale-110 absolute top-2 right-10 z-10"  
+                                    onClick={deleteSearch}
+                                >  
                                     <Image className="" src="/images/xmark-solid.svg" alt="close" width={15} height={15} />
                                 </button>                               
                             </div>
                             <button 
                                 className="flex w-32 h-full bg-[#24657d] hover:bg-[#7199a1] hover:text-black rounded-r-md items-center  justify-center font-bold"
-                                onClick={handleSearch}
+                                //onClick={handleSearch}
                             >
                                 <Image className="w-auto h-auto" src="/images/search.png" alt="Search" width={40} height={40}/>
                                 搜尋
@@ -184,7 +307,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                 <button 
                                     key={index} 
                                     className="w-2/12 flex flex-col justify-between text-[#0e4b66] transition-transform duration-300 hover:scale-110 hover:shadow-lg hover:shadow-gray-400"
-                                    onClick={() => handleCancerFilter(cancer.filter)}
+                                    //onClick={() => handleCancerFilter(cancer.filter)}
                                 >
                                     <div className="w-full h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
                                     <hr className="w-9/12 mx-auto border-solid border-2 border-[#acb8b6]"/>
@@ -193,23 +316,21 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                             ))}
                         </div>
                     </div>
-                    
-                                    依行政區{/*渲資*/}
+                    {/*渲資*/}
                     <div className="h-auto w-full flex flex-col items-start">
-                        <p className="text-black ">共有<strong>{currentData.length}</strong>個搜尋結果</p>
                         <hr className="w-full border-solid border border-[#acb8b6] my-[10px]"/>
                         {/*選標籤*/}
                         <div className="mx-w-screen-md h-9 flex justify-center mb-[20px]">
                             <div className="w-[150px] bg-2 bg-[#e6e6e6]  rounded-l-md text-black text-center py-1">排序:</div>
                             <button 
                                 className="font-bold w-36 bg-[#ffffff]  border border-[#e6e6e6] hover:bg-[#acb8b6]  hover:text-[#ffffff] text-[#707070] text-center py-1"
-                                onClick={handleSortByViews}
+                                //onClick={handleSortByViews}
                             >
                                 熱門度
                             </button>
                             <div className="relative w-36">
                                 <button
-                                    onClick={() => toggleDropdowns('institutions')}
+                                    //onClick={() => toggleDropdowns('institutions')}
                                     className={`flex justify-around items-center font-bold border border-[#e6e6e6] ${isOpenInstitutions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#ffffff] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
                                 >
                                     依機構
@@ -219,8 +340,8 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                     <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] p-[10px]">
                                         {institutions.map((institution) => (
                                             <li key={institution} 
-                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-2 border-solid border border-[#e6e6e6] rounded-md  cursor-pointer "
-                                                onClick={() => handleSelectFilter('institution', institution)} 
+                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-2 border-solid border border-[#e6e6e6] rounded-md  cursor-pointer"
+                                                //onClick={() => handleSelectFilter('institution', institution)} 
                                             >
                                                 {institution}
                                             </li>
@@ -230,19 +351,19 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                             </div>
                             <div className="relative w-36">
                                 <button
-                                    onClick={() => toggleDropdowns('divisions')}
-                                    className="flex justify-around items-center  font-bold bg-[#ffffff] border border-[#e6e6e6] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070] text-center py-1 w-full h-full"
+                                    //onClick={() => toggleDropdowns('divisions')}
+                                    className={`flex justify-around items-center font-bold border border-[#e6e6e6] ${isOpenDivisions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#ffffff] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
                                 >
                                     依科別
                                     <Image src="/images/down_small_line.svg" alt="division" width={25} height={25} />
                                 </button>
                                 {isOpenDivisions && (
-                                    <ul className="grid grid-cols-3 absolute z-20 bg-[#ffffff] border border-[#e6e6e6] w-[500px]">
+                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] p-[10px]">
                                         {divisions.map((division) => (
                                             <li 
                                                 key={division} 
-                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]" 
-                                                onClick={() => handleSelectFilter('division', division)}
+                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]  rounded-md  cursor-pointer " 
+                                                //onClick={() => handleSelectFilter('division', division)}
                                             >
                                                 {division}
                                             </li>
@@ -252,19 +373,19 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                             </div>
                             <div className="relative w-36">
                                 <button
-                                    onClick={() => toggleDropdowns('districts')}
-                                    className="flex justify-around items-center  font-bold bg-[#ffffff] border border-[#e6e6e6] rounded-r-md hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070] text-center py-1 w-full h-full"
+                                    //onClick={() => toggleDropdowns('districts')}
+                                    className={`rounded-r-md flex justify-around items-center font-bold border border-[#e6e6e6] ${isOpenDistricts ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#ffffff] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
                                 >
                                     依行政區
                                     <Image src="/images/down_small_line.svg" alt="district" width={25} height={25} />
                                 </button>
                                 {isOpenDistricts && (
-                                    <ul className="grid grid-cols-3 absolute z-20 bg-[#ffffff] border border-[#e6e6e6] w-[500px]">
+                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] p-[10px]">
                                         {districts.map((district) => (
                                             <li 
                                                 key={district} 
-                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]" 
-                                                onClick={() => handleSelectFilter('district', district)}
+                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]  rounded-md  cursor-pointer " 
+                                                //onClick={() => handleSelectFilter('district', district)}
                                                 >
                                                 {district}
                                             </li>
@@ -273,62 +394,51 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                 )}
                             </div>
                         </div>
-                        {/*卡片盒+分頁按鈕*/}
+                        {/*卡片盒:舊資料先渲染*/}
                         <div id="institutions-grid" className="w-full h-auto m-auto grid grid-cols-4 gap-20 justify-center items-start box-border mt-[20px]">
-                            {loading ? (
-                                Array.from({ length: postsPerPage }, (_, index) => (
-                                    <Skeleton key={index} height={320} width={250} className="m-[10px]" />
-                                ))
-                            ) : (
-                                currentPosts.map((institution) => (     
-                                    <Link 
-                                        key={institution.hosp_name} 
-                                        href={`/Search/${encodeURIComponent(institution.hosp_name)}`}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            handleIncrement(institution.hosp_name, `/Search/${encodeURIComponent(institution.hosp_name)}`);
-                                        }}
-                                    >
-                                        <div className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
-                                            <div className="relative"> 
-                                                {institution.map && (
-                                                    <Image 
-                                                        src={institution.map} 
-                                                        alt="institution" 
-                                                        width={250} 
-                                                        height={200} 
-                                                        className="w-full h-[200px]  object-cover object-center" 
-                                                        unoptimized={true}
-                                                    />
-                                                )}
+                            {currentData.map((institution, index) => (
+                                <Link 
+                                    key={institution.hosp_name} 
+                                    href={`/Search/${encodeURIComponent(institution.hosp_name)}`}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        //handleIncrement(institution.hosp_name, `/Search/${encodeURIComponent(institution.hosp_name)}`);
+                                    }}
+                                >
+                                    <div className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
+                                        <div className="relative"> 
+                                            {institution.imageUrl && (
                                                 <Image 
-                                                    className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full" 
-                                                    src="/images/heart_line.svg" 
-                                                    alt="collection" 
-                                                    width={40} 
-                                                    height={40} 
+                                                    src={institution.imageUrl} 
+                                                    alt="institution" 
+                                                    width={250} 
+                                                    height={200} 
+                                                    className="w-full h-[200px] object-cover object-center" 
+                                                    unoptimized={true}
                                                 />
-                                            </div>
-                                            <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{institution.hosp_name}</div>
-                                            <div className="w-full h-[30px] flex items-center justify-end">
-                                                <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
-                                                <span className="ml-2 text-black mr-[10px] mt-[5px]">觀看數:{views[institution.hosp_name]}</span>
-                                            </div>
+                                            )}
+                                            <Image 
+                                                className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full" 
+                                                src="/images/heart_line.svg" 
+                                                alt="collection" 
+                                                width={40} 
+                                                height={40} 
+                                            />
                                         </div>
-                                    </Link>
+                                        <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{institution.hosp_name}</div>
+                                        <div className="w-full h-[30px] flex items-center justify-end">
+                                            <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))}
+                            {loading && (
+                                Array(20).fill(0).map((_, index) => (
+                                    <Skeleton key={index} height={320} width={250} className="m-[10px] bg-[#ffffff]" />
                                 ))
                             )}
+                            <div ref={lastElementRef} />
                         </div>
-                        {loading ? (
-                            <Skeleton height={50} width={1280} className="my-[40px] mx-[20px]" />
-                        ) : (
-                            <Pagination
-                                postsPerPage={postsPerPage}
-                                totalPosts={currentData.length}
-                                paginate={paginate}
-                                currentPage={currentPage}
-                            />
-                        )}
                     </div>
                 </div>
             </main>

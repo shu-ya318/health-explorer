@@ -3,7 +3,6 @@ import {useState, useEffect} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useInstitutions }  from "./contexts/InstitutionsContext";
 import 'animate.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; 
@@ -65,9 +64,10 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
     });
   };
 
+  
   const handleSearchClick = (filter: string) => {
     router.push(`/Search?filter=${filter}`);
-};
+  };
 
 
   if (openLoading) {
@@ -81,7 +81,6 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
   return (       
     <AnimatePresence>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-        {/* 實際內容 */}
         <div className="relative w-full h-[640px] bg-[url('/images/homeBanner.webp')] bg-cover bg-center">
           <div className="absolute top-[65%] left-[27%] -translate-x-[80%] -translate-y-[80%] flex flex-col justify-between">
             <div className="flex flex-col animate__animated  animate__backInLeft animate__slow">
@@ -140,28 +139,13 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
             </div>
             <button 
                 type="button" 
-                className="w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-11  mt-5 mb-5 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]" >
+                className="w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-11  mt-5 mb-5 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]" 
+                onClick={()=>router.push('/CancerScreening')} 
+            >
                 查詢免費癌篩資格
             </button>
           </div>
         </div>
-        {/* 
-        <div className="flex justify-center items-center bg-[url('/images/homeBanner.webp')] bg-cover bg-center">
-          <div className="relative max-w-[1200px] w-full h-[600px]">
-            <h1 className="absolute top-[15%] left-[46%] -translate-x-[80%] -translate-y-[100%] max-w-[1200px] w-full text-center text-[60px] font-bold text-white">
-              健康探索者
-            </h1>
-            <h3 className="absolute top-[21%] left-[46%] -translate-x-[80%] -translate-y-[100%] max-w-[1200px] w-full text-center text-[40px] font-medium text-white">
-              診救健康醫起來
-            </h3>
-          </div>
-        </div>
-        */}
-
-        {/*  
-
-          */}
-          {/*  */}
       </motion.div>
     </AnimatePresence>
   )

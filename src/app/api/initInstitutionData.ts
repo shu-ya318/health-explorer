@@ -1,14 +1,24 @@
 'use client';
-import { useEffect, useState } from 'react';
 import { FirebaseInstitutionData } from '../lib/types';
 import {db} from '../lib/firebaseConfig';
 import { collection, doc, writeBatch, getDocs, setDoc} from 'firebase/firestore';
+import { useLoadScript, useGoogleMap } from '@react-google-maps/api';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../lib/firebaseConfig'; 
 
-// 單處肺癌寫死資
-/*遍歷每API : 接收全實資   -> 取部分屬 整理進指定屬名  
--> 塞入統一資庫(一、apiKey非癌篩們 1.過濾任一元素h_s : 若同值，該元素divison 合併更新值為apiKey、不同值，新增 二、apiKey癌們，過濾任一元素h_s : 若同值，該元素cancer_screening 合併更新為apiKey)  
-->指定者，額外新增欄位(3診API)
-*/
+
+interface ApiDataItem {
+    hosp_name?: string;
+    tel?: string;
+    area?: string;
+    district?: string;
+    town?: string;
+    hosp_addr?: string;
+    division?: string;
+    hosp_attr_type?: string;
+}
+
+
 // (一)取得+整理資料
 const cervicalCancerData: FirebaseInstitutionData[] = [
     {
@@ -73,128 +83,128 @@ const cervicalCancerData: FirebaseInstitutionData[] = [
     },
 ];
 
-const formatFunctions: { [key: string]: (item: any) => FirebaseInstitutionData } = {
-    '衛生所': (item: any) => ({
-      hosp_name: `新北市${item.hosp_name.substring(0, 3)}${item.hosp_name.substring(3)}`,
-      tel: item.tel,
-      area: item.district,
-      hosp_addr: item.hosp_addr
+const formatFunctions: { [key: string]: (item: ApiDataItem) => FirebaseInstitutionData } = {
+    '衛生所': (item: ApiDataItem) => ({
+        hosp_name: `新北市${item.hosp_name?.substring(0, 3) ?? ''}${item.hosp_name?.substring(3) ?? ''}`,
+        tel: item.tel ?? '',
+        area: item.district ?? '',
+        hosp_addr: item.hosp_addr ?? '',
     }),
-    '醫院': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr
+    '醫院': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.area ?? '',
+        hosp_addr: item.hosp_addr ?? '',
     }),
-    '兒科': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
+    '兒科': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.area ?? '',
+        hosp_addr: item.hosp_addr ?? '',
+        division: item.division ?? '',
     }),
-    '婦產科': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
+    '婦產科': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.area ?? '',
+        hosp_addr: item.hosp_addr ?? '',
+        division: item.division ?? '',
     }),
-    '牙醫一般科': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
+    '牙醫一般科': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.area ?? '',
+        hosp_addr: item.hosp_addr ?? '',
+        division: item.division ?? '',
     }),
-    '耳鼻喉科': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
+    '耳鼻喉科': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.area ?? '',
+        hosp_addr: item.hosp_addr ?? '',
+        division: item.division ?? '',
     }),
-    '皮膚科': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
+    '皮膚科': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.area ?? '',
+        hosp_addr: item.hosp_addr ?? '',
+        division: item.division ?? '',
     }),
-    '眼科': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
+    '眼科': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.area ?? '',
+        hosp_addr: item.hosp_addr ?? '',
+        division: item.division ?? '',
     }),
-    '骨科': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
+    '骨科': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.area ?? '',
+        hosp_addr: item.hosp_addr ?? '',
     }),
-    '精神科': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.district,
-        hosp_addr: item.hosp_addr,
+    '精神科': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.district ?? '',
+        hosp_addr: item.hosp_addr ?? '',
     }),
-    '心理諮商及心理治療科': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.district,
-        hosp_addr: item.hosp_addr
+    '心理諮商及心理治療科': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.district ?? '',
+        hosp_addr: item.hosp_addr ?? '',
     }),
-    '家庭醫學科': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
+    '家庭醫學科': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.area ?? '',
+        hosp_addr: item.hosp_addr ?? '',
+        division: item.division ?? '',
     }),
-    '泌尿科': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
+    '泌尿科': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.area ?? '',
+        hosp_addr: item.hosp_addr ?? '',
+        division: item.division ?? '',
     }),
-    '內科': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
+    '內科': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.area ?? '',
+        hosp_addr: item.hosp_addr ?? '',
+        division: item.division ?? '',
     }),
-    '外科': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
-        division: item.division
+    '外科': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.area ?? '',
+        hosp_addr: item.hosp_addr ?? '',
+        division: item.division ?? '',
     }),
-    '子宮頸癌': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.area,
-        hosp_addr: item.hosp_addr,
+    '子宮頸癌': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.area ?? '',
+        hosp_addr: item.hosp_addr ?? '',
     }),
-    '大腸癌': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.district,
-        hosp_addr: item.hosp_addr,
+    '大腸癌': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.district ?? '',
+        hosp_addr: item.hosp_addr ?? '',
     }),
-    '口腔癌': (item: any) => ({
-        hosp_name: item.hosp_name,
-        tel: item.tel,
-        area: item.town,
-        hosp_addr: item.hosp_addr,
+    '口腔癌': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_name ?? '',
+        tel: item.tel ?? '',
+        area: item.town ?? '',
+        hosp_addr: item.hosp_addr ?? '',
     }),
-    '乳癌': (item: any) => ({
-        hosp_name: item.hosp_attr_type,
-        hosp_addr: item.hosp_addr,
+    '乳癌': (item: ApiDataItem) => ({
+        hosp_name: item.hosp_attr_type ?? '',
+        hosp_addr: item.hosp_addr ?? '',
     })
 };
 
@@ -246,58 +256,105 @@ function addManualFields(item: FirebaseInstitutionData, apiKey: string): Firebas
     }
 }
 
+async function fetchGeocode(item: FirebaseInstitutionData): Promise<FirebaseInstitutionData> {
+    const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(item.hosp_addr)}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+    const response = await fetch(geocodeUrl);
+    if (!response.ok) {
+        throw new Error(`Geocode API call failed with status: ${response.status}`);
+    }
+    const data = await response.json();
+    if (data.results.length > 0) {
+        item.lat = data.results[0].geometry.location.lat;
+        item.lng = data.results[0].geometry.location.lng;
+    }
+    return item;
+}
+async function fetchStaticMapImage(item: FirebaseInstitutionData): Promise<FirebaseInstitutionData> {
+    if (item.lat && item.lng) {
+        const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${item.lat},${item.lng}&zoom=15&size=250x200&maptype=roadmap&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+        item.imageUrl = staticMapUrl;
+    } else {
+        item.imageUrl = null;
+    }
+    return item;
+}
+
 async function fetchAndFormatData() {
     let institutionData: FirebaseInstitutionData[] = [];
 
-    for (const { url, key } of apiUrls) {
-        const paginatedUrl = `${url}?page=0&size=1300`;
-        try {
-            const response = await fetch(paginatedUrl);
-            if (!response.ok) {
-                throw new Error(`API call failed with status: ${response.status}`);
-            }
+    const fetchDataPromises = apiUrls.map(({ url, key }) =>
+        fetch(`${url}?page=0&size=1200`)
+            .then(response => response.ok ? response.json() : Promise.reject(`API call failed with status: ${response.status}`))
+            .then((data: ApiDataItem[]) => { 
+                return data.map((item: ApiDataItem) => {
+                    let formattedItem = formatFunctions[key](item);
+                    formattedItem = addManualFields(formattedItem, key);
+                    formattedItem.view = 0;
+                    return formattedItem;
+                });
+            })
+            .catch(error => {
+                console.error(`Error fetching data for key ${key}:`, error);
+                return [];
+            })
+    );
 
-            const data = await response.json();
-            const formatFunction = formatFunctions[key];
-            if (!formatFunction) {
-                console.error(`No format function found for key: ${key}`);
-                continue;
-            }
-
-            for (const item of data) {
-                let formattedItem = formatFunction(item);
-                formattedItem = addManualFields(formattedItem, key);
-                const existingEntry = institutionData.find(entry => entry.hosp_name === formattedItem.hosp_name);
-                if (['子宮頸癌', '大腸癌', '口腔癌', '乳癌'].includes(key)) {
+    const results = await Promise.allSettled(fetchDataPromises);
+    results.forEach((result, index) => {
+        if (result.status === 'fulfilled') {
+            result.value.forEach((item: FirebaseInstitutionData) => { 
+                const existingEntry = institutionData.find(entry => entry.hosp_name === item.hosp_name);
+                if (['子宮頸癌', '大腸癌', '口腔癌', '乳癌'].includes(apiUrls[index].key)) {
                     if (existingEntry) {
-                        existingEntry.cancer_screening = existingEntry.cancer_screening ? `${existingEntry.cancer_screening}, ${key}` : key;
+                        existingEntry.cancer_screening = existingEntry.cancer_screening ? `${existingEntry.cancer_screening}, ${apiUrls[index].key}` : apiUrls[index].key;
                     } else {
-                        institutionData.push(formattedItem);
+                        institutionData.push(item);
                     }
                 } else {
                     if (existingEntry) {
-                        existingEntry.division = existingEntry.division ? `${existingEntry.division}, ${key}` : key;
+                        existingEntry.division = existingEntry.division ? `${existingEntry.division}, ${apiUrls[index].key}` : apiUrls[index].key;
                     } else {
-                        institutionData.push(formattedItem);
+                        institutionData.push(item);
                     }
                 }
+            });
+        } else {
+            console.error(`Error with API URL ${apiUrls[index].url}: ${result.reason}`);
+        }
+    });
 
+    const geocodeAndMapPromises = cervicalCancerData.concat(institutionData).map(async (item, index) => {
+        try {
+            await fetchGeocode(item);
+            await fetchStaticMapImage(item);
+            if ((index + 1) % 100 === 0) {
+                await new Promise(resolve => setTimeout(resolve, 3000));
             }
         } catch (error) {
-            console.error(`Error fetching data for key ${key}:`, error);
+            console.error("Error processing item:", item.hosp_name, error);
         }
-    }
-    for (const item of cervicalCancerData) {
-        const existingEntry = institutionData.find(entry => entry.hosp_name === item.hosp_name);
-        if (existingEntry) {
-            existingEntry.cancer_screening = existingEntry.cancer_screening ? `${existingEntry.cancer_screening}, '肺癌'` : '肺癌';
-        } else {
-            institutionData.push(item);
-        }
-    }
+    });
 
+    await Promise.allSettled(geocodeAndMapPromises);
     return institutionData;
 }
+
+async function processImageAndUpload(item: FirebaseInstitutionData): Promise<void> {
+    if (item.imageUrl) {
+      let imageBlob;
+      try {
+        const imageResp = await fetch(item.imageUrl);
+        imageBlob = await imageResp.blob();
+      } catch (fetchError) {
+        console.error("Failed to fetch Google Static Map, using placeholder instead for", item.hosp_addr, fetchError);
+        imageBlob = await fetch('/images/placeholder.png').then(res => res.blob());
+      }
+      const imageRef = ref(storage, 'institutionImages/' + (item.hosp_name || 'unknown'));
+      await uploadBytes(imageRef, imageBlob); 
+      const mapUrl = await getDownloadURL(imageRef);
+      item.imageUrl = mapUrl;
+    }
+  }
 
 
  // (二)資料加入firebase
@@ -316,9 +373,12 @@ export async function initInstitutionData(){
     const snapshot = await getDocs(collection(db, 'medicalInstitutions'));
     if (snapshot.size > 1) {
         console.log("Firestore data is fully initialized; no API calls");
-        return;
+        //return;
     } 
     const institutionData = await fetchAndFormatData(); 
-    console.log(institutionData);
     await createFirestoreData(institutionData);
+    console.log(institutionData);
+
+    const uploadPromises = institutionData.map(item => processImageAndUpload(item));
+    await Promise.all(uploadPromises);
 }

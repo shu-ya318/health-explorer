@@ -1,27 +1,21 @@
+/*
 'use client';
 import { createContext, useContext, useEffect, useState, ReactNode} from 'react';
 import { FirebaseInstitutionData} from '../lib/types';
-import { initInstitutionData }from '../api/initInstitutionData';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebaseConfig';
-import { useLoadScript, useGoogleMap } from '@react-google-maps/api';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 
 interface InstitutionsContextType {
     institutionData: FirebaseInstitutionData[];
     setInstitutionData: (data: FirebaseInstitutionData[]) => void;
     loading: boolean;
-    views: Record<string, number>;
-    incrementView: (hosp_name: string) => void;
 }
 
 const defaultInstitutionContextValue: InstitutionsContextType = {
     institutionData: [],
     setInstitutionData: () => {},
     loading: true,
-    views: {},
-    incrementView: () => {},
 };
 
 const InstitutionsContext = createContext<InstitutionsContextType>(defaultInstitutionContextValue);
@@ -43,49 +37,27 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
     });
     const [loading,setLoading] = useState<boolean>(false);
 
-    const [views, setViews] = useState<Record<string, number>>(() => { //單純預設值為1，重載頁面會重置
-        const savedViews = localStorage.getItem('views');
-        return savedViews ? JSON.parse(savedViews) : {};
-    });
-
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
         libraries: ['places']
     });
 
-   
-    useEffect(() => {
-        localStorage.setItem('isDataLoaded', isDataLoaded.toString());
-    }, [isDataLoaded]);
 
     useEffect(() => {
         async function handleInstitutionData() {
-            if (!isDataLoaded && isLoaded) {
+            if (!isDataLoaded) {
                 setLoading(true);
                 const newData: FirebaseInstitutionData[] = [];
                 try {
-                    await initInstitutionData();
+                    //仍保留context來呼?各頁元useEffect呼? await initInstitutionData();
                     const geocoder = new google.maps.Geocoder();
                     const querySnapshot = await getDocs(collection(db, 'medicalInstitutions'));
-                    const storage = getStorage();
                     
                     const promises = querySnapshot.docs.map(async doc => {
                         try {
                             const docData = doc.data();
                             const response = await geocoder.geocode({ address: docData.hosp_addr });
-                            const location = response.results[0].geometry.location;
-                            const imageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(docData.hosp_addr)}&zoom=15&size=250x200&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
-                            let imageBlob;
-                            try {
-                                const imageResp = await fetch(imageUrl);
-                                imageBlob = await imageResp.blob();
-                            } catch (fetchError) {
-                                console.error("Failed to fetch Google Static Map, using placeholder instead for", docData.hosp_addr, fetchError);
-                                imageBlob = await fetch('/images/placeholder.png').then(res => res.blob());
-                            }
-                            const imageRef = ref(storage, 'institutionImages/' + (docData.hosp_name || 'unknown'));
-                            await uploadBytes(imageRef, imageBlob);
-                            const mapUrl = await getDownloadURL(imageRef);
+                
     
                             newData.push({
                                 hosp_name: docData.hosp_name || '',
@@ -94,9 +66,9 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
                                 hosp_addr: docData.hosp_addr || '',
                                 division: docData.division || '',
                                 cancer_screening: docData.cancer_screening || '',
-                                lat: location.lat(),
-                                lng: location.lng(),
-                                map: mapUrl
+                                lat: docData.lat(),
+                                lng: docData.lng(),
+                                map: docData.imageUrl
                             } as FirebaseInstitutionData);
                         } catch (error) {
                             console.error("Error processing document:", doc.id, error);
@@ -105,7 +77,6 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
                     await Promise.all(promises);
     
                     if (newData.length > 0) {
-                        localStorage.setItem('institutionData', JSON.stringify(newData));
                         setInstitutionData(newData);
                         setIsDataLoaded(true);
                     }
@@ -117,7 +88,7 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
             }
         }
         handleInstitutionData();
-    }, [isDataLoaded, isLoaded]);           
+    }, [isDataLoaded]);           
 
 
     useEffect(() => {
@@ -143,7 +114,7 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
 
 
     return (
-        <InstitutionsContext.Provider value={{institutionData, setInstitutionData, loading, views, incrementView}}>
+        <InstitutionsContext.Provider value={{institutionData, setInstitutionData, loading}}>
             {children}
         </InstitutionsContext.Provider>
     );
@@ -157,3 +128,4 @@ export const useInstitutions = (): InstitutionsContextType => {
     }
     return context;
 }
+*/

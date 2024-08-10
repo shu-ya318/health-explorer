@@ -1,13 +1,13 @@
 'use client';
 import SearchContent from '../components/SearchContent';
-import { InstitutionsProvider } from '../contexts/InstitutionsContext';
+//import { InstitutionsProvider } from '../contexts/InstitutionsContext';
 
 
 const SearchPage: React.FC = (): React.ReactElement | null  => {
     return (     
-        <InstitutionsProvider>  
+        //<InstitutionsProvider>  
             <SearchContent />
-        </InstitutionsProvider>
+        //</InstitutionsProvider>
     )
 };
 

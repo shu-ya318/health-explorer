@@ -4,15 +4,9 @@ export interface FirebaseInstitutionData {
     area?: string;
     hosp_addr: string;
     division?: string;
-    cancer_screening?: string
+    cancer_screening?: string;
+    view?:number;
+    lat?: number | null;
+    lng?: number | null;
+    imageUrl?: string | null;
 }
-
-
-//繼承 FirebaseInstitutionData的屬性 ，且+額外屬性
-//搭配元件 1.引入FirebaseInstitutionDataExtended 2.型別定義useState<FirebaseInstitutionDataExtended[]  >([]);或 | null>(null); 3.條件渲染處理undefined情形
-export interface FirebaseInstitutionDataExtended extends FirebaseInstitutionData {
-    lat?: number;
-    lng?: number;
-    map?: string;
-}
-

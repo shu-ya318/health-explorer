@@ -1,51 +1,27 @@
-import { FirebaseInstitutionData, FirebaseInstitutionDataExtended } from '../lib/types.js';
-import {useInstitutions }  from "../contexts/InstitutionsContext";
 import { useRouter } from 'next/navigation'; 
 import {useState, useEffect, useMemo} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 import { motion, AnimatePresence } from "framer-motion"; 
 import BounceLoader from "react-spinners/bounceLoader";
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+import { FirebaseInstitutionData} from '../lib/types.js';
+import { db } from '../lib/firebaseConfig';
+import { collection, doc, getDocs, getDoc, query, where} from 'firebase/firestore';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 
 
 const InstitutionContent: React.FC = (): React.ReactElement | null  => {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY; 
 
     const [openLoading, setOpenLoading] = useState<boolean>(true);
+    const [loading,setLoading] = useState<boolean>(false);
     const router = useRouter();
-    const {institutionData, loading, views, incrementView} = useInstitutions();
-    const [institutionDetails, setInstitutionDetails] = useState<FirebaseInstitutionDataExtended | null>(null);  //不型別定義[ ]，因接收內容為單物件、也不定義{ }
-    const [comparableInstitutions, setComparableInstitutions] = useState<FirebaseInstitutionDataExtended[]>([]);
+    const [institutionDetails, setInstitutionDetails] = useState<FirebaseInstitutionData| null>(null);  //不型別定義[ ]，因接收內容為單物件、也不定義{ }
+    const [comparableInstitutions, setComparableInstitutions] = useState<FirebaseInstitutionData[]>([]);
     const [carouselIndex, setCarouselIndex] = useState(0);
-
-
-    useEffect(() => {
-        const pathSegments = window.location.pathname.split('/');
-        const encodedHospName = pathSegments.pop() || '';
-        const hosp_name = decodeURIComponent(encodedHospName); 
-        if (!loading) {
-            const matchedData = institutionData.find(data => data.hosp_name === hosp_name);
-            setInstitutionDetails(matchedData || null);
-            if (matchedData) {
-                const filteredData = institutionData.filter(data =>
-                    data.area === matchedData.area && data.division === matchedData.division && data.hosp_name !== hosp_name
-                );
-                setComparableInstitutions(filteredData);
-                setCarouselIndex(0);
-            }
-        }
-    }, [institutionData, loading]);
-
-    
-    const mapCenter = useMemo(() => {
-        if (institutionDetails && institutionDetails.lat !== undefined && institutionDetails.lng !== undefined) { //因可選參屬性,多檢查非空值
-            return { lat: institutionDetails.lat, lng: institutionDetails.lng };
-        }
-        return { lat: 0, lng: 0 }; //抓不到經緯度的預設值
-    }, [institutionDetails]);
 
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
@@ -53,8 +29,59 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
     });
 
 
+    useEffect(() => {
+        setLoading(true);
+        const pathSegments = window.location.pathname.split('/');
+        const encodedHospName = pathSegments.pop() || '';
+        const hosp_name = decodeURIComponent(encodedHospName); 
+
+        const docRef = doc(db, 'medicalInstitutions', hosp_name);
+        getDoc(docRef).then(docSnap => {
+            if (docSnap.exists()) {
+                setInstitutionDetails(docSnap.data() as FirebaseInstitutionData);
+            }
+            setLoading(false);
+        });
+    }, []);
+    
+    useEffect(() => {
+        if (institutionDetails) {
+            setLoading(true);
+            const q = query(
+                collection(db, 'medicalInstitutions'),
+                where('division', '==', institutionDetails.division),
+                where('area', '==', institutionDetails.area)
+            );
+            getDocs(q).then(async querySnapshot => {
+                const storage = getStorage();
+                const institutions = await Promise.all(querySnapshot.docs.map(async doc => {
+                    const data = doc.data() as FirebaseInstitutionData;
+                    try {
+                        const imageRef = ref(storage, 'institutionImages/' + (data.hosp_name || 'unknown'));
+                        const imageUrl = await getDownloadURL(imageRef);
+                        return { ...data, imageUrl };
+                    } catch (error) {
+                        console.error('Failed to load image:', error);
+                        return { ...data, imageUrl: '/images/placeholder.png' };
+                    }
+                }));
+                setComparableInstitutions(institutions.filter(inst => inst.hosp_name !== institutionDetails.hosp_name));
+                setLoading(false);
+            });
+        }
+    }, [institutionDetails]);
+
+    
+    const mapCenter = useMemo(() => {
+        if (institutionDetails && typeof institutionDetails.lat === 'number' && typeof institutionDetails.lng === 'number') {  //因可選參屬性,多檢查
+            return { lat: institutionDetails.lat, lng: institutionDetails.lng };
+        }
+        return { lat: 0, lng: 0 };
+    }, [institutionDetails]);
+
+
     const handleIncrement = (hosp_name: string, url: string) => {
-        incrementView(hosp_name);
+        //incrementView(hosp_name);
         router.push(url); 
     };
 
@@ -81,7 +108,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
 
     return(
         <>
-            {institutionDetails ? (
+            {isLoaded && institutionDetails ? (
             <AnimatePresence>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                     <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#F0F0F0]" >
@@ -163,9 +190,9 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                             >
                                                 <div className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
                                                     <div className="relative">
-                                                        {institution.map && (
+                                                        {institution.imageUrl && (
                                                             <Image 
-                                                                src={institution.map} 
+                                                                src={institution.imageUrl} 
                                                                 alt="institution" 
                                                                 width={250} 
                                                                 height={200} 
@@ -184,7 +211,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                     <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{institution.hosp_name}</div>
                                                     <div className="w-full h-[30px] flex items-center justify-end">
                                                         <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
-                                                        <span className="ml-2 text-black mr-[10px] mt-[5px]">觀看數:{views[institution.hosp_name]}</span>
+                                                        {/*<span className="ml-2 text-black mr-[10px] mt-[5px]">觀看數:{views[institution.hosp_name]}</span>*/} 
                                                     </div>
                                                 </div>
                                             </Link>
@@ -222,5 +249,6 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
         </>
     )
 }
+
 
 export default InstitutionContent;

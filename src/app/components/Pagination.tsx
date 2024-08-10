@@ -1,3 +1,4 @@
+/*
 'use client';
 import {useState} from 'react';
 import Image from 'next/image';
@@ -9,15 +10,16 @@ interface PaginationProps {
   currentPage: number;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ postsPerPage, totalPosts, paginate, currentPage }) => {
-    const pageNumbers: number[] = [];
+const Pagination: React.FC<PaginationProps> = ({ totalPosts, paginate, currentPage, postsPerPage }) => {
+    //const pageNumbers: number[] = [];
     const pageNumberLimit = 8;
     const [maxPageNumberLimit, setMaxPageNumberLimit] = useState(pageNumberLimit);
     const [minPageNumberLimit, setMinPageNumberLimit] = useState(0);
 
 
+    const pageNumbers: number[] = [];
     for (let i = 1; i <= Math.ceil(totalPosts / postsPerPage); i++) {
-        pageNumbers.push(i);
+      pageNumbers.push(i);
     }
 
 
@@ -104,3 +106,4 @@ const Pagination: React.FC<PaginationProps> = ({ postsPerPage, totalPosts, pagin
 
 
 export default Pagination;
+*/
