@@ -229,6 +229,9 @@ const apiUrls = [
     { 'url': 'https://data.ntpc.gov.tw/api/datasets/4aa54765-a471-4412-a314-468f892a1794/json', 'key': '口腔癌' },
     { 'url': 'https://data.ntpc.gov.tw/api/datasets/435dae21-f8b9-449b-b9bd-0283a9541f68/json', 'key': '乳癌' }
 ];
+
+
+
 function addManualFields(item: FirebaseInstitutionData, apiKey: string): FirebaseInstitutionData {
     switch (apiKey) {
         case '衛生所':
@@ -256,8 +259,24 @@ function addManualFields(item: FirebaseInstitutionData, apiKey: string): Firebas
     }
 }
 
+function formatAddress(address: string): string {
+    const numberPos = address.indexOf('號');
+    if (numberPos !== -1) {
+        let basePart = address.substring(0, numberPos + 1);
+        const lastComma = basePart.lastIndexOf('、');
+        if (lastComma !== -1) {
+            const segmentAfterLastComma = basePart.substring(lastComma + 1);
+            if (/^\d+/.test(segmentAfterLastComma)) {
+                return address.substring(0, lastComma + 1) + segmentAfterLastComma;
+            }
+        }
+        return basePart;
+    }
+    return address;
+}
 async function fetchGeocode(item: FirebaseInstitutionData): Promise<FirebaseInstitutionData> {
-    const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(item.hosp_addr)}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+    const formattedAddress = formatAddress(item.hosp_addr).replace(/,/g, '').replace(/\s/g, '%20');
+    const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${formattedAddress}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
     const response = await fetch(geocodeUrl);
     if (!response.ok) {
         throw new Error(`Geocode API call failed with status: ${response.status}`);
@@ -266,6 +285,8 @@ async function fetchGeocode(item: FirebaseInstitutionData): Promise<FirebaseInst
     if (data.results.length > 0) {
         item.lat = data.results[0].geometry.location.lat;
         item.lng = data.results[0].geometry.location.lng;
+    } else {
+        throw new Error('No geocode results found for the address');
     }
     return item;
 }
@@ -278,6 +299,7 @@ async function fetchStaticMapImage(item: FirebaseInstitutionData): Promise<Fireb
     }
     return item;
 }
+
 
 async function fetchAndFormatData() {
     let institutionData: FirebaseInstitutionData[] = [];
@@ -339,6 +361,7 @@ async function fetchAndFormatData() {
     return institutionData;
 }
 
+
 async function processImageAndUpload(item: FirebaseInstitutionData): Promise<void> {
     if (item.imageUrl) {
       let imageBlob;
@@ -373,7 +396,7 @@ export async function initInstitutionData(){
     const snapshot = await getDocs(collection(db, 'medicalInstitutions'));
     if (snapshot.size > 1) {
         console.log("Firestore data is fully initialized; no API calls");
-        //return;
+        return;
     } 
     const institutionData = await fetchAndFormatData(); 
     await createFirestoreData(institutionData);
