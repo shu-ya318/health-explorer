@@ -45,7 +45,6 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
   const [loading, setLoading] = useState(true);
 
 
-  //只在元件首次渲染時建立監聽器，直到監聽器被清除
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -64,6 +63,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
       unsubscribe();
     };
   }, []);  
+
 
   const register = async (email: string, password: string) => {
     try {
@@ -87,6 +87,7 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
     try {
       await signOut(auth);
       setUser(null);
+      window.location.href = '/';
     } catch (error) {
       const e = error as AuthError;
       throw new Error(e.message);
