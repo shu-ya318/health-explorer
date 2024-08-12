@@ -293,15 +293,16 @@ async function fetchGeocode(item: FirebaseInstitutionData): Promise<FirebaseInst
     return item;
 }
 async function fetchStaticMapImage(item: FirebaseInstitutionData): Promise<FirebaseInstitutionData> {
-    if (item.lat && item.lng) {
-        const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${item.lat},${item.lng}&zoom=15&size=250x200&maptype=roadmap&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
-        item.imageUrl = staticMapUrl;
-    } else {
-        item.imageUrl = null;
-    }
-    return item;
+    const formattedAddress = formatAddress(item.hosp_addr).replace(/,/g, '').replace(/\s/g, '%20');
+    const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${formattedAddress}&zoom=15&size=250x200&maptype=roadmap&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
+    const imageResponse = await fetch(staticMapUrl);
+    const imageBlob = await imageResponse.blob();
+    const imageRef = ref(storage, 'institutionImages/' + item.hosp_name);
+    await uploadBytes(imageRef, imageBlob);
+    const mapUrl = await getDownloadURL(imageRef);
+    item.imageUrl = mapUrl;
+    return item; 
 }
-
 
 async function fetchAndFormatData(): Promise<FirebaseInstitutionData[]> {
     let institutionData: FirebaseInstitutionData[] = [];
@@ -403,24 +404,6 @@ async function throttlePromises(funcs: ApiFunction[], limit: number, delay: numb
 }
 
 
-async function processImageAndUpload(item: FirebaseInstitutionData): Promise<void> {
-    if (item.imageUrl) {
-      let imageBlob;
-      try {
-        const imageResp = await fetch(item.imageUrl);
-        imageBlob = await imageResp.blob();
-      } catch (fetchError) {
-        console.error("Failed to fetch Google Static Map, using placeholder instead for", item.hosp_addr, fetchError);
-        imageBlob = await fetch('/images/placeholder.png').then(res => res.blob());
-      }
-      const imageRef = ref(storage, 'institutionImages/' + (item.hosp_name || 'unknown'));
-      await uploadBytes(imageRef, imageBlob); 
-      const mapUrl = await getDownloadURL(imageRef);
-      item.imageUrl = mapUrl;
-    }
-}
-
-
  // (二)資料加入firebase
 async function createFirestoreData(institutionData: FirebaseInstitutionData[]) {
     const batch = writeBatch(db);
@@ -439,10 +422,8 @@ export async function initInstitutionData(){
         console.log('Firestore data is fully initialized; no API calls');
         return;
     } 
+    
     const institutionData = await fetchAndFormatData(); 
     await createFirestoreData(institutionData);
     console.log(institutionData);
-
-    const uploadPromises = institutionData.map(item => processImageAndUpload(item));
-    await Promise.all(uploadPromises);
 }

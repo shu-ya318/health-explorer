@@ -1,15 +1,16 @@
 
-import {  Hits, SearchBox, Configure, useSearchBox} from "react-instantsearch";
+import { SearchBox, Configure, Hits , useSearchBox} from "react-instantsearch";
 import { InstantHit } from "./InstantHit";
 
 
 export const InstantResults = () => {
   const { query } = useSearchBox();
-  const shouldDisplayHits = query && query.trim() !== '';
+  const shouldDisplayHits = query && query.trim() !== ''; 
+
 
   return (
     <>
-      <Configure hitsPerPage={3} />
+      <Configure hitsPerPage={10} />  
       <div className="ais-InstantSearch flex flex-col w-full h-full z-40">
         <SearchBoxComponent />
         {shouldDisplayHits && <Hits hitComponent={InstantHit} className="cursor-pointer"/>}
@@ -21,7 +22,7 @@ export const InstantResults = () => {
 const SearchBoxComponent = () => {
   return (
     <>
-      <SearchBox />
+      <SearchBox placeholder="請輸入關鍵字"/>
     </>
   );
 };

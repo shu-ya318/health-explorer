@@ -10,8 +10,8 @@ import { db } from '../lib/firebaseConfig';
 import { collection, query, where, orderBy, startAfter, limit, getDocs, DocumentSnapshot } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 
-import { InstantResults } from "./Algolia/InstantResults";
-import { Pagination } from 'react-instantsearch';
+import { SearchBox, Configure, useHits, Pagination } from 'react-instantsearch';
+import { finalHit } from "./Algolia/finalHit";
 
 const cancers = [
     { filter: '子宮頸癌', image:"/images/cervicalCancer.png"},
@@ -44,86 +44,20 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     const searchParams = useSearchParams();
     const filter = searchParams.get('filter');
 
-    const searchInputRef = useRef<HTMLInputElement>(null);
-
     //const [sortByViews, setSortByViews] = useState<boolean>(false);
     const [isOpenInstitutions, setIsOpenInstitutions] = useState(false);
     const [isOpenDivisions, setIsOpenDivisions] = useState(false);
     const [isOpenDistricts, setIsOpenDistricts] = useState(false);
-    
 
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     const [loading, setLoading] = useState<boolean>(false);
-    const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
-    const observer = useRef<IntersectionObserver>();
-    const lastElementRef = useRef<HTMLDivElement>(null);
     const [currentData, setCurrentData] = useState<FirebaseInstitutionData[]>([]);
 
+    const { items } = useHits();
+    console.log(items);
 
 
-    /*const fetchMoreData = useCallback(async () => {
-        if (loading || (!lastVisible && !isInitialLoad)) return;
-    
-        setLoading(true);
-        try {
-            const nextQuery = query(
-                collection(db, "medicalInstitutions"),
-                orderBy("hosp_name"),
-                lastVisible ? startAfter(lastVisible) : limit(20), 
-                limit(20)
-            );
-            const documentSnapshots = await getDocs(nextQuery);
-    
-            if (documentSnapshots.docs.length > 0) {
-                const newDataPromises = documentSnapshots.docs.map(async doc => {
-                    const data = doc.data() as FirebaseInstitutionData;
-                    try {
-                        const imageRef = ref(getStorage(), `institutionImages/${data.hosp_name || 'unknown'}.png`);
-                        const imageUrl = await getDownloadURL(imageRef);
-                        return { ...data, imageUrl };
-                    } catch (error) {
-                        console.error('Failed to load image:', error);
-                        return { ...data, imageUrl: '/images/placeholder.png' };
-                    }
-                });
-                const newData = await Promise.all(newDataPromises);
-    
-                setCurrentData(prev => [...prev, ...newData]);
-                setLastVisible(documentSnapshots.docs[documentSnapshots.docs.length - 1]);
-            } else {
-                if (observer.current && lastElementRef.current) {
-                    observer.current.unobserve(lastElementRef.current);
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-        setLoading(false);
-    }, [loading, lastVisible, isInitialLoad, observer, lastElementRef]);  
-
-
-    useEffect(() => {
-        if (isInitialLoad) {
-            fetchMoreData();
-            setIsInitialLoad(false);
-        }
-
-        const observer = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && !loading && lastVisible) {
-                fetchMoreData();
-            }
-        }, { threshold: 1.0 });
-
-        if (lastElementRef.current) {
-            observer.observe(lastElementRef.current);
-        }
-
-        return () => {
-            observer.disconnect();
-        };
-    }, [lastVisible, loading, fetchMoreData, isInitialLoad]); 
-*/
-    
+/*
     const fetchMoreData = useCallback(async () => {
         if (loading || (!lastVisible && !isInitialLoad)) return;
 
@@ -184,27 +118,9 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
             observer.disconnect();
         };
     }, [lastVisible, loading, fetchMoreData, isInitialLoad]); 
+*/
 
-
-    /*  無法搜尋至少完整包含searchTerm的值 ，需搭配外部套件 Algolia
-    const handleSearch = async () => {
-        const searchTerm = searchInputRef.current?.value.trim();
-        if (!searchTerm) return;
-    
-        setLoading(true);
-        const searchQuery = query(
-            collection(db, 'medicalInstitutions'),
-            where('hosp_name', '>=', searchTerm),
-            limit(20)
-        );
-        const querySnapshot = await getDocs(searchQuery);
-        const searchData = querySnapshot.docs.map(doc => ({ ...doc.data() as FirebaseInstitutionData, id: doc.id }));
-        setCurrentData(searchData);
-        setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-        setLoading(false);
-    };
-
-
+    /* 過濾資料
     useEffect(() => {
         let filteredData = institutionData as FirebaseInstitutionData[];
         if (filter) {
@@ -260,7 +176,6 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
         setCurrentPage(1);
     };
 */
-
     /*const handleIncrement = (hosp_name: string, url: string) => {
         incrementView(hosp_name);
         router.push(url); 
@@ -271,10 +186,10 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     return (
         <main className="w-full h-auto flex flex-col justify-center items-center flex-grow bg-[#ffffff]" >
                 <div className="w-[1280px]">
-                    {/*搜 */}
+                    {/*搜*/}
                     <div className="w-full h-10 mt-[60px]  mb-[30px]"> 
                         <div className="flex max-w-screen-md h-full mx-auto"> 
-                            <InstantResults />
+                            <SearchBox className="ais-InstantSearch flex flex-col w-full h-full z-40 rounded-lg border-solid border-[3px] border-[#6898a5]" placeholder="請輸入關鍵字"/>
                         </div>
                     </div>
                     {/*癌篩分類*/}
@@ -372,57 +287,41 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                 )}
                             </div>
                         </div>
-                        {/*卡片盒:舊資料先渲染*/}
+                        {/*卡片盒*/}
                         <div className="w-full h-auto m-auto grid grid-cols-4 gap-20 justify-center items-start box-border mt-[20px]">
-                        {/*<Configure hitsPerPage={20} />
-                        <Hits hitComponent={InstantHit} className="cursor-pointer"/>*/}
-                            {/*
-                            {currentData.map((institution, index) => (
-                                <Link 
-                                    key={institution.hosp_name} 
-                                    href={`/Search/${encodeURIComponent(institution.hosp_name)}`}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        //handleIncrement(institution.hosp_name, `/Search/${encodeURIComponent(institution.hosp_name)}`);
-                                    }}
-                                >
-                                    <div className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
-                                        <div className="relative"> 
-                                            {institution.imageUrl && (
-                                                <Image 
-                                                    src={institution.imageUrl} 
-                                                    alt="institution" 
-                                                    width={250} 
-                                                    height={200} 
-                                                    className="w-full h-[200px] object-cover object-center" 
-                                                    unoptimized={true}
-                                                />
-                                            )}
-                                            <Image 
-                                                className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full" 
-                                                src="/images/heart_line.svg" 
-                                                alt="collection" 
-                                                width={40} 
-                                                height={40} 
+                            <Configure hitsPerPage={16} /> 
+                            {items.map((hit) => (
+                                  <div   key={hit.objectID} className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
+                                    <div className="relative">
+                                        {hit.imageUrl && (
+                                            <Image
+                                                src={hit.imageUrl}
+                                                alt="institution"
+                                                width={250}
+                                                height={200}
+                                                className="w-full h-[200px] object-cover object-center"
+                                                unoptimized={true}
                                             />
-                                        </div>
-                                        <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{institution.hosp_name}</div>
-                                        <div className="w-full h-[30px] flex items-center justify-end">
-                                            <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
-                                        </div>
+                                        )}
+                                        <Image
+                                            className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full"
+                                            src="/images/heart_line.svg"
+                                            alt="collection"
+                                            width={40}
+                                            height={40}
+                                        />
                                     </div>
-                                </Link>
+                                    <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{(hit).hosp_name}</div>
+                                    <div className="w-full h-[30px] flex items-center justify-end">
+                                        <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
+                                        <span className="ml-2 text-black mr-[10px]">觀看數:{(hit).view}</span>
+                                    </div>
+                                </div>
                             ))}
-                            {loading && (
-                                Array(20).fill(0).map((_, index) => (
-                                    <Skeleton key={index} height={320} width={250} className="m-[10px] bg-[#ffffff]" />
-                                ))
-                            )}
-                            <div ref={lastElementRef} />     
-                            */}
                         </div>
-                        {/*<Pagination padding={5} showFirst={true} showLast={true} />*/}
-                        
+                        <div  className="w-full">
+                            <Pagination padding={5} showFirst={true} showLast={true} className="my-[50px]  mx-auto w-[650px]"/>
+                        </div>
                     </div>
                 </div>
             </main>

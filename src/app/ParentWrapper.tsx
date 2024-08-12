@@ -5,7 +5,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 
 import algoliasearch from "algoliasearch/lite";
-import "instantsearch.css/themes/satellite.css";
+import "instantsearch.css/themes/satellite.css";  // 改更小幅度，改修改部分CSS import "instantsearch.css/themes/algolia-min.css"
 import { InstantSearch, Hits, SearchBox, Configure} from "react-instantsearch";
 
 
