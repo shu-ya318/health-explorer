@@ -1,10 +1,9 @@
 'use client';
 import { FirebaseInstitutionData } from '../lib/types';
-import {db} from '../lib/firebaseConfig';
+import {db, storage} from '../lib/firebaseConfig';
 import { collection, doc, writeBatch, getDocs, setDoc} from 'firebase/firestore';
 import { useLoadScript, useGoogleMap } from '@react-google-maps/api';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '../lib/firebaseConfig'; 
 
 
 interface ApiDataItem {
@@ -16,6 +15,9 @@ interface ApiDataItem {
     hosp_addr?: string;
     division?: string;
     hosp_attr_type?: string;
+}
+interface ApiFunction {
+    (): Promise<FirebaseInstitutionData[]>;
 }
 
 
@@ -301,30 +303,29 @@ async function fetchStaticMapImage(item: FirebaseInstitutionData): Promise<Fireb
 }
 
 
-async function fetchAndFormatData() {
+async function fetchAndFormatData(): Promise<FirebaseInstitutionData[]> {
     let institutionData: FirebaseInstitutionData[] = [];
 
-    const fetchDataPromises = apiUrls.map(({ url, key }) =>
-        fetch(`${url}?page=0&size=1200`)
-            .then(response => response.ok ? response.json() : Promise.reject(`API call failed with status: ${response.status}`))
-            .then((data: ApiDataItem[]) => { 
-                return data.map((item: ApiDataItem) => {
-                    let formattedItem = formatFunctions[key](item);
-                    formattedItem = addManualFields(formattedItem, key);
-                    formattedItem.view = 0;
-                    return formattedItem;
-                });
-            })
-            .catch(error => {
-                console.error(`Error fetching data for key ${key}:`, error);
-                return [];
-            })
-    );
-
-    const results = await Promise.allSettled(fetchDataPromises);
+    const fetchDataFunctions: ApiFunction[] = apiUrls.map(({ url, key }, index) => async () => {
+        try {
+            const response = await fetch(`${url}?page=0&size=1200`);
+            const data: ApiDataItem[] = await response.json();
+            return data.map(item => {
+                let formattedItem: FirebaseInstitutionData = formatFunctions[key](item);
+                formattedItem.view = 0;
+                return addManualFields(formattedItem, key);
+            });
+        } catch (error) {
+            console.error(`Error fetching data for key ${key}:`, error);
+            return [];
+        }
+    });
+  
+    const throttledFetchResults: FirebaseInstitutionData[][] = await throttlePromises(fetchDataFunctions, 10, 100);
+    const results = await Promise.allSettled(throttledFetchResults);
     results.forEach((result, index) => {
         if (result.status === 'fulfilled') {
-            result.value.forEach((item: FirebaseInstitutionData) => { 
+            result.value.forEach((item: FirebaseInstitutionData) => {
                 const existingEntry = institutionData.find(entry => entry.hosp_name === item.hosp_name);
                 if (['子宮頸癌', '大腸癌', '口腔癌', '乳癌'].includes(apiUrls[index].key)) {
                     if (existingEntry) {
@@ -345,20 +346,60 @@ async function fetchAndFormatData() {
         }
     });
 
-    const geocodeAndMapPromises = cervicalCancerData.concat(institutionData).map(async (item, index) => {
-        try {
-            await fetchGeocode(item);
-            await fetchStaticMapImage(item);
-            if ((index + 1) % 100 === 0) {
-                await new Promise(resolve => setTimeout(resolve, 3000));
-            }
-        } catch (error) {
-            console.error("Error processing item:", item.hosp_name, error);
+    cervicalCancerData.forEach(item => {
+        const existingEntry = institutionData.find(entry => entry.hosp_name === item.hosp_name);
+        if (existingEntry) {
+            existingEntry.cancer_screening = existingEntry.cancer_screening ? `${existingEntry.cancer_screening}, 肺癌` : '肺癌';
+        } else {
+            institutionData.push(item);
         }
     });
 
-    await Promise.allSettled(geocodeAndMapPromises);
+    async function processGeocodeAndMapImages(data: FirebaseInstitutionData[], concurrentLimit: number = 10, delay: number = 100) {
+        let index = 0;
+    
+        const throttleRequests = async () => {
+            if (index >= data.length) return;
+    
+            const slice = data.slice(index, index + concurrentLimit);
+            const promises = slice.map(async item => {
+                try {
+                    await fetchGeocode(item);
+                    await fetchStaticMapImage(item);
+                } catch (error) {
+                    console.error("Error processing item:", item.hosp_name, error);
+                }
+            });
+    
+            await Promise.allSettled(promises);
+            await new Promise(resolve => setTimeout(resolve, delay)); 
+    
+            index += concurrentLimit;
+            await throttleRequests(); 
+        };
+        await throttleRequests();
+    }
+    await processGeocodeAndMapImages(institutionData, 10, 100);
+
     return institutionData;
+}
+async function throttlePromises(funcs: ApiFunction[], limit: number, delay: number): Promise<FirebaseInstitutionData[][]> {
+    let result: Promise<FirebaseInstitutionData[]>[] = [];
+    let executing: Promise<void>[] = [];
+
+    const enqueue = function(): Promise<void> {
+        if (executing.length >= limit || funcs.length === 0) return Promise.resolve();
+        const task = funcs.shift()!;
+        const promise = Promise.resolve().then(() => task());
+        result.push(promise);
+        const execute = promise.then(() => new Promise<void>(resolve => setTimeout(resolve, delay)))
+            .finally(() => executing.splice(executing.indexOf(execute), 1));
+        executing.push(execute);
+        return execute.then(enqueue);
+    };
+
+    await Promise.resolve().then(() => Promise.all(Array.from({ length: limit }, enqueue)));
+    return Promise.all(result);
 }
 
 
@@ -377,7 +418,7 @@ async function processImageAndUpload(item: FirebaseInstitutionData): Promise<voi
       const mapUrl = await getDownloadURL(imageRef);
       item.imageUrl = mapUrl;
     }
-  }
+}
 
 
  // (二)資料加入firebase
@@ -395,7 +436,7 @@ async function createFirestoreData(institutionData: FirebaseInstitutionData[]) {
 export async function initInstitutionData(){
     const snapshot = await getDocs(collection(db, 'medicalInstitutions'));
     if (snapshot.size > 1) {
-        console.log("Firestore data is fully initialized; no API calls");
+        console.log('Firestore data is fully initialized; no API calls');
         return;
     } 
     const institutionData = await fetchAndFormatData(); 

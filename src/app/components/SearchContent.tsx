@@ -5,11 +5,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { FirebaseInstitutionData} from '../lib/types.js';
+import { FirebaseInstitutionData} from '../lib/types';
 import { db } from '../lib/firebaseConfig';
 import { collection, query, where, orderBy, startAfter, limit, getDocs, DocumentSnapshot } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 
+import { InstantResults } from "./Algolia/InstantResults";
+import { Pagination } from 'react-instantsearch';
 
 const cancers = [
     { filter: '子宮頸癌', image:"/images/cervicalCancer.png"},
@@ -56,6 +58,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     const observer = useRef<IntersectionObserver>();
     const lastElementRef = useRef<HTMLDivElement>(null);
     const [currentData, setCurrentData] = useState<FirebaseInstitutionData[]>([]);
+
 
 
     /*const fetchMoreData = useCallback(async () => {
@@ -183,11 +186,6 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     }, [lastVisible, loading, fetchMoreData, isInitialLoad]); 
 
 
-    const deleteSearch = () => {
-        if (searchInputRef.current) {
-            searchInputRef.current.value = "";
-        }
-    }
     /*  無法搜尋至少完整包含searchTerm的值 ，需搭配外部套件 Algolia
     const handleSearch = async () => {
         const searchTerm = searchInputRef.current?.value.trim();
@@ -273,30 +271,10 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     return (
         <main className="w-full h-auto flex flex-col justify-center items-center flex-grow bg-[#ffffff]" >
                 <div className="w-[1280px]">
-                    {/*搜  flex-row */}
+                    {/*搜 */}
                     <div className="w-full h-10 mt-[60px]  mb-[30px]"> 
                         <div className="flex max-w-screen-md h-full mx-auto"> 
-                            <div className="flex relative w-full h-full ">
-                                <input
-                                    className="flex-grow h-full px-4 text-lg font-bold text-gray-500 border-solid border-2 border-[#6898a5] shadow-[0_0_3px_#AABBCC] rounded-l-md"
-                                    type="text"
-                                    placeholder="輸入關鍵字搜尋"
-                                    ref={searchInputRef}
-                                />  
-                                <button 
-                                    className="hover:scale-110 absolute top-2 right-10 z-10"  
-                                    onClick={deleteSearch}
-                                >  
-                                    <Image className="" src="/images/xmark-solid.svg" alt="close" width={15} height={15} />
-                                </button>                               
-                            </div>
-                            <button 
-                                className="flex w-32 h-full bg-[#24657d] hover:bg-[#7199a1] hover:text-black rounded-r-md items-center  justify-center font-bold"
-                                //onClick={handleSearch}
-                            >
-                                <Image className="w-auto h-auto" src="/images/search.png" alt="Search" width={40} height={40}/>
-                                搜尋
-                            </button>
+                            <InstantResults />
                         </div>
                     </div>
                     {/*癌篩分類*/}
@@ -395,7 +373,10 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                             </div>
                         </div>
                         {/*卡片盒:舊資料先渲染*/}
-                        <div id="institutions-grid" className="w-full h-auto m-auto grid grid-cols-4 gap-20 justify-center items-start box-border mt-[20px]">
+                        <div className="w-full h-auto m-auto grid grid-cols-4 gap-20 justify-center items-start box-border mt-[20px]">
+                        {/*<Configure hitsPerPage={20} />
+                        <Hits hitComponent={InstantHit} className="cursor-pointer"/>*/}
+                            {/*
                             {currentData.map((institution, index) => (
                                 <Link 
                                     key={institution.hosp_name} 
@@ -437,8 +418,11 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                     <Skeleton key={index} height={320} width={250} className="m-[10px] bg-[#ffffff]" />
                                 ))
                             )}
-                            <div ref={lastElementRef} />
+                            <div ref={lastElementRef} />     
+                            */}
                         </div>
+                        {/*<Pagination padding={5} showFirst={true} showLast={true} />*/}
+                        
                     </div>
                 </div>
             </main>

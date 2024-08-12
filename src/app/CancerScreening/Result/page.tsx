@@ -56,8 +56,6 @@ const CancerScreeningResultPage: React.FC<ResultProps> = () => {
     const smoking = answers[4] as number;
     const familyLungCancer = answers[5] as number;
     const familyBreastCancer = answers[6] as number;
-    //const currentYear = new Date().getFullYear() - 1911;
-    //const age = currentYear - birthYear;
 
 
     const noQualification = (birthYear > 96 && betelNutUsage === 3 && smoking === 3) ||
