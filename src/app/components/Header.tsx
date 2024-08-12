@@ -2,14 +2,12 @@
 import { useState, MouseEvent} from 'react'; 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useAuth } from '../contexts/AuthContext'; 
 import SignInModal from './auth/SignInModal';
 import RegisterModal from './auth/RegisterModal';
 
 
 const Header: React.FC = () => {
-  //const router = useRouter();
   const { user, logout } = useAuth();
   const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState(false);
@@ -19,6 +17,7 @@ const Header: React.FC = () => {
     try {
       await logout();
       alert('您已成功登出!感謝您的使用!');
+      setIsSignInModalVisible(false);
     } catch (error) {
       console.error(error);
       alert('登出失敗!請稍後再試!');

@@ -1,14 +1,15 @@
 'use client';
 import SearchContent from '../components/SearchContent';
-//import { InstitutionsProvider } from '../contexts/InstitutionsContext';
+import { CollectionContextProvider } from '../contexts/CollectionContext';
 
 
 const SearchPage: React.FC = (): React.ReactElement | null  => {
     return (     
-        //<InstitutionsProvider>  
+        <CollectionContextProvider>  
             <SearchContent />
-        //</InstitutionsProvider>
+        </CollectionContextProvider>
     )
 };
+
 
 export default SearchPage;

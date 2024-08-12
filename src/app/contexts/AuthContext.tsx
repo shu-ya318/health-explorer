@@ -87,7 +87,6 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
     try {
       await signOut(auth);
       setUser(null);
-      window.location.href = '/';
     } catch (error) {
       const e = error as AuthError;
       throw new Error(e.message);
@@ -101,5 +100,6 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
     </AuthContext.Provider>
   );
 }
+
 
 export const useAuth = () => useContext(AuthContext);

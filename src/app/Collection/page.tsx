@@ -1,15 +1,15 @@
 'use client';
-import { useEffect } from 'react';
-import { initInstitutionData } from '../api/initInstitutionData';
-const Page = () => {
-    
+import CollectionContent from '../components/CollectionContent';
+import { CollectionContextProvider } from '../contexts/CollectionContext';
 
-    return (
-        <div>
-            <h1>Welcome to Our Page</h1>  
-            
-            <h1>Welcome to Our Page</h1>
-        </div>
-    );
+
+const CollectionPage: React.FC = (): React.ReactElement | null  => {
+    return (     
+        <CollectionContextProvider>  
+            <CollectionContent />
+        </CollectionContextProvider>
+    )
 };
-export default Page;
+
+
+export default CollectionPage;

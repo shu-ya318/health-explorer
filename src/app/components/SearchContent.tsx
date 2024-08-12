@@ -1,17 +1,21 @@
 //import {useInstitutions }  from "../contexts/InstitutionsContext";
-import {useState, useEffect,useCallback , useRef, ChangeEvent} from 'react';
+import {useState, useEffect,useCallback , useRef, ChangeEvent, FormEvent} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';   
 import Image from 'next/image';
 import Link from 'next/link';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
-import { FirebaseInstitutionData} from '../lib/types';
-import { db } from '../lib/firebaseConfig';
-import { collection, query, where, orderBy, startAfter, limit, getDocs, DocumentSnapshot } from 'firebase/firestore';
-import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-
+// import Skeleton from 'react-loading-skeleton';
+// import 'react-loading-skeleton/dist/skeleton.css';
 import { SearchBox, Configure, useHits, Pagination } from 'react-instantsearch';
 import { finalHit } from "./Algolia/finalHit";
+
+import { FirebaseInstitutionData} from '../lib/types';
+import { db } from '../lib/firebaseConfig';
+import { collection, query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot } from 'firebase/firestore';
+import { useCollection } from '../contexts/CollectionContext'; 
+import { useAuth } from '../contexts/AuthContext'; 
+import SignInModal from './auth/SignInModal';
+import RegisterModal from './auth/RegisterModal';
+
 
 const cancers = [
     { filter: '子宮頸癌', image:"/images/cervicalCancer.png"},
@@ -40,24 +44,50 @@ const districts = [
 
 
 const SearchContent: React.FC = (): React.ReactElement | null  => {
+    const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
+    const [isSignInModalVisible, setIsSignInModalVisible] = useState(false);
+    const { user } = useAuth();
+    const { collectionData, addCollectionRecord, deleteCollectionRecord } = useCollection();
+
     const router = useRouter();
     const searchParams = useSearchParams();
     const filter = searchParams.get('filter');
 
-    //const [sortByViews, setSortByViews] = useState<boolean>(false);
     const [isOpenInstitutions, setIsOpenInstitutions] = useState(false);
     const [isOpenDivisions, setIsOpenDivisions] = useState(false);
     const [isOpenDistricts, setIsOpenDistricts] = useState(false);
 
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     const [loading, setLoading] = useState<boolean>(false);
-    const [currentData, setCurrentData] = useState<FirebaseInstitutionData[]>([]);
 
     const { items } = useHits();
-    console.log(items);
 
 
-/*
+    const handleAddClick = async (e: FormEvent<HTMLFormElement>,hit:any) => {
+        e.preventDefault();
+        if (!user.email) return;
+    
+        const newRecord = {
+          userId: user.uid,
+          email: user.email,
+          hosp_name:hit.hosp_name,
+          view:hit.view
+        };
+        await addCollectionRecord(newRecord);
+        // ?重新fetch會條件渲染  ，就不重刷新頁面，讓愛心切換 router.push('/Search')
+      };
+
+      const handleRemoveClick = async (id: string | undefined) => {
+        if (id) {
+          await deleteCollectionRecord(id);
+          // ?重新fetch會條件渲染  ，就不重刷新頁面，讓愛心切換 router.push('/Search')
+        } else {
+          console.error("找不到此筆收藏紀錄ID");
+        }
+      };
+
+
+    /* VER接收資料庫資料+無限滾動
     const fetchMoreData = useCallback(async () => {
         if (loading || (!lastVisible && !isInitialLoad)) return;
 
@@ -303,13 +333,55 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                                 unoptimized={true}
                                             />
                                         )}
-                                        <Image
-                                            className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full"
-                                            src="/images/heart_line.svg"
-                                            alt="collection"
-                                            width={40}
-                                            height={40}
-                                        />
+                                        {!user && (
+                                            <>
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => setIsSignInModalVisible(true)} 
+                                                >
+                                                    <Image
+                                                        className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full"
+                                                        src="/images/heart_line.svg"
+                                                        alt="collection"
+                                                        width={40}
+                                                        height={40}
+                                                    />
+                                                </button>
+                                                {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
+                                                {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
+                                                </>
+                                        )}
+                                        {!collectionData ? (
+                                            <>
+                                                <button 
+                                                    type="submit"
+                                                    onClick={handleAddClick(hit)} 
+                                                >
+                                                    <Image
+                                                        className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full"
+                                                        src="/images/heart_line.svg"
+                                                        alt="collection"
+                                                        width={40}
+                                                        height={40}
+                                                    />
+                                                </button>
+                                            </>
+                                            ) : (
+                                            <>
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => handleRemoveClick(record.id)}
+                                                >
+                                                    <Image
+                                                        className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full"
+                                                        src="/images/heart_fill.svg"
+                                                        alt="collection"
+                                                        width={40}
+                                                        height={40}
+                                                    />
+                                                </button>
+                                            </>
+                                        )}
                                     </div>
                                     <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{(hit).hosp_name}</div>
                                     <div className="w-full h-[30px] flex items-center justify-end">

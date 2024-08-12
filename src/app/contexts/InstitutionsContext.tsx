@@ -49,7 +49,7 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
                 setLoading(true);
                 const newData: FirebaseInstitutionData[] = [];
                 try {
-                    //仍保留context來呼?各頁元useEffect呼? await initInstitutionData();
+                    //await initInstitutionData();
                     const geocoder = new google.maps.Geocoder();
                     const querySnapshot = await getDocs(collection(db, 'medicalInstitutions'));
                     
@@ -101,6 +101,7 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
         }
     }, [institutionData, views]);
 
+
     const incrementView = (hosp_name: string) => {
         setViews(prevViews => {
             const updatedViews = {
@@ -112,9 +113,10 @@ export const InstitutionsProvider: React.FC<InstitutionsProviderProps> = ({ chil
         });
     };
 
+    
 
     return (
-        <InstitutionsContext.Provider value={{institutionData, setInstitutionData, loading}}>
+        <InstitutionsContext.Provider value={{institutionData, loading}}>
             {children}
         </InstitutionsContext.Provider>
     );
