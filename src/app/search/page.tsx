@@ -1,13 +1,16 @@
 'use client';
 import SearchContent from '../components/SearchContent';
-import { CollectionContextProvider } from '../contexts/CollectionContext';
-
+import { CollectionProvider } from '../contexts/CollectionContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const SearchPage: React.FC = (): React.ReactElement | null  => {
+    const { user } = useAuth();
+
+    
     return (     
-        <CollectionContextProvider>  
+        <CollectionProvider user={user}>  
             <SearchContent />
-        </CollectionContextProvider>
+        </CollectionProvider>
     )
 };
 

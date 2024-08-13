@@ -3,15 +3,14 @@ import {useState, useEffect,useCallback , useRef, ChangeEvent, FormEvent} from '
 import {useRouter, useSearchParams} from 'next/navigation';   
 import Image from 'next/image';
 import Link from 'next/link';
-// import Skeleton from 'react-loading-skeleton';
-// import 'react-loading-skeleton/dist/skeleton.css';
+
 import { SearchBox, Configure, useHits, Pagination } from 'react-instantsearch';
-import { finalHit } from "./Algolia/finalHit";
+import { finalHit } from "./AlgoliaSearch/finalHit";
 
 import { FirebaseInstitutionData} from '../lib/types';
 import { db } from '../lib/firebaseConfig';
-import { collection, query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot } from 'firebase/firestore';
-import { useCollection } from '../contexts/CollectionContext'; 
+import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot } from 'firebase/firestore';
+import { useCollection, CollectionData } from '../contexts/CollectionContext'; 
 import { useAuth } from '../contexts/AuthContext'; 
 import SignInModal from './auth/SignInModal';
 import RegisterModal from './auth/RegisterModal';
@@ -47,7 +46,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
     const [isSignInModalVisible, setIsSignInModalVisible] = useState(false);
     const { user } = useAuth();
-    const { collectionData, addCollectionRecord, deleteCollectionRecord } = useCollection();
+    const { state, addCollection, removeCollection} = useCollection();
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -63,30 +62,43 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     const { items } = useHits();
 
 
-    const handleAddClick = async (e: FormEvent<HTMLFormElement>,hit:any) => {
-        e.preventDefault();
-        if (!user.email) return;
-    
-        const newRecord = {
-          userId: user.uid,
-          email: user.email,
-          hosp_name:hit.hosp_name,
-          view:hit.view
+    const handleAddClick = async (hit: any, userId:string) => {
+        if (!user) return;
+
+        const newRecord: CollectionData = {
+            userId: user.uid,
+            hosp_name: hit.hosp_name,
+            area: hit.area,
+            division: hit.division, 
+            cancer_screening: hit.cancer_screening,
+            timestamp: new Date() 
         };
-        await addCollectionRecord(newRecord);
-        // ?重新fetch會條件渲染  ，就不重刷新頁面，讓愛心切換 router.push('/Search')
-      };
+        await addCollection(newRecord);
+        console.log("Collection added:", newRecord);
+    };
 
-      const handleRemoveClick = async (id: string | undefined) => {
-        if (id) {
-          await deleteCollectionRecord(id);
-          // ?重新fetch會條件渲染  ，就不重刷新頁面，讓愛心切換 router.push('/Search')
+    const handleRemoveClick = async (objectID:string, userId:string) => {
+        if (!user) return;
+
+        //遍歷的key值非同資料庫id，先讀取要操作資料庫的對應文件
+        const q = query(collection(db, 'collections'), where("hosp_name", "==", objectID), where("userId", "==", userId));
+        const querySnapshot = await getDocs(q);
+    
+        if (!querySnapshot.empty) {
+            const batch = querySnapshot.docs.map(async (document) => {
+                await deleteDoc(doc(db, 'collections', document.id));
+                console.log("Deleting document:", document.id);
+                return document.id;  // 間接從firstore才能取得文件id
+            });
+            const deletedDocIds = await Promise.all(batch);
+    
+            deletedDocIds.forEach(docId => {
+                removeCollection(docId);
+            });
         } else {
-          console.error("找不到此筆收藏紀錄ID");
+            console.error("firestore無此筆收藏紀錄文件或狀態找不到對應id的元素");
         }
-      };
-
-
+    };
     /* VER接收資料庫資料+無限滾動
     const fetchMoreData = useCallback(async () => {
         if (loading || (!lastVisible && !isInitialLoad)) return;
@@ -321,7 +333,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                         <div className="w-full h-auto m-auto grid grid-cols-4 gap-20 justify-center items-start box-border mt-[20px]">
                             <Configure hitsPerPage={16} /> 
                             {items.map((hit) => (
-                                  <div   key={hit.objectID} className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
+                                <div key={hit.objectID} className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
                                     <div className="relative">
                                         {hit.imageUrl && (
                                             <Image
@@ -333,60 +345,37 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                                 unoptimized={true}
                                             />
                                         )}
-                                        {!user && (
+                                        {/* 連接另一個資料庫Collections */}
+                                        {!user ? (
                                             <>
-                                                <button 
-                                                    type="button" 
-                                                    onClick={() => setIsSignInModalVisible(true)} 
-                                                >
-                                                    <Image
-                                                        className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full"
-                                                        src="/images/heart_line.svg"
-                                                        alt="collection"
-                                                        width={40}
-                                                        height={40}
-                                                    />
+                                                <button type="button" onClick={() => setIsSignInModalVisible(true)}>
+                                                    <Image src="/images/heart_line.svg" alt="collection" width={40} height={40} className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full" />
                                                 </button>
                                                 {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
                                                 {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
-                                                </>
-                                        )}
-                                        {!collectionData ? (
-                                            <>
-                                                <button 
-                                                    type="submit"
-                                                    onClick={handleAddClick(hit)} 
-                                                >
-                                                    <Image
-                                                        className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full"
-                                                        src="/images/heart_line.svg"
-                                                        alt="collection"
-                                                        width={40}
-                                                        height={40}
-                                                    />
-                                                </button>
                                             </>
-                                            ) : (
+                                        ) : (
                                             <>
-                                                <button 
-                                                    type="button" 
-                                                    onClick={() => handleRemoveClick(record.id)}
-                                                >
-                                                    <Image
-                                                        className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full"
-                                                        src="/images/heart_fill.svg"
-                                                        alt="collection"
-                                                        width={40}
-                                                        height={40}
-                                                    />
-                                                </button>
+                                                {(() => {
+                                                    const isFavorited = state.collections.some(item => item.userId === user.uid && item.hosp_name === hit.objectID);
+                                                    const handleHeartClick = isFavorited ? () => handleRemoveClick(hit.objectID, user.uid) : () => handleAddClick(hit, user.uid);
+                                                    return (
+                                                        <button type="button" onClick={handleHeartClick}>
+                                                            <Image 
+                                                                src="/images/heart_line.svg" 
+                                                                alt="collection" width={40} height={40} 
+                                                                className={`${isFavorited ? 'bg-[#FFFFFF] border-[10px]  shadow-[0_0_10px_#6898a5]' : 'bg-transparent '} absolute top-1.5 right-1.5 z-10 border-solid border-2  border-[#6898a5] rounded-full`}
+                                                            />
+                                                        </button>
+                                                    );
+                                                })()}
                                             </>
                                         )}
                                     </div>
-                                    <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{(hit).hosp_name}</div>
+                                    <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{hit.hosp_name}</div>
                                     <div className="w-full h-[30px] flex items-center justify-end">
                                         <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
-                                        <span className="ml-2 text-black mr-[10px]">觀看數:{(hit).view}</span>
+                                        <span className="ml-2 text-black mr-[10px]">觀看數:{hit.view}</span>
                                     </div>
                                 </div>
                             ))}

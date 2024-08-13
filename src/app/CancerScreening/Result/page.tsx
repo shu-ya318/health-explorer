@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation'; 
 import { useState, useEffect } from 'react';
-import { InstantResults } from "../../components/Algolia/InstantResults";
+import { InstantResults } from "../../components/AlgoliaSearch/InstantResults";
 
 
 interface ResultProps {
