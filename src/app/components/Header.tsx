@@ -1,5 +1,6 @@
 'use client';
 import { useState, MouseEvent} from 'react'; 
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '../contexts/AuthContext'; 
@@ -8,9 +9,19 @@ import RegisterModal from './auth/RegisterModal';
 
 
 const Header: React.FC = () => {
+  const router = useRouter();
   const { user, logout } = useAuth();
   const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState(false);
+
+
+  const handleFavoriteClick = () => {
+    if (user) {
+      router.push('/Favorite'); 
+    } else {
+      setIsSignInModalVisible(true);
+    }
+  };
 
 
   const handleLogout = async () => {
@@ -18,6 +29,7 @@ const Header: React.FC = () => {
       await logout();
       alert('您已成功登出!感謝您的使用!');
       setIsSignInModalVisible(false);
+      setIsRegisterModalVisible(false);
     } catch (error) {
       console.error(error);
       alert('登出失敗!請稍後再試!');
@@ -33,7 +45,13 @@ const Header: React.FC = () => {
               <Link href='/' className="hover:text-[#acb8b6]">健康探索者</Link>
           </div>
           <div className="flex items-center text-white no-underline font-bold cursor-pointer">
-            <p className="text-white font-bold cursor-pointer my-2.5 px-2.5 h-9 flex items-center hover:text-[#acb8b6] mr-30" >我的收藏</p>
+            <button  
+              type="button" 
+              className="text-white font-bold cursor-pointer my-2.5 px-2.5 h-9 flex items-center hover:text-[#acb8b6] mr-30" 
+              onClick={handleFavoriteClick}
+            >
+              我的收藏
+            </button >
             {!user ? (
                  <>
                   <button 

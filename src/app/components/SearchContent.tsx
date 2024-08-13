@@ -1,5 +1,5 @@
 //import {useInstitutions }  from "../contexts/InstitutionsContext";
-import {useState, useEffect,useCallback , useRef, ChangeEvent, FormEvent} from 'react';
+import {useState, useEffect, ChangeEvent, FormEvent} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';   
 import Image from 'next/image';
 import Link from 'next/link';
@@ -7,10 +7,10 @@ import Link from 'next/link';
 import { SearchBox, Configure, useHits, Pagination } from 'react-instantsearch';
 import { finalHit } from "./AlgoliaSearch/finalHit";
 
-import { FirebaseInstitutionData} from '../lib/types';
-import { db } from '../lib/firebaseConfig';
+import { db } from '../library/firebaseConfig';
 import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot } from 'firebase/firestore';
-import { useCollection, CollectionData } from '../contexts/CollectionContext'; 
+import { useFavorite} from '../contexts/FavoriteContext'; 
+import { FirebaseFavoriteData} from '../library/types.js';
 import { useAuth } from '../contexts/AuthContext'; 
 import SignInModal from './auth/SignInModal';
 import RegisterModal from './auth/RegisterModal';
@@ -46,7 +46,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
     const [isSignInModalVisible, setIsSignInModalVisible] = useState(false);
     const { user } = useAuth();
-    const { state, addCollection, removeCollection} = useCollection();
+    const { state, addFavorite, removeFavorite} = useFavorite();
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -56,112 +56,49 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     const [isOpenDivisions, setIsOpenDivisions] = useState(false);
     const [isOpenDistricts, setIsOpenDistricts] = useState(false);
 
-    const [isInitialLoad, setIsInitialLoad] = useState(true);
-    const [loading, setLoading] = useState<boolean>(false);
-
     const { items } = useHits();
 
 
     const handleAddClick = async (hit: any, userId:string) => {
         if (!user) return;
 
-        const newRecord: CollectionData = {
+        const newRecord: FirebaseFavoriteData = {
             userId: user.uid,
             hosp_name: hit.hosp_name,
-            area: hit.area,
-            division: hit.division, 
-            cancer_screening: hit.cancer_screening,
-            timestamp: new Date() 
+            hosp_addr: hit.hosp_addr,
+            tel:hit.tel,
+            //division: hit.division, 
+            //cancer_screening: hit.cancer_screening,
+            timestamp: new Date() ,
+            imageUrl: hit.imageUrl
         };
-        await addCollection(newRecord);
-        console.log("Collection added:", newRecord);
+        await addFavorite(newRecord);
+        console.log("Favorite added:", newRecord);
     };
 
     const handleRemoveClick = async (objectID:string, userId:string) => {
         if (!user) return;
 
         //遍歷的key值非同資料庫id，先讀取要操作資料庫的對應文件
-        const q = query(collection(db, 'collections'), where("hosp_name", "==", objectID), where("userId", "==", userId));
+        const q = query(collection(db, 'favorites'), where("hosp_name", "==", objectID), where("userId", "==", userId));
         const querySnapshot = await getDocs(q);
     
         if (!querySnapshot.empty) {
             const batch = querySnapshot.docs.map(async (document) => {
-                await deleteDoc(doc(db, 'collections', document.id));
+                await deleteDoc(doc(db, 'favorites', document.id));
                 console.log("Deleting document:", document.id);
                 return document.id;  // 間接從firstore才能取得文件id
             });
             const deletedDocIds = await Promise.all(batch);
     
             deletedDocIds.forEach(docId => {
-                removeCollection(docId);
+                removeFavorite(docId);
             });
         } else {
             console.error("firestore無此筆收藏紀錄文件或狀態找不到對應id的元素");
         }
     };
-    /* VER接收資料庫資料+無限滾動
-    const fetchMoreData = useCallback(async () => {
-        if (loading || (!lastVisible && !isInitialLoad)) return;
-
-        setLoading(true);
-        try {
-            const nextQuery = query(
-                collection(db, 'medicalInstitutions'),
-                orderBy('hosp_name'),
-                lastVisible ? startAfter(lastVisible) : limit(20), 
-                limit(20)
-            );
-            const documentSnapshots = await getDocs(nextQuery);
-
-            if (documentSnapshots.docs.length > 0) {
-                const newDataPromises = documentSnapshots.docs.map(async doc => {
-                    const data = doc.data() as FirebaseInstitutionData;
-                    try {
-                        const imageRef = ref(getStorage(), `institutionImages/${data.hosp_name || 'unknown'}.png`);
-                        const imageUrl = await getDownloadURL(imageRef);
-                        return { ...data, imageUrl };
-                    } catch (error) {
-                        console.error('Failed to load image:', error);
-                        return { ...data, imageUrl: '/images/placeholder.png' };
-                    }
-                });
-                const newData = await Promise.all(newDataPromises);
-
-                setCurrentData(prev => [...prev, ...newData]);
-                setLastVisible(documentSnapshots.docs[documentSnapshots.docs.length - 1]);
-            } else {
-                if (observer.current && lastElementRef.current) {
-                    observer.current.unobserve(lastElementRef.current);
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-        setLoading(false);
-    }, [loading, lastVisible, isInitialLoad]);
-
-    useEffect(() => {
-        if (isInitialLoad) {
-            fetchMoreData();
-            setIsInitialLoad(false);
-        }
-
-        const observer = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && !loading && lastVisible) {
-                fetchMoreData();
-            }
-        }, { threshold: 1.0 });
-
-        if (lastElementRef.current) {
-            observer.observe(lastElementRef.current);
-        }
-
-        return () => {
-            observer.disconnect();
-        };
-    }, [lastVisible, loading, fetchMoreData, isInitialLoad]); 
-*/
-
+    
     /* 過濾資料
     useEffect(() => {
         let filteredData = institutionData as FirebaseInstitutionData[];
@@ -333,51 +270,53 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                         <div className="w-full h-auto m-auto grid grid-cols-4 gap-20 justify-center items-start box-border mt-[20px]">
                             <Configure hitsPerPage={16} /> 
                             {items.map((hit) => (
-                                <div key={hit.objectID} className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
-                                    <div className="relative">
-                                        {hit.imageUrl && (
-                                            <Image
-                                                src={hit.imageUrl}
-                                                alt="institution"
-                                                width={250}
-                                                height={200}
-                                                className="w-full h-[200px] object-cover object-center"
-                                                unoptimized={true}
-                                            />
-                                        )}
-                                        {/* 連接另一個資料庫Collections */}
-                                        {!user ? (
-                                            <>
-                                                <button type="button" onClick={() => setIsSignInModalVisible(true)}>
-                                                    <Image src="/images/heart_line.svg" alt="collection" width={40} height={40} className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full" />
-                                                </button>
-                                                {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
-                                                {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
-                                            </>
-                                        ) : (
-                                            <>
-                                                {(() => {
-                                                    const isFavorited = state.collections.some(item => item.userId === user.uid && item.hosp_name === hit.objectID);
-                                                    const handleHeartClick = isFavorited ? () => handleRemoveClick(hit.objectID, user.uid) : () => handleAddClick(hit, user.uid);
-                                                    return (
-                                                        <button type="button" onClick={handleHeartClick}>
-                                                            <Image 
-                                                                src="/images/heart_line.svg" 
-                                                                alt="collection" width={40} height={40} 
-                                                                className={`${isFavorited ? 'bg-[#FFFFFF] border-[10px]  shadow-[0_0_10px_#6898a5]' : 'bg-transparent '} absolute top-1.5 right-1.5 z-10 border-solid border-2  border-[#6898a5] rounded-full`}
-                                                            />
-                                                        </button>
-                                                    );
-                                                })()}
-                                            </>
-                                        )}
+                                 <Link  key={hit.objectID} href={`/Search/${encodeURIComponent(hit.hosp_name)}`}>
+                                    <div  className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
+                                        <div className="relative">
+                                            {hit.imageUrl && (
+                                                <Image
+                                                    src={hit.imageUrl}
+                                                    alt="institution"
+                                                    width={250}
+                                                    height={200}
+                                                    className="w-full h-[200px] object-cover object-center"
+                                                    unoptimized={true}
+                                                />
+                                            )}
+                                            {/* 連接另一個資料庫favorites */}
+                                            {!user ? (
+                                                <>
+                                                    <button type="button" onClick={() => setIsSignInModalVisible(true)}>
+                                                        <Image src="/images/heart_line.svg" alt="collection" width={40} height={40} className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full" />
+                                                    </button>
+                                                    {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
+                                                    {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {(() => {
+                                                        const isFavorited = state.favorites.some(item => item.userId === user.uid && item.hosp_name === hit.objectID);
+                                                        const handleHeartClick = isFavorited ? () => handleRemoveClick(hit.objectID, user.uid) : () => handleAddClick(hit, user.uid);
+                                                        return (
+                                                            <button type="button" onClick={handleHeartClick}>
+                                                                <Image 
+                                                                    src="/images/heart_line.svg" 
+                                                                    alt="collection" width={40} height={40} 
+                                                                    className={`${isFavorited ? 'bg-[#FFFFFF] border-[10px]  shadow-[0_0_10px_#6898a5]' : 'bg-transparent '} absolute top-1.5 right-1.5 z-10 border-solid border-2  border-[#6898a5] rounded-full`}
+                                                                />
+                                                            </button>
+                                                        );
+                                                    })()}
+                                                </>
+                                            )}
+                                        </div>
+                                        <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{hit.hosp_name}</div>
+                                        <div className="w-full h-[30px] flex items-center justify-end">
+                                            <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
+                                            <span className="ml-2 text-black mr-[10px]">觀看數:{hit.view}</span>
+                                        </div>
                                     </div>
-                                    <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{hit.hosp_name}</div>
-                                    <div className="w-full h-[30px] flex items-center justify-end">
-                                        <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
-                                        <span className="ml-2 text-black mr-[10px]">觀看數:{hit.view}</span>
-                                    </div>
-                                </div>
+                                </Link>
                             ))}
                         </div>
                         <div  className="w-full">
