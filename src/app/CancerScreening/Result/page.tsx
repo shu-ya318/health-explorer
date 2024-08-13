@@ -151,7 +151,7 @@ const CancerScreeningResultPage: React.FC<ResultProps> = () => {
                     </button>
                 </div>
             )}
-            <InstantResults />
+            {/*<InstantResults />*/}
         </div>
     );
 }
