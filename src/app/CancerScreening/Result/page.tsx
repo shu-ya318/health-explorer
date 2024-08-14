@@ -157,5 +157,4 @@ const CancerScreeningResultPage: React.FC<ResultProps> = () => {
 }
 
 
-
-export default CancerScreeningResultPage;   
+export default CancerScreeningResultPage;  
