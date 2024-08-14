@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
 import { motion, AnimatePresence } from "framer-motion"; 
-import BounceLoader from "react-spinners/bounceLoader";
+import BounceLoader from "react-spinners/BounceLoader";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { FirebaseInstitutionData} from '../lib/types';

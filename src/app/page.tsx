@@ -7,7 +7,7 @@ import 'animate.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; 
 import { motion, AnimatePresence } from "framer-motion"; 
-import PuffLoader from "react-spinners/puffLoader";
+import PuffLoader from "react-spinners/PuffLoader";   //大小寫需完全一致
 
 
 interface Search {
