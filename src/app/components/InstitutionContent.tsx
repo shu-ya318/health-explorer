@@ -5,11 +5,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
 import { motion, AnimatePresence } from "framer-motion"; 
-import BounceLoader from "react-spinners/bounceLoader";
+import BounceLoader from "react-spinners/BounceLoader";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { FirebaseInstitutionData} from '../lib/types.js';
-import { db } from '../lib/firebaseConfig.js';
+import { FirebaseInstitutionData} from '../lib/types';
+import { db } from '../lib/firebaseConfig';
 import { collection, doc, getDocs, getDoc, query, where} from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 
@@ -232,7 +232,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                 <div className="flex items-center">
                                     <button 
                                         className="mx-auto my-16  w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-11  hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]"
-                                        onClick={()=>router.push('/Search')}
+                                        onClick={()=>router.push('/search')}
                                     >
                                         搜尋更多機構
                                     </button>

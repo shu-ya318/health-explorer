@@ -6,13 +6,12 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 import { db } from '../lib/firebaseConfig';
-import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot } from 'firebase/firestore';
+import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot, Timestamp } from 'firebase/firestore';
 import { useFavorite} from '../contexts/FavoriteContext'; 
-import { FirebaseFavoriteData} from '../lib/types.js';
+import { FirebaseFavoriteData} from '../lib/types';
 import { useAuth } from '../contexts/AuthContext'; 
 
 import HomePage  from '../page'; 
-
 
 
 const FavoriteContent: React.FC = (): React.ReactElement | null  => {
@@ -122,7 +121,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
         }
     };
     
-
+  
     return (
         <> 
         {!user ? 
@@ -173,10 +172,6 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                             <div className="flex flex-row justify-start items-center leading-12">
                                                 <span className="text-lg font-medium text-[#1D445D] mr-1.5">地址:</span>
                                                 <span className="text-lg font-medium text-[#1D445D] mr-1.5">{item.hosp_addr}</span>
-                                            </div>
-                                            <div className="flex flex-row justify-start items-center leading-12">
-                                                <span className="text-lg font-medium text-[#1D445D] mr-1.5">收藏日期:</span>
-                                                <span className="text-lg font-medium text-[#1D445D]">{item.timestamp.toDate().toLocaleDateString()}</span>
                                             </div>
                                         </div>
                                     </div>
