@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { InstantResults } from "../../components/AlgoliaSearch/InstantResults";
 
 
-interface ResultProps {
+/*interface ResultProps {
     answers: (string | number)[];
-}
+}*/
 
 
 const cancer = [
@@ -18,7 +18,7 @@ const cancer = [
   ];
 
 
-const CancerScreeningResultPage: React.FC<ResultProps> = () => {
+const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
     const router = useRouter();
     const [answers, setAnswers] = useState<any[]>([]);
 
