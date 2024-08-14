@@ -176,7 +176,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                             </div>
                                             <div className="flex flex-row justify-start items-center leading-12">
                                                 <span className="text-lg font-medium text-[#1D445D] mr-1.5">收藏日期:</span>
-                                                <span className="text-lg font-medium text-[#1D445D]">{item.timestamp.toDate().toLocaleDateString()}</span>
+                                                <span className="text-lg font-medium text-[#1D445D]">{(item.timestamp instanceof Date) ? item.timestamp.toLocaleDateString() : new Date(item.timestamp).toLocaleDateString()}</span>
                                             </div>
                                         </div>
                                     </div>
