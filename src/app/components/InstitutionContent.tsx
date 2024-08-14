@@ -8,8 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import BounceLoader from "react-spinners/bounceLoader";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { FirebaseInstitutionData} from '../library/types.js';
-import { db } from '../library/firebaseConfig';
+import { FirebaseInstitutionData} from '../lib/types.js';
+import { db } from '../lib/firebaseConfig.js';
 import { collection, doc, getDocs, getDoc, query, where} from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 

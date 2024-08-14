@@ -9,7 +9,7 @@ import {
   signOut,
   AuthError
 } from 'firebase/auth';
-import { auth } from '../library/firebaseConfig';
+import { auth } from '../lib/firebaseConfig';
 
 
 interface CustomUser {

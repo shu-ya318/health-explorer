@@ -5,10 +5,10 @@ import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-import { db } from '../library/firebaseConfig';
+import { db } from '../lib/firebaseConfig';
 import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot } from 'firebase/firestore';
 import { useFavorite} from '../contexts/FavoriteContext'; 
-import { FirebaseFavoriteData} from '../library/types.js';
+import { FirebaseFavoriteData} from '../lib/types.js';
 import { useAuth } from '../contexts/AuthContext'; 
 
 import HomePage  from '../page'; 

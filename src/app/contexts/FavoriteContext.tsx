@@ -1,9 +1,9 @@
 'use client';
 import { createContext, useContext, useEffect,useCallback, useReducer } from 'react';
 import { useAuth } from '../contexts/AuthContext'; 
-import {db} from '../library/firebaseConfig';
+import {db} from '../lib/firebaseConfig';
 import { collection, doc, getDocs, addDoc, deleteDoc, query, where, orderBy, startAfter, limit, DocumentSnapshot } from 'firebase/firestore';
-import { FirebaseFavoriteData} from '../library/types.js';
+import { FirebaseFavoriteData} from '../lib/types.js';
 
 
 interface FavoriteProviderProps {
