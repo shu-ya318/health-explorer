@@ -1,8 +1,7 @@
 {
   "/page": "app/page.js",
-  "/Favorite/page": "app/Favorite/page.js",
-  "/Search/page": "app/Search/page.js",
   "/CancerScreening/page": "app/CancerScreening/page.js",
+  "/Search/page": "app/Search/page.js",
   "/Search/[hosp_name]/page": "app/Search/[hosp_name]/page.js",
-  "/CancerScreening/Result/page": "app/CancerScreening/Result/page.js"
+  "/Favorite/page": "app/Favorite/page.js"
 }

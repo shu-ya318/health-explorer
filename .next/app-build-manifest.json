@@ -12,11 +12,15 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/Favorite/page": [
+    "/CancerScreening/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/Favorite/page.css",
-      "static/chunks/app/Favorite/page.js"
+      "static/chunks/app/CancerScreening/page.js"
+    ],
+    "/CancerScreening/Result/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/CancerScreening/Result/page.js"
     ],
     "/Search/page": [
       "static/chunks/webpack.js",
@@ -29,15 +33,11 @@
       "static/css/app/Search/[hosp_name]/page.css",
       "static/chunks/app/Search/[hosp_name]/page.js"
     ],
-    "/CancerScreening/page": [
+    "/Favorite/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/CancerScreening/page.js"
-    ],
-    "/CancerScreening/Result/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/CancerScreening/Result/page.js"
+      "static/css/app/Favorite/page.css",
+      "static/chunks/app/Favorite/page.js"
     ]
   }
 }

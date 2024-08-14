@@ -8,7 +8,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { db } from '../lib/firebaseConfig';
 import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot } from 'firebase/firestore';
 import { useFavorite} from '../contexts/FavoriteContext'; 
-import { FirebaseFavoriteData} from '../lib/types.js';
+import { FirebaseFavoriteData} from '../lib/types';
 import { useAuth } from '../contexts/AuthContext'; 
 
 import HomePage  from '../page'; 
