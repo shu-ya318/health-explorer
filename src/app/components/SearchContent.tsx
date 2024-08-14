@@ -270,7 +270,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                         <div className="w-full h-auto m-auto grid grid-cols-4 gap-20 justify-center items-start box-border mt-[20px]">
                             <Configure hitsPerPage={16} /> 
                             {items.map((hit) => (
-                                 <Link  key={hit.objectID} href={`/Search/${encodeURIComponent(hit.hosp_name)}`}>
+                                 <Link  key={hit.objectID} href={`/search/${encodeURIComponent(hit.hosp_name)}`}>
                                     <div  className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
                                         <div className="relative">
                                             {hit.imageUrl && (
@@ -283,7 +283,6 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                                     unoptimized={true}
                                                 />
                                             )}
-                                            {/* 連接另一個資料庫favorites */}
                                             {!user ? (
                                                 <>
                                                     <button type="button" onClick={() => setIsSignInModalVisible(true)}>

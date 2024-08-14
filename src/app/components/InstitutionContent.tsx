@@ -8,11 +8,34 @@ import { motion, AnimatePresence } from "framer-motion";
 import BounceLoader from "react-spinners/BounceLoader";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { FirebaseInstitutionData} from '../lib/types';
 import { db } from '../lib/firebaseConfig';
 import { collection, doc, getDocs, getDoc, query, where} from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+import algoliasearch from 'algoliasearch/lite';
 
+
+interface InstitutionInfo {
+    objectID: string;
+    hosp_name: string;
+    area: string;
+    path: string;
+    tel: string;
+    hosp_addr: string;
+    division: string;
+    view: number;
+    lat: number;
+    lng: number;
+    cancer_screening?:string;
+    imageUrl: string;
+    lastmodified: {
+        _operation: string;
+        value: number;
+    };
+}
+
+
+const searchClient = algoliasearch("N0FZM6IRFS", "f0a299471e81f359d8306ebca289feaf");
+const index = searchClient.initIndex('Medical_Institutions');
 
 const InstitutionContent: React.FC = (): React.ReactElement | null  => {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY; 
@@ -20,8 +43,8 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
     const [openLoading, setOpenLoading] = useState<boolean>(true);
     const [loading,setLoading] = useState<boolean>(false);
     const router = useRouter();
-    const [institutionDetails, setInstitutionDetails] = useState<FirebaseInstitutionData| null>(null);  //不型別定義[ ]，因接收內容為單物件、也不定義{ }
-    const [comparableInstitutions, setComparableInstitutions] = useState<FirebaseInstitutionData[]>([]);
+    const [institutionDetails, setInstitutionDetails] = useState<InstitutionInfo| null>(null);  //不型別定義[ ]，因接收內容為單物件、也不定義{ }
+    const [comparableInstitutions, setComparableInstitutions] = useState<InstitutionInfo[]>([]);
     const [carouselIndex, setCarouselIndex] = useState(0);
 
     const { isLoaded } = useLoadScript({
@@ -36,37 +59,56 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
         const encodedHospName = pathSegments.pop() || '';
         const hosp_name = decodeURIComponent(encodedHospName); 
 
-        const docRef = doc(db, 'medicalInstitutions', hosp_name);
-        getDoc(docRef).then(docSnap => {
-            if (docSnap.exists()) {
-                setInstitutionDetails(docSnap.data() as FirebaseInstitutionData);
+        index.search<InstitutionInfo>(hosp_name).then(({ hits }) => {
+            if (hits && hits.length > 0) {
+                const result = hits[0];
+                setInstitutionDetails({
+                    objectID: result.objectID,
+                    hosp_name: result.hosp_name,
+                    area: result.area,
+                    path: result.path,
+                    tel: result.tel,
+                    hosp_addr: result.hosp_addr,
+                    division: result.division,
+                    view: result.view,
+                    lat: result.lat,
+                    lng: result.lng,
+                    imageUrl: result.imageUrl,
+                    lastmodified: result.lastmodified
+                });
+            } else {
+                console.error('No data found for:', hosp_name);
             }
-            setLoading(false);
+        }).catch(error => {
+            console.error('Search failed:', error);
         });
+
     }, []);
     
-    useEffect(() => {
+    useEffect(() => {    //官網自行先手動輸入
         if (institutionDetails) {
             setLoading(true);
-            const q = query(
-                collection(db, 'medicalInstitutions'),
-                where('division', '==', institutionDetails.division),
-                where('area', '==', institutionDetails.area)
-            );
-            getDocs(q).then(async querySnapshot => {
-                const storage = getStorage();
-                const institutions = await Promise.all(querySnapshot.docs.map(async doc => {
-                    const data = doc.data() as FirebaseInstitutionData;
-                    try {
-                        const imageRef = ref(storage, 'institutionImages/' + (data.hosp_name || 'unknown'));
-                        const imageUrl = await getDownloadURL(imageRef);
-                        return { ...data, imageUrl };
-                    } catch (error) {
-                        console.error('Failed to load image:', error);
-                        return { ...data, imageUrl: '/images/placeholder.png' };
-                    }
+            const filters = `division:"${institutionDetails.division}" AND area:"${institutionDetails.area}"`;
+            console.log(filters);
+            index.search<InstitutionInfo>('', { filters }).then(({ hits }) => {
+                const filteredHits = hits.filter(hit => hit.objectID !== institutionDetails.objectID).map(hit => ({
+                    objectID: hit.objectID,
+                    hosp_name: hit.hosp_name || '',
+                    area: hit.area || '',
+                    path: hit.path || '',
+                    tel: hit.tel || '',
+                    hosp_addr: hit.hosp_addr || '',
+                    division: hit.division || '',
+                    view: hit.view || 0,
+                    lat: hit.lat || 0,
+                    lng: hit.lng || 0,
+                    imageUrl: hit.imageUrl || '',
+                    lastmodified: hit.lastmodified || { _operation: '', value: 0 }
                 }));
-                setComparableInstitutions(institutions.filter(inst => inst.hosp_name !== institutionDetails.hosp_name));
+                setComparableInstitutions(filteredHits);
+                setLoading(false);
+            }).catch(error => {
+                console.error('Search failed for comparable institutions:', error);
                 setLoading(false);
             });
         }
@@ -74,7 +116,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
 
     
     const mapCenter = useMemo(() => {
-        if (institutionDetails && typeof institutionDetails.lat === 'number' && typeof institutionDetails.lng === 'number') {  //因可選參屬性,多檢查
+        if (institutionDetails && typeof institutionDetails.lat === 'number' && typeof institutionDetails.lng === 'number') {  //因可選參屬性,嚴格檢查型別
             return { lat: institutionDetails.lat, lng: institutionDetails.lng };
         }
         return { lat: 0, lng: 0 };
@@ -92,7 +134,6 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
             setCarouselIndex(prev => prev + 3);
         }
     };
-
     const handlePrev = () => {
         if (carouselIndex > 0) {
             setCarouselIndex(prev => prev - 3);
@@ -183,10 +224,10 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                             {displayedInstitutions.map(institution => (   
                                                 <Link 
                                                 key={institution.hosp_name} 
-                                                href={`/Search/${encodeURIComponent(institution.hosp_name)}`}
+                                                href={`/search/${encodeURIComponent(institution.hosp_name)}`}
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    handleIncrement(institution.hosp_name, `/Search/${encodeURIComponent(institution.hosp_name)}`);
+                                                    handleIncrement(institution.hosp_name, `/search/${encodeURIComponent(institution.hosp_name)}`);
                                                 }}
                                             >
                                                 <div className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
@@ -201,6 +242,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                                 unoptimized={true}
                                                             />
                                                         )}
+                                                        
                                                         <Image 
                                                             className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full" 
                                                             src="/images/heart_line.svg" 
@@ -208,6 +250,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                             width={40} 
                                                             height={40} 
                                                         />
+
                                                     </div>
                                                     <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{institution.hosp_name}</div>
                                                     <div className="w-full h-[30px] flex items-center justify-end">
