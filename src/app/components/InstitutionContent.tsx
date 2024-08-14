@@ -232,7 +232,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                 <div className="flex items-center">
                                     <button 
                                         className="mx-auto my-16  w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-11  hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]"
-                                        onClick={()=>router.push('/Search')}
+                                        onClick={()=>router.push('/search')}
                                     >
                                         搜尋更多機構
                                     </button>

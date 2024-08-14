@@ -114,7 +114,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
             <button 
               type="button" 
               className="w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-11  mt-5 mb-5 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]"
-              onClick={()=>router.push('/Search')} 
+              onClick={()=>router.push('/search')} 
             >
               搜尋更多
             </button>

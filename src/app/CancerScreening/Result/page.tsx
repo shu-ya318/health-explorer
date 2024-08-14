@@ -92,7 +92,7 @@ const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
                     <p className="text-xl text-center text-black">您目前無符合的免費癌症篩檢資格，若有自費需求請洽各大醫院。</p>
                     <button 
                         className="mx-auto my-16  w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-11  hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]" 
-                        onClick={() => router.push(`/Search`)}>
+                        onClick={() => router.push(`/search`)}>
                         開始搜尋醫院
                     </button>
                 </div>
@@ -102,7 +102,7 @@ const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
                     <p className="p-4 text-center text-black">每2年可免費篩檢1次。</p>
                     <button 
                         className="mt-4 p-2 bg-blue-500 text-white" 
-                        onClick={() => handleSearchClick(cancer[3].filter)}>
+                        onClick={() => router.push(`/search`)}>
                         口腔癌篩檢
                     </button>
                 </div>
@@ -112,7 +112,7 @@ const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
                     <p className="p-4 text-center text-black">每2年可免費篩檢1次。</p>
                     <button 
                         className="mt-4 p-2 bg-blue-500 text-white" 
-                        onClick={() => handleSearchClick(cancer[4].filter)}
+                        onClick={() => router.push(`/search`)}
                     >
                         肺癌篩檢
                     </button>
@@ -123,7 +123,7 @@ const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
                     <p className="p-4 text-center text-black">每2年可免費篩檢1次。</p>
                     <button 
                         className="mt-4 p-2 bg-blue-500 text-white" 
-                        onClick={() => handleSearchClick(cancer[2].filter)}
+                        onClick={() => router.push(`/search`)}
                     >
                         大腸癌篩檢
                     </button>
@@ -134,7 +134,7 @@ const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
                     <p className="p-4 text-center text-black">每1年可免費篩檢1次。</p>
                     <button 
                         className="mt-4 p-2 bg-blue-500 text-white" 
-                        onClick={() => handleSearchClick(cancer[0].filter)}
+                        onClick={() => router.push(`/search`)}
                     >
                         子宮頸癌篩檢
                     </button>
@@ -145,7 +145,7 @@ const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
                     <p className="p-4 text-center text-black">每2年可免費篩檢1次。</p>
                     <button 
                         className="mt-4 p-2 bg-blue-500 text-white" 
-                        onClick={() => handleSearchClick(cancer[1].filter)}
+                        onClick={() => router.push(`/search`)}
                     >
                         乳癌篩檢
                     </button>
