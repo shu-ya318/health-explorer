@@ -12,34 +12,14 @@ import { db } from '../lib/firebaseConfig';
 import { collection, doc, getDocs, getDoc, query, where, deleteDoc} from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { useFavorite} from '../contexts/FavoriteContext'; 
-import { FirebaseFavoriteData} from '../lib/types';
+import { FirebaseFavoriteData, InstitutionInfo} from '../lib/types';
 import { useAuth } from '../contexts/AuthContext'; 
 import algoliasearch from 'algoliasearch/lite';
 import SignInModal from './auth/SignInModal';
 import RegisterModal from './auth/RegisterModal';
 
 
-interface InstitutionInfo {
-    objectID: string;
-    hosp_name: string;
-    area: string;
-    path: string;
-    tel: string;
-    hosp_addr: string;
-    division: string;
-    view: number;
-    lat: number;
-    lng: number;
-    cancer_screening?:string;
-    imageUrl: string;
-    lastmodified: {
-        _operation: string;
-        value: number;
-    };
-}
-
-
-const searchClient = algoliasearch("N0FZM6IRFS", "f0a299471e81f359d8306ebca289feaf");
+const searchClient = algoliasearch("N0FZM6IRFS", "8beff10e9cbfc7a46566ef515eb9b48c");
 const index = searchClient.initIndex('Medical_Institutions');
 
 const InstitutionContent: React.FC = (): React.ReactElement | null  => {
@@ -54,7 +34,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
     const { state, addFavorite, removeFavorite} = useFavorite();
 
     const router = useRouter();
-    const [institutionDetails, setInstitutionDetails] = useState<InstitutionInfo| null>(null);  //不型別定義[ ]，因接收內容為單物件、也不定義{ }
+    const [institutionDetails, setInstitutionDetails] = useState<InstitutionInfo| null>(null);
     const [comparableInstitutions, setComparableInstitutions] = useState<InstitutionInfo[]>([]);
     const [carouselIndex, setCarouselIndex] = useState(0);
 
@@ -66,34 +46,36 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
 
     useEffect(() => {
         setLoading(true);
+    
         const pathSegments = window.location.pathname.split('/');
         const encodedHospName = pathSegments.pop() || '';
         const hosp_name = decodeURIComponent(encodedHospName); 
 
-        index.search<InstitutionInfo>(hosp_name).then(({ hits }) => {
-            if (hits && hits.length > 0) {
-                const result = hits[0];
-                setInstitutionDetails({
-                    objectID: result.objectID,
-                    hosp_name: result.hosp_name,
-                    area: result.area,
-                    path: result.path,
-                    tel: result.tel,
-                    hosp_addr: result.hosp_addr,
-                    division: result.division,
-                    view: result.view,
-                    lat: result.lat,
-                    lng: result.lng,
-                    imageUrl: result.imageUrl,
-                    lastmodified: result.lastmodified
-                });
-            } else {
-                console.error('No data found for:', hosp_name);
-            }
-        }).catch(error => {
-            console.error('Search failed:', error);
-        });
-
+        index.search<InstitutionInfo>(hosp_name)
+            .then(({ hits }) => {
+                if (hits && hits.length > 0) {
+                    const result = hits[0];
+                    setInstitutionDetails({
+                        objectID: result.objectID,
+                        hosp_name: result.hosp_name,
+                        area: result.area,
+                        path: result.path,
+                        tel: result.tel,
+                        hosp_addr: result.hosp_addr,
+                        division: result.division,
+                        view: result.view,
+                        lat: result.lat,
+                        lng: result.lng,
+                        imageUrl: result.imageUrl,
+                        lastmodified: result.lastmodified
+                    });
+                } else {
+                    console.error('No data found for:', hosp_name);
+                }
+            }).catch(error => {
+                console.error('Search failed:', error);
+            });
+            setLoading(false);
     }, []);
     
     useEffect(() => {
@@ -101,27 +83,27 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
             setLoading(true);
             const filters = `division:"${institutionDetails.division}" AND area:"${institutionDetails.area}"`;
             console.log(filters);
-            index.search<InstitutionInfo>('', { filters }).then(({ hits }) => {
-                const filteredHits = hits.filter(hit => hit.objectID !== institutionDetails.objectID).map(hit => ({
-                    objectID: hit.objectID,
-                    hosp_name: hit.hosp_name || '',
-                    area: hit.area || '',
-                    path: hit.path || '',
-                    tel: hit.tel || '',
-                    hosp_addr: hit.hosp_addr || '',
-                    division: hit.division || '',
-                    view: hit.view || 0,
-                    lat: hit.lat || 0,
-                    lng: hit.lng || 0,
-                    imageUrl: hit.imageUrl || '',
-                    lastmodified: hit.lastmodified || { _operation: '', value: 0 }
-                }));
-                setComparableInstitutions(filteredHits);
+            index.search<InstitutionInfo>('', { filters })
+                .then(({ hits }) => {
+                    const filteredHits = hits.filter(hit => hit.objectID !== institutionDetails.objectID).map(hit => ({
+                        objectID: hit.objectID,
+                        hosp_name: hit.hosp_name || '',
+                        area: hit.area || '',
+                        path: hit.path || '',
+                        tel: hit.tel || '',
+                        hosp_addr: hit.hosp_addr || '',
+                        division: hit.division || '',
+                        view: hit.view || 0,
+                        lat: hit.lat || 0,
+                        lng: hit.lng || 0,
+                        imageUrl: hit.imageUrl || '',
+                        lastmodified: hit.lastmodified || { _operation: '', value: 0 }
+                    }));
+                    setComparableInstitutions(filteredHits);
+                }).catch(error => {
+                    console.error('Search failed for comparable institutions:', error);
+                });
                 setLoading(false);
-            }).catch(error => {
-                console.error('Search failed for comparable institutions:', error);
-                setLoading(false);
-            });
         }
     }, [institutionDetails]);
 

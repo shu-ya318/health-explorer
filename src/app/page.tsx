@@ -7,7 +7,7 @@ import 'animate.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; 
 import { motion, AnimatePresence } from "framer-motion"; 
-import PuffLoader from "react-spinners/PuffLoader";   //大小寫需完全一致
+import PuffLoader from "react-spinners/PuffLoader";
 
 
 interface Search {
@@ -29,7 +29,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
   const searches = [
     { description: '依行政區', filter: '蘆洲區', image: '/images/building-solid.svg' },
     { description: '依科別', filter: '家庭醫學科', image: '/images/stethoscope-solid.svg' },
-    { description: '依癌篩項目', filter: '乳癌', image: '/images/magnifying-glass-plus-solid.svg' },
+    { description: '依癌篩項目', filter: '子宮頸癌', image: '/images/magnifying-glass-plus-solid.svg' },
     { description: '依機構類型', filter: '醫院', image: '/images/hospital-regular.svg' }
   ];
   const cancers = [
@@ -66,7 +66,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
 
   
   const handleSearchClick = (filter: string) => {
-    router.push(`/Search?filter=${filter}`);
+    router.push(`/search?filter=${filter}`);
   };
 
 
