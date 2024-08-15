@@ -73,21 +73,18 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
             imageUrl: hit.imageUrl
         };
         await addFavorite(newRecord);
-        console.log("Favorite added:", newRecord);
     };
 
     const handleRemoveClick = async (objectID:string, userId:string) => {
         if (!user) return;
 
-        //遍歷的key值非同資料庫id，先讀取要操作資料庫的對應文件
         const q = query(collection(db, 'favorites'), where("hosp_name", "==", objectID), where("userId", "==", userId));
         const querySnapshot = await getDocs(q);
     
         if (!querySnapshot.empty) {
             const batch = querySnapshot.docs.map(async (document) => {
                 await deleteDoc(doc(db, 'favorites', document.id));
-                console.log("Deleting document:", document.id);
-                return document.id;  // 間接從firstore才能取得文件id
+                return document.id; 
             });
             const deletedDocIds = await Promise.all(batch);
     
@@ -98,6 +95,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
             console.error("firestore無此筆收藏紀錄文件或狀態找不到對應id的元素");
         }
     };
+    
     
     /* 過濾資料
     useEffect(() => {
@@ -266,13 +264,12 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                 )}
                             </div>
                         </div>
-                        {/*卡片盒*/}
+                        {/*卡片盒 */} 
                         <div className="w-full h-auto m-auto grid grid-cols-4 gap-20 justify-center items-start box-border mt-[20px]">
-                            <Configure hitsPerPage={16} /> 
+                            <Configure hitsPerPage={16} />   
                             {items.map((hit) => (
-                                 <Link  key={hit.objectID} href={`/search/${encodeURIComponent(hit.hosp_name)}`}>
-                                    <div  className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
-                                        <div className="relative">
+                                    <div  key={hit.objectID} className="relative h-[320px] border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
+                                        <Link href={`/search/${encodeURIComponent(hit.hosp_name)}`} className="h-full flex flex-col">
                                             {hit.imageUrl && (
                                                 <Image
                                                     src={hit.imageUrl}
@@ -283,39 +280,38 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                                     unoptimized={true}
                                                 />
                                             )}
-                                            {!user ? (
-                                                <>
-                                                    <button type="button" onClick={() => setIsSignInModalVisible(true)}>
-                                                        <Image src="/images/heart_line.svg" alt="collection" width={40} height={40} className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full" />
-                                                    </button>
-                                                    {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
-                                                    {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    {(() => {
-                                                        const isFavorited = state.favorites.some(item => item.userId === user.uid && item.hosp_name === hit.objectID);
-                                                        const handleHeartClick = isFavorited ? () => handleRemoveClick(hit.objectID, user.uid) : () => handleAddClick(hit, user.uid);
-                                                        return (
-                                                            <button type="button" onClick={handleHeartClick}>
-                                                                <Image 
-                                                                    src="/images/heart_line.svg" 
-                                                                    alt="collection" width={40} height={40} 
-                                                                    className={`${isFavorited ? 'bg-[#FFFFFF] border-[10px]  shadow-[0_0_10px_#6898a5]' : 'bg-transparent '} absolute top-1.5 right-1.5 z-10 border-solid border-2  border-[#6898a5] rounded-full`}
-                                                                />
-                                                            </button>
-                                                        );
-                                                    })()}
-                                                </>
-                                            )}
-                                        </div>
-                                        <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{hit.hosp_name}</div>
-                                        <div className="w-full h-[30px] flex items-center justify-end">
-                                            <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
-                                            <span className="ml-2 text-black mr-[10px]">觀看數:{hit.view}</span>
-                                        </div>
+                                            <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{hit.hosp_name}</div>
+                                            <div className="w-full h-[30px] flex items-center justify-end">
+                                                <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
+                                                <span className="ml-2 text-black mr-[10px]">觀看數:{hit.view}</span>
+                                            </div>
+                                        </Link>
+                                        {!user ? (
+                                            <>
+                                                <button type="button"  className="absolute top-1.5 right-1.5 z-10" onClick={() => setIsSignInModalVisible(true)}>
+                                                    <Image src="/images/heart_line.svg" alt="collection" width={40} height={40} className="border-solid border-2 border-[#6898a5] rounded-full" />
+                                                </button>
+                                                {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
+                                                {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
+                                            </>
+                                        ) : (
+                                            <>
+                                                {(() => {
+                                                    const isFavorited = state.favorites.some(item => item.userId === user.uid && item.hosp_name === hit.objectID);
+                                                    const handleHeartClick = isFavorited ? () => handleRemoveClick(hit.objectID, user.uid) : () => handleAddClick(hit, user.uid);
+                                                    return (
+                                                        <button type="button" className="absolute top-1.5 right-1.5 z-10" onClick={handleHeartClick}>
+                                                            <Image 
+                                                                src="/images/heart_line.svg" 
+                                                                alt="collection" width={40} height={40} 
+                                                                className={`${isFavorited ? 'bg-[#FFFFFF] border-[10px]  shadow-[0_0_10px_#6898a5]' : 'bg-transparent '} border-solid border-2  border-[#6898a5] rounded-full`}
+                                                            />
+                                                        </button>
+                                                    );
+                                                })()}
+                                            </>
+                                        )}
                                     </div>
-                                </Link>
                             ))}
                         </div>
                         <div  className="w-full">

@@ -67,23 +67,22 @@ export const FavoriteProvider: React.FC<FavoriteProviderProps> = ({ children, us
 
       dispatch({ type: 'SET_FAVORITES', payload: data });
   }, [user]);
-
+  
   useEffect(() => {
-      fetchFavoriteData();
-  }, [fetchFavoriteData]);
+    fetchFavoriteData();
+}, [fetchFavoriteData]);
 
 
   const addFavorite = async (favoriteItem: FirebaseFavoriteData) => {
       const docRef = await addDoc(collection(db, 'favorites'), favoriteItem);
       dispatch({ type: 'ADD_FAVORITE', payload: {  ...favoriteItem, id: docRef.id} });
-      console.log(state);
+      fetchFavoriteData();
   };
 
   const removeFavorite = async (docId: string) => {
       await deleteDoc(doc(db, 'favorites', docId));
-      console.log("Removing document from state:", docId);
       dispatch({ type: 'REMOVE_FAVORITE', payload: docId });
-      console.log(state);
+      fetchFavoriteData();
   };
 
 

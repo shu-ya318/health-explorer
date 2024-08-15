@@ -9,9 +9,14 @@ import BounceLoader from "react-spinners/BounceLoader";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { db } from '../lib/firebaseConfig';
-import { collection, doc, getDocs, getDoc, query, where} from 'firebase/firestore';
+import { collection, doc, getDocs, getDoc, query, where, deleteDoc} from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+import { useFavorite} from '../contexts/FavoriteContext'; 
+import { FirebaseFavoriteData} from '../lib/types';
+import { useAuth } from '../contexts/AuthContext'; 
 import algoliasearch from 'algoliasearch/lite';
+import SignInModal from './auth/SignInModal';
+import RegisterModal from './auth/RegisterModal';
 
 
 interface InstitutionInfo {
@@ -42,6 +47,12 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
 
     const [openLoading, setOpenLoading] = useState<boolean>(true);
     const [loading,setLoading] = useState<boolean>(false);
+
+    const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
+    const [isSignInModalVisible, setIsSignInModalVisible] = useState(false);
+    const { user } = useAuth();
+    const { state, addFavorite, removeFavorite} = useFavorite();
+
     const router = useRouter();
     const [institutionDetails, setInstitutionDetails] = useState<InstitutionInfo| null>(null);  //不型別定義[ ]，因接收內容為單物件、也不定義{ }
     const [comparableInstitutions, setComparableInstitutions] = useState<InstitutionInfo[]>([]);
@@ -85,7 +96,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
 
     }, []);
     
-    useEffect(() => {    //官網自行先手動輸入
+    useEffect(() => {
         if (institutionDetails) {
             setLoading(true);
             const filters = `division:"${institutionDetails.division}" AND area:"${institutionDetails.area}"`;
@@ -123,10 +134,10 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
     }, [institutionDetails]);
 
 
-    const handleIncrement = (hosp_name: string, url: string) => {
+    /*const handleIncrement = (hosp_name: string, url: string) => {
         //incrementView(hosp_name);
         router.push(url); 
-    };
+    };*/
 
 
     const handleNext = () => {
@@ -139,13 +150,49 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
             setCarouselIndex(prev => prev - 3);
         }
     };
-
     const displayedInstitutions = useMemo(() => {
         return comparableInstitutions.slice(carouselIndex, carouselIndex + 3);
     }, [carouselIndex, comparableInstitutions]);
 
     const isAtStart = carouselIndex === 0;
     const isAtEnd = carouselIndex + 3 >= comparableInstitutions.length;
+
+    const handleAddClick = async (institution: InstitutionInfo, userId:string) => {
+        if (!user) return;
+
+        const newRecord: FirebaseFavoriteData = {
+            userId: user.uid,
+            hosp_name: institution.hosp_name,
+            hosp_addr: institution.hosp_addr,
+            tel:institution.tel,
+            //division: institution.division, 
+            //cancer_screening: institution.cancer_screening,
+            timestamp: new Date() ,
+            imageUrl: institution.imageUrl
+        };
+        await addFavorite(newRecord);
+    };
+
+    const handleRemoveClick = async (objectID:string, userId:string) => {
+        if (!user) return;
+
+        const q = query(collection(db, 'favorites'), where("hosp_name", "==", objectID), where("userId", "==", userId));
+        const querySnapshot = await getDocs(q);
+    
+        if (!querySnapshot.empty) {
+            const batch = querySnapshot.docs.map(async (document) => {
+                await deleteDoc(doc(db, 'favorites', document.id));
+                return document.id;
+            });
+            const deletedDocIds = await Promise.all(batch);
+    
+            deletedDocIds.forEach(docId => {
+                removeFavorite(docId);
+            });
+        } else {
+            console.error("firestore無此筆收藏紀錄文件或狀態找不到對應id的元素");
+        }
+    };
 
 
     return(
@@ -158,7 +205,31 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                             <div className="w-[1200px]">
                                 <div className="w-full flex  flex-col items-center">
                                     <h3 className="text-3xl text-black font-bold text-center mt-[40px]">{institutionDetails.hosp_name}</h3>
-                                    <Image src="/images/heart_line.svg" alt="collection"  width={40} height={40} className="mt-[30px] border-solid border-4 border-[#6898a5] rounded-full" />
+                                    {!user ? (
+                                        <>
+                                            <button type="button" onClick={() => setIsSignInModalVisible(true)}>
+                                                <Image src="/images/heart_line.svg" alt="collection" width={40} height={40} className="mt-[30px] border-solid border-2 border-[#6898a5] rounded-full" />
+                                            </button>
+                                            {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
+                                            {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
+                                        </>
+                                    ) : (
+                                        <>
+                                            {(() => {
+                                                const isFavorited = state.favorites.some(item => item.userId === user.uid && item.hosp_name === institutionDetails.objectID);
+                                                const handleHeartClick = isFavorited ? () => handleRemoveClick(institutionDetails.objectID, user.uid) : () => handleAddClick(institutionDetails, user.uid);
+                                                return (
+                                                    <button type="button" onClick={handleHeartClick}>
+                                                        <Image 
+                                                            src="/images/heart_line.svg" 
+                                                            alt="collection" width={40} height={40} 
+                                                            className={`${isFavorited ? 'bg-[#FFFFFF] border-[10px]  shadow-[0_0_10px_#6898a5]' : 'bg-transparent '} mt-[30px] border-solid border-2  border-[#6898a5] rounded-full`}
+                                                        />
+                                                    </button>
+                                                );
+                                            })()}
+                                        </>
+                                    )}
                                 </div>
                                 {/*簡介*/}
                                     <hr className="w-full border border-[#acb8b6] my-[30px]"/>
@@ -222,43 +293,50 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                 <Image src="/images/left_arrow.png" alt="left-arrow-icon" width={46} height={46} />
                                             </button>  
                                             {displayedInstitutions.map(institution => (   
-                                                <Link 
-                                                key={institution.hosp_name} 
-                                                href={`/search/${encodeURIComponent(institution.hosp_name)}`}
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    handleIncrement(institution.hosp_name, `/search/${encodeURIComponent(institution.hosp_name)}`);
-                                                }}
-                                            >
-                                                <div className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
-                                                    <div className="relative">
+                                                <div  key={institution.hosp_name} className="relative h-[320px] border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
+                                                    <Link   href={`/search/${encodeURIComponent(institution.hosp_name)}`} className="h-full flex flex-col">
                                                         {institution.imageUrl && (
-                                                            <Image 
-                                                                src={institution.imageUrl} 
-                                                                alt="institution" 
-                                                                width={250} 
-                                                                height={200} 
-                                                                className="w-full h-[200px]  object-cover object-center"  
+                                                            <Image
+                                                                src={institution.imageUrl}
+                                                                alt="institution"
+                                                                width={250}
+                                                                height={200}
+                                                                className="w-full h-[200px] object-cover object-center"
                                                                 unoptimized={true}
                                                             />
                                                         )}
-                                                        
-                                                        <Image 
-                                                            className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full" 
-                                                            src="/images/heart_line.svg" 
-                                                            alt="collection" 
-                                                            width={40} 
-                                                            height={40} 
-                                                        />
-
-                                                    </div>
-                                                    <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{institution.hosp_name}</div>
-                                                    <div className="w-full h-[30px] flex items-center justify-end">
-                                                        <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
-                                                        {/*<span className="ml-2 text-black mr-[10px] mt-[5px]">觀看數:{views[institution.hosp_name]}</span>*/} 
-                                                    </div>
+                                                        <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{institution.hosp_name}</div>
+                                                        <div className="w-full h-[30px] flex items-center justify-end">
+                                                            <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
+                                                            <span className="ml-2 text-black mr-[10px]">觀看數:{institution.view}</span>
+                                                        </div>
+                                                    </Link>
+                                                    {!user ? (
+                                                        <>
+                                                            <button type="button"  className="absolute top-1.5 right-1.5 z-10" onClick={() => setIsSignInModalVisible(true)}>
+                                                                <Image src="/images/heart_line.svg" alt="collection" width={40} height={40} className="border-solid border-2 border-[#6898a5] rounded-full" />
+                                                            </button>
+                                                            {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
+                                                            {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            {(() => {
+                                                                const isFavorited = state.favorites.some(item => item.userId === user.uid && item.hosp_name === institution.objectID);
+                                                                const handleHeartClick = isFavorited ? () => handleRemoveClick(institution.objectID, user.uid) : () => handleAddClick(institution, user.uid);
+                                                                return (
+                                                                    <button type="button" className="absolute top-1.5 right-1.5 z-10" onClick={handleHeartClick}>
+                                                                        <Image 
+                                                                            src="/images/heart_line.svg" 
+                                                                            alt="collection" width={40} height={40} 
+                                                                            className={`${isFavorited ? 'bg-[#FFFFFF] border-[10px]  shadow-[0_0_10px_#6898a5]' : 'bg-transparent '} border-solid border-2  border-[#6898a5] rounded-full`}
+                                                                        />
+                                                                    </button>
+                                                                );
+                                                            })()}
+                                                        </>
+                                                    )}
                                                 </div>
-                                            </Link>
                                             ))}
                                             <button
                                                 id="right-arrow"
