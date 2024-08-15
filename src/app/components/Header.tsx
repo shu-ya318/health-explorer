@@ -17,7 +17,7 @@ const Header: React.FC = () => {
 
   const handleFavoriteClick = () => {
     if (user) {
-      router.push('/Favorite'); 
+      router.push('/favorite'); 
     } else {
       setIsSignInModalVisible(true);
     }

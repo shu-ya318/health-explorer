@@ -22,7 +22,9 @@ export const InstantResults = () => {
 const SearchBoxComponent = () => {
   return (
     <>
-      <SearchBox placeholder="請輸入關鍵字"/>
+       <div className="flex max-w-screen-md h-full mx-auto"> 
+          <SearchBox className="ais-InstantSearch flex flex-col w-full h-full z-40 rounded-lg border-solid border-[3px] border-[#6898a5]" placeholder="請輸入關鍵字"/>
+      </div>
     </>
   );
 };

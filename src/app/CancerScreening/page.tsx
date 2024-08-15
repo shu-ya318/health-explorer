@@ -26,7 +26,7 @@ const CancerScreeningPage: React.FC = (): React.ReactElement | null  => {
     useEffect(()=>{
         if (finished && answers.length === surveyItems.length) {
             localStorage.setItem('answers', JSON.stringify(answers));
-            router.push('/CancerScreening/Result');
+            router.push('/cancerScreening/result');
         }
     },[finished, router, answers]);
 

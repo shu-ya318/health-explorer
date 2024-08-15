@@ -1,20 +1,24 @@
 //import {useInstitutions }  from "../contexts/InstitutionsContext";
-import {useState, useEffect, ChangeEvent, FormEvent} from 'react';
+import {useState, useEffect, ChangeEvent, FormEvent, useRef} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';   
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { SearchBox, Configure, useHits, Pagination } from 'react-instantsearch';
-import { finalHit } from "./AlgoliaSearch/finalHit";
-
 import { db } from '../lib/firebaseConfig';
 import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot } from 'firebase/firestore';
 import { useFavorite} from '../contexts/FavoriteContext'; 
-import { FirebaseFavoriteData} from '../lib/types';
+import { FirebaseFavoriteData, InstitutionInfo} from '../lib/types';
+import algoliasearch,{ SearchIndex }  from 'algoliasearch';
+import Pagination from '../components/Pagination';
 import { useAuth } from '../contexts/AuthContext'; 
 import SignInModal from './auth/SignInModal';
 import RegisterModal from './auth/RegisterModal';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
+
+const searchClient = algoliasearch("N0FZM6IRFS", "8beff10e9cbfc7a46566ef515eb9b48c");
+const index = searchClient.initIndex('Medical_Institutions');
 
 const cancers = [
     { filter: '子宮頸癌', image:"/images/cervicalCancer.png"},
@@ -50,44 +54,165 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
 
     const router = useRouter();
     const searchParams = useSearchParams();
-    const filter = searchParams.get('filter');
+    const filterValue = decodeURIComponent(searchParams.get('filter') || '');
 
+
+    const searchInputRef = useRef<HTMLInputElement>(null);
+// const [sortByViews, setSortByViews] = useState<boolean>(false);
     const [isOpenInstitutions, setIsOpenInstitutions] = useState(false);
     const [isOpenDivisions, setIsOpenDivisions] = useState(false);
     const [isOpenDistricts, setIsOpenDistricts] = useState(false);
 
-    const { items } = useHits();
+    const [loading,setLoading] = useState<boolean>(false);
+    // const [selectedCancer, setSelectedCancer] = useState('');
+    const [currentData, setCurrentData] = useState<InstitutionInfo[]>([]); 
+
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const postsPerPage = 20;
 
 
-    const handleAddClick = async (hit: any, userId:string) => {
+    
+    // 初次載入頁面:跳轉的過濾資料或全部資料
+    useEffect(() => {
+        const fetchAndSetData = async () => {
+            setLoading(true);
+            if (filterValue) {
+                let searchOptions = {};
+
+                if (['子宮頸癌', '乳癌', '大腸癌', '口腔癌', '肺癌'].includes(filterValue)) {
+                        facetFilters: [[`cancer_screening:${filterValue}`]]
+                } else {
+                    switch (filterValue) {
+                        case '蘆洲區':
+                            searchOptions = { filters: `area:"${filterValue}"` };
+                            break;
+                        case '家庭醫學科':
+                            facetFilters: [[`division:${filterValue}`]]
+                            break;
+                        case '醫院':
+                            searchOptions = { query: filterValue };
+                            break;
+                        default:
+                            setLoading(false);
+                            return;
+                    }
+                }
+
+                index.search<InstitutionInfo>(filterValue, searchOptions)
+                .then(({ hits }) => {
+                    setCurrentData(hits);
+                    setLoading(false);
+                }).catch(error => {
+                    console.error("Search failed: ", error);
+                    setLoading(false);
+                });
+            } else {
+                let hits: InstitutionInfo[] = [];
+                await index.browseObjects<InstitutionInfo>({
+                    batch: (batch:any) => {
+                        hits = hits.concat(batch as InstitutionInfo[]);
+                    }
+                });
+
+                if (hits.length > 0) {
+                    setCurrentData(hits);
+                } else {
+                    console.error('No data found');
+                }
+                setLoading(false);
+            }
+        };
+
+        fetchAndSetData().catch(error => {
+            console.error('Failed to fetch data:', error);
+            setLoading(false);
+        });
+    }, [filterValue]);
+
+    
+    const handleSearch = async (): Promise<void> => {
+        const searchTerm = searchInputRef.current?.value.trim();
+        setLoading(true);
+        index.search<InstitutionInfo>(searchTerm || '')
+            .then(({ hits }) => {
+                setCurrentData(hits as InstitutionInfo[]);
+            }).catch(error => {
+                console.error('Search failed:', error);
+            });
+            setLoading(false);
+    };
+    const deleteSearch = () => {
+        if (searchInputRef.current) {
+            searchInputRef.current.value = "";
+        }
+    }
+
+
+    const handleCancerFilter = async (cancerType: string) => {
+        setLoading(true);
+        const searchOptions = { query: cancerType };
+        index.search<InstitutionInfo>(cancerType, searchOptions)
+            .then(({ hits }) => {
+                setCurrentData(hits);
+                console.log('Search Results on Cancer Type Updated:', hits);
+            }).catch(error => {
+                console.error('Search failed:', error);
+            });
+        setLoading(false);
+    };
+
+
+    const toggleDropdowns = (type: 'institutions' | 'divisions' | 'districts'): void => {
+        setIsOpenInstitutions(type === 'institutions' ? !isOpenInstitutions : false);
+        setIsOpenDivisions(type === 'divisions' ? !isOpenDivisions : false);
+        setIsOpenDistricts(type === 'districts' ? !isOpenDistricts : false);
+    };
+    const handleSelectFilter = (filterType: 'institution' | 'division' | 'district', value: string): void => {
+        setLoading(true);
+        
+        const searchOptions = {facetFilters: [[`cancer_screening:${filterValue}`]]};
+        console.error(searchOptions);
+        index.search<InstitutionInfo>(value, searchOptions)
+        .then(({ hits }) => {
+            setCurrentData(hits);
+            setLoading(false);
+        }).catch(error => {
+            console.error("Search failed: ", error);
+            setLoading(false);
+        });
+
+        setCurrentPage(1);
+        setIsOpenInstitutions(false);
+        setIsOpenDivisions(false);
+        setIsOpenDistricts(false);
+    };
+    
+
+    const handleAddClick = async (institution: InstitutionInfo, userId:string) => {
         if (!user) return;
 
         const newRecord: FirebaseFavoriteData = {
             userId: user.uid,
-            hosp_name: hit.hosp_name,
-            hosp_addr: hit.hosp_addr,
-            tel:hit.tel,
-            //division: hit.division, 
-            //cancer_screening: hit.cancer_screening,
+            hosp_name: institution.hosp_name,
+            hosp_addr: institution.hosp_addr,
+            tel:institution.tel,
+            //division: institution.division, 
+            //cancer_screening: institution.cancer_screening,
             timestamp: new Date() ,
-            imageUrl: hit.imageUrl
+            imageUrl: institution.imageUrl
         };
         await addFavorite(newRecord);
-        console.log("Favorite added:", newRecord);
     };
-
     const handleRemoveClick = async (objectID:string, userId:string) => {
         if (!user) return;
 
-        //遍歷的key值非同資料庫id，先讀取要操作資料庫的對應文件
         const q = query(collection(db, 'favorites'), where("hosp_name", "==", objectID), where("userId", "==", userId));
         const querySnapshot = await getDocs(q);
     
         if (!querySnapshot.empty) {
             const batch = querySnapshot.docs.map(async (document) => {
                 await deleteDoc(doc(db, 'favorites', document.id));
-                console.log("Deleting document:", document.id);
-                return document.id;  // 間接從firstore才能取得文件id
+                return document.id; 
             });
             const deletedDocIds = await Promise.all(batch);
     
@@ -99,48 +224,6 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
         }
     };
     
-    /* 過濾資料
-    useEffect(() => {
-        let filteredData = institutionData as FirebaseInstitutionData[];
-        if (filter) {
-            filteredData = institutionData.filter(institution =>
-                institution.hosp_name.includes(filter) ||
-                institution.division?.includes(filter) ||
-                institution.area?.includes(filter) ||
-                institution.cancer_screening?.includes(filter)
-            );
-        }
-        setCurrentData(filteredData);
-    }, [filter, institutionData]);
-
-
-    const handleCancerFilter = (cancerType: string) => {
-        const filteredInstitutions = institutionData.filter(institution =>
-            institution.cancer_screening?.includes(cancerType)
-        );
-        setCurrentData(filteredInstitutions);
-        setCurrentPage(1);
-    };
-
-
-    const toggleDropdowns = (type: 'institutions' | 'divisions' | 'districts'): void => {
-        setIsOpenInstitutions(type === 'institutions' ? !isOpenInstitutions : false);
-        setIsOpenDivisions(type === 'divisions' ? !isOpenDivisions : false);
-        setIsOpenDistricts(type === 'districts' ? !isOpenDistricts : false);
-    };
-    const handleSelectFilter = (filterType: 'institution' | 'division' | 'district', value: string): void => {
-        const filteredData = institutionData.filter(institution =>
-            filterType === 'institution' ? institution.hosp_name.includes(value) :
-            filterType === 'division' ? institution.division?.includes(value) :
-            institution.area?.includes(value)
-        );
-        setCurrentData(filteredData);
-        setCurrentPage(1);
-        setIsOpenInstitutions(false);
-        setIsOpenDivisions(false);
-        setIsOpenDistricts(false);
-    };
-*/
 
     /*觀看數 useEffect(() => {
         let data = [...institutionData];
@@ -161,14 +244,37 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     };
     */
 
+    
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = currentData.slice(indexOfFirstPost, indexOfLastPost);
+
 
     return (
         <main className="w-full h-auto flex flex-col justify-center items-center flex-grow bg-[#ffffff]" >
                 <div className="w-[1280px]">
-                    {/*搜*/}
+                    {/*搜  flex-row */}
                     <div className="w-full h-10 mt-[60px]  mb-[30px]"> 
                         <div className="flex max-w-screen-md h-full mx-auto"> 
-                            <SearchBox className="ais-InstantSearch flex flex-col w-full h-full z-40 rounded-lg border-solid border-[3px] border-[#6898a5]" placeholder="請輸入關鍵字"/>
+                            <div className="flex relative w-full h-full ">
+                                <input
+                                    className="flex-grow h-full px-4 text-lg font-bold text-gray-500 border-solid border-2 border-[#6898a5] shadow-[0_0_3px_#AABBCC] rounded-l-md"
+                                    type="text"
+                                    placeholder="輸入關鍵字搜尋"
+                                    ref={searchInputRef}
+                                />
+                                <button className="hover:scale-110 absolute top-2 right-10 z-10" onClick={deleteSearch}>
+                                    <Image className="" src="/images/xmark-solid.svg" alt="close" width={15} height={15} />
+                                </button>                               
+                            </div>
+                            <button 
+                                className="flex w-32 h-full bg-[#24657d] hover:bg-[#7199a1] hover:text-black rounded-r-md items-center  justify-center font-bold"
+                                onClick={handleSearch}
+                            >
+                                <Image className="w-auto h-auto" src="/images/search.png" alt="Search" width={40} height={40}/>
+                                搜尋
+                            </button>
                         </div>
                     </div>
                     {/*癌篩分類*/}
@@ -179,7 +285,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                 <button 
                                     key={index} 
                                     className="w-2/12 flex flex-col justify-between text-[#0e4b66] transition-transform duration-300 hover:scale-110 hover:shadow-lg hover:shadow-gray-400"
-                                    //onClick={() => handleCancerFilter(cancer.filter)}
+                                    onClick={() => handleCancerFilter(cancer.filter)}
                                 >
                                     <div className="w-full h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
                                     <hr className="w-9/12 mx-auto border-solid border-2 border-[#acb8b6]"/>
@@ -202,7 +308,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                             </button>
                             <div className="relative w-36">
                                 <button
-                                    //onClick={() => toggleDropdowns('institutions')}
+                                    onClick={() => toggleDropdowns('institutions')}
                                     className={`flex justify-around items-center font-bold border border-[#e6e6e6] ${isOpenInstitutions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#ffffff] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
                                 >
                                     依機構
@@ -213,7 +319,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                         {institutions.map((institution) => (
                                             <li key={institution} 
                                                 className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-2 border-solid border border-[#e6e6e6] rounded-md  cursor-pointer"
-                                                //onClick={() => handleSelectFilter('institution', institution)} 
+                                                onClick={() => handleSelectFilter('institution', institution)} 
                                             >
                                                 {institution}
                                             </li>
@@ -223,7 +329,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                             </div>
                             <div className="relative w-36">
                                 <button
-                                    //onClick={() => toggleDropdowns('divisions')}
+                                    onClick={() => toggleDropdowns('divisions')}
                                     className={`flex justify-around items-center font-bold border border-[#e6e6e6] ${isOpenDivisions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#ffffff] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
                                 >
                                     依科別
@@ -235,7 +341,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                             <li 
                                                 key={division} 
                                                 className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]  rounded-md  cursor-pointer " 
-                                                //onClick={() => handleSelectFilter('division', division)}
+                                                onClick={() => handleSelectFilter('division', division)}
                                             >
                                                 {division}
                                             </li>
@@ -245,7 +351,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                             </div>
                             <div className="relative w-36">
                                 <button
-                                    //onClick={() => toggleDropdowns('districts')}
+                                    onClick={() => toggleDropdowns('districts')}
                                     className={`rounded-r-md flex justify-around items-center font-bold border border-[#e6e6e6] ${isOpenDistricts ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#ffffff] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
                                 >
                                     依行政區
@@ -257,7 +363,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                             <li 
                                                 key={district} 
                                                 className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]  rounded-md  cursor-pointer " 
-                                                //onClick={() => handleSelectFilter('district', district)}
+                                                onClick={() => handleSelectFilter('district', district)}
                                                 >
                                                 {district}
                                             </li>
@@ -266,16 +372,19 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                 )}
                             </div>
                         </div>
-                        {/*卡片盒*/}
+                        {/*卡片盒 */} 
                         <div className="w-full h-auto m-auto grid grid-cols-4 gap-20 justify-center items-start box-border mt-[20px]">
-                            <Configure hitsPerPage={16} /> 
-                            {items.map((hit) => (
-                                 <Link  key={hit.objectID} href={`/Search/${encodeURIComponent(hit.hosp_name)}`}>
-                                    <div  className="h-[320px] flex flex-col border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
-                                        <div className="relative">
-                                            {hit.imageUrl && (
+                        {loading ? (
+                            Array.from({ length: postsPerPage }, (_, index) => (
+                                <Skeleton key={index} height={320} width={250} className="m-[10px]" />
+                            ))
+                        ) : (
+                            currentPosts.map((institution) => (
+                                    <div  key={institution.hosp_name} className="relative h-[320px] border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
+                                        <Link href={`/search/${encodeURIComponent(institution.hosp_name)}`} className="h-full flex flex-col">
+                                            {institution.imageUrl && (
                                                 <Image
-                                                    src={hit.imageUrl}
+                                                    src={institution.imageUrl}
                                                     alt="institution"
                                                     width={250}
                                                     height={200}
@@ -283,45 +392,51 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                                     unoptimized={true}
                                                 />
                                             )}
-                                            {/* 連接另一個資料庫favorites */}
-                                            {!user ? (
-                                                <>
-                                                    <button type="button" onClick={() => setIsSignInModalVisible(true)}>
-                                                        <Image src="/images/heart_line.svg" alt="collection" width={40} height={40} className="absolute top-1.5 right-1.5 z-10 border-solid border-2 border-[#6898a5] rounded-full" />
-                                                    </button>
-                                                    {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
-                                                    {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    {(() => {
-                                                        const isFavorited = state.favorites.some(item => item.userId === user.uid && item.hosp_name === hit.objectID);
-                                                        const handleHeartClick = isFavorited ? () => handleRemoveClick(hit.objectID, user.uid) : () => handleAddClick(hit, user.uid);
-                                                        return (
-                                                            <button type="button" onClick={handleHeartClick}>
-                                                                <Image 
-                                                                    src="/images/heart_line.svg" 
-                                                                    alt="collection" width={40} height={40} 
-                                                                    className={`${isFavorited ? 'bg-[#FFFFFF] border-[10px]  shadow-[0_0_10px_#6898a5]' : 'bg-transparent '} absolute top-1.5 right-1.5 z-10 border-solid border-2  border-[#6898a5] rounded-full`}
-                                                                />
-                                                            </button>
-                                                        );
-                                                    })()}
-                                                </>
-                                            )}
-                                        </div>
-                                        <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{hit.hosp_name}</div>
-                                        <div className="w-full h-[30px] flex items-center justify-end">
-                                            <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
-                                            <span className="ml-2 text-black mr-[10px]">觀看數:{hit.view}</span>
-                                        </div>
+                                            <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{institution.hosp_name}</div>
+                                            <div className="w-full h-[30px] flex items-center justify-end">
+                                                <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
+                                                <span className="ml-2 text-black mr-[10px]">觀看數:{institution.view}</span>
+                                            </div>
+                                        </Link>
+                                        {!user ? (
+                                            <>
+                                                <button type="button"  className="absolute top-1.5 right-1.5 z-10" onClick={() => setIsSignInModalVisible(true)}>
+                                                    <Image src="/images/heart_line.svg" alt="collection" width={40} height={40} className="border-solid border-2 border-[#6898a5] rounded-full" />
+                                                </button>
+                                                {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
+                                                {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
+                                            </>
+                                        ) : (
+                                            <>
+                                                {(() => {
+                                                    const isFavorited = state.favorites.some(item => item.userId === user.uid && item.hosp_name === institution.objectID);
+                                                    const handleHeartClick = isFavorited ? () => handleRemoveClick(institution.objectID, user.uid) : () => handleAddClick(institution, user.uid);
+                                                    return (
+                                                        <button type="button" className="absolute top-1.5 right-1.5 z-10" onClick={handleHeartClick}>
+                                                            <Image 
+                                                                src="/images/heart_line.svg" 
+                                                                alt="collection" width={40} height={40} 
+                                                                className={`${isFavorited ? 'bg-[#FFFFFF] border-[10px]  shadow-[0_0_10px_#6898a5]' : 'bg-transparent '} border-solid border-2  border-[#6898a5] rounded-full`}
+                                                            />
+                                                        </button>
+                                                    );
+                                                })()}
+                                            </>
+                                        )}
                                     </div>
-                                </Link>
-                            ))}
+                            ))
+                        )}
                         </div>
-                        <div  className="w-full">
-                            <Pagination padding={5} showFirst={true} showLast={true} className="my-[50px]  mx-auto w-[650px]"/>
-                        </div>
+                        {loading ? (
+                            <Skeleton  height={50} width={1280} className="m-[10px]" />
+                        ):( 
+                            <Pagination
+                                postsPerPage={postsPerPage}
+                                totalPosts={currentData.length}
+                                paginate={paginate}
+                                currentPage={currentPage}
+                            />
+                        )}
                     </div>
                 </div>
             </main>

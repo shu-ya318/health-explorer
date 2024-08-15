@@ -61,16 +61,6 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ }),
 
-/***/ "(ssr)/./node_modules/react-instantsearch-core/dist/es/connectors/usePagination.js":
-/*!***********************************************************************************!*\
-  !*** ./node_modules/react-instantsearch-core/dist/es/connectors/usePagination.js ***!
-  \***********************************************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   usePagination: () => (/* binding */ usePagination)\n/* harmony export */ });\n/* harmony import */ var instantsearch_js_es_connectors_pagination_connectPagination_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! instantsearch.js/es/connectors/pagination/connectPagination.js */ \"(ssr)/./node_modules/instantsearch.js/es/connectors/pagination/connectPagination.js\");\n/* harmony import */ var _hooks_useConnector_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../hooks/useConnector.js */ \"(ssr)/./node_modules/react-instantsearch-core/dist/es/hooks/useConnector.js\");\n\n\nfunction usePagination(props, additionalWidgetProperties) {\n  return (0,_hooks_useConnector_js__WEBPACK_IMPORTED_MODULE_0__.useConnector)(instantsearch_js_es_connectors_pagination_connectPagination_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"], props, additionalWidgetProperties);\n}//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKHNzcikvLi9ub2RlX21vZHVsZXMvcmVhY3QtaW5zdGFudHNlYXJjaC1jb3JlL2Rpc3QvZXMvY29ubmVjdG9ycy91c2VQYWdpbmF0aW9uLmpzIiwibWFwcGluZ3MiOiI7Ozs7OztBQUErRjtBQUN2QztBQUNqRDtBQUNQLFNBQVMsb0VBQVksQ0FBQyxzR0FBaUI7QUFDdkMiLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly9oZWFsdGgtZXhwbG9yZXIvLi9ub2RlX21vZHVsZXMvcmVhY3QtaW5zdGFudHNlYXJjaC1jb3JlL2Rpc3QvZXMvY29ubmVjdG9ycy91c2VQYWdpbmF0aW9uLmpzP2U2ZDAiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IGNvbm5lY3RQYWdpbmF0aW9uIGZyb20gXCJpbnN0YW50c2VhcmNoLmpzL2VzL2Nvbm5lY3RvcnMvcGFnaW5hdGlvbi9jb25uZWN0UGFnaW5hdGlvbi5qc1wiO1xuaW1wb3J0IHsgdXNlQ29ubmVjdG9yIH0gZnJvbSBcIi4uL2hvb2tzL3VzZUNvbm5lY3Rvci5qc1wiO1xuZXhwb3J0IGZ1bmN0aW9uIHVzZVBhZ2luYXRpb24ocHJvcHMsIGFkZGl0aW9uYWxXaWRnZXRQcm9wZXJ0aWVzKSB7XG4gIHJldHVybiB1c2VDb25uZWN0b3IoY29ubmVjdFBhZ2luYXRpb24sIHByb3BzLCBhZGRpdGlvbmFsV2lkZ2V0UHJvcGVydGllcyk7XG59Il0sIm5hbWVzIjpbXSwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///(ssr)/./node_modules/react-instantsearch-core/dist/es/connectors/usePagination.js\n");
-
-/***/ }),
-
 /***/ "(ssr)/./node_modules/react-instantsearch-core/dist/es/connectors/useSearchBox.js":
 /*!**********************************************************************************!*\
   !*** ./node_modules/react-instantsearch-core/dist/es/connectors/useSearchBox.js ***!
