@@ -87,7 +87,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
 
 
     const handleDeleteClick = async (docId: string) => {
-        if (!user) return;
+        if (!uid) return;
 
         try {
             await removeFavorite(docId);
