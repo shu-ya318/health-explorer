@@ -19,7 +19,10 @@ import SignInModal from './auth/SignInModal';
 import RegisterModal from './auth/RegisterModal';
 
 
-const searchClient = algoliasearch("N0FZM6IRFS", "8beff10e9cbfc7a46566ef515eb9b48c");
+const searchClient = algoliasearch(
+    process.env.ALGOLIA_APP_ID as string, 
+    process.env.ALGOLIA_SEARCH_KEY as string
+  );
 const index = searchClient.initIndex('Medical_Institutions');
 
 const InstitutionContent: React.FC = (): React.ReactElement | null  => {
