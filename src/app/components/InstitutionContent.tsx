@@ -9,7 +9,7 @@ import BounceLoader from "react-spinners/BounceLoader";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { db } from '../lib/firebaseConfig';
-import { collection, doc, getDocs, getDoc, query, where, deleteDoc} from 'firebase/firestore';
+import { collection, doc, getDocs, getDoc, query, where, deleteDoc, updateDoc, increment } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 import { useFavorite} from '../contexts/FavoriteContext'; 
 import { FirebaseFavoriteData, InstitutionInfo} from '../lib/types';
@@ -142,6 +142,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
     const isAtStart = carouselIndex === 0;
     const isAtEnd = carouselIndex + 3 >= comparableInstitutions.length;
 
+
     const handleAddClick = async (institution: InstitutionInfo, userId:string) => {
         if (!user) return;
 
@@ -157,7 +158,6 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
         };
         await addFavorite(newRecord);
     };
-
     const handleRemoveClick = async (objectID:string, userId:string) => {
         if (!user) return;
 
@@ -178,6 +178,20 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
             console.error("firestore無此筆收藏紀錄文件或狀態找不到對應id的元素");
         }
     };
+
+    const handleIncrement = async (institution: InstitutionInfo) => {
+        const docRef = doc(db, 'medicalInstitutions', institution.hosp_name);
+        router.push(`/search/${encodeURIComponent(institution.hosp_name)}`);
+        
+        try {
+            await updateDoc(docRef, {
+                view: increment(1)
+            });
+            
+        } catch (error) {
+            console.error('Failed to increment views:', error);
+        }
+     };
 
 
     return(
@@ -279,7 +293,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                             </button>  
                                             {displayedInstitutions.map(institution => (   
                                                 <div  key={institution.hosp_name} className="relative h-[320px] border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
-                                                    <Link   href={`/search/${encodeURIComponent(institution.hosp_name)}`} className="h-full flex flex-col">
+                                                     <button onClick={() => handleIncrement(institution)} className="h-full w-full flex flex-col">
                                                         {institution.imageUrl && (
                                                             <Image
                                                                 src={institution.imageUrl}
@@ -295,7 +309,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                             <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
                                                             <span className="ml-2 text-black mr-[10px]">觀看數:{institution.view}</span>
                                                         </div>
-                                                    </Link>
+                                                    </button>
                                                     {!user ? (
                                                         <>
                                                             <button type="button"  className="absolute top-1.5 right-1.5 z-10" onClick={() => setIsSignInModalVisible(true)}>
