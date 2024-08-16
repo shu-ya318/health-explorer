@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { db } from '../lib/firebaseConfig';
-import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot } from 'firebase/firestore';
+import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot, updateDoc, increment, getDoc } from 'firebase/firestore';
 import { useFavorite} from '../contexts/FavoriteContext'; 
 import { FirebaseFavoriteData, InstitutionInfo} from '../lib/types';
 import algoliasearch,{ SearchIndex }  from 'algoliasearch';
@@ -61,18 +61,16 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
 
 
     const searchInputRef = useRef<HTMLInputElement>(null);
-// const [sortByViews, setSortByViews] = useState<boolean>(false);
+    const [sortByViews, setSortByViews] = useState<boolean>(false);
     const [isOpenInstitutions, setIsOpenInstitutions] = useState(false);
     const [isOpenDivisions, setIsOpenDivisions] = useState(false);
     const [isOpenDistricts, setIsOpenDistricts] = useState(false);
 
     const [loading,setLoading] = useState<boolean>(false);
-    // const [selectedCancer, setSelectedCancer] = useState('');
     const [currentData, setCurrentData] = useState<InstitutionInfo[]>([]); 
 
     const [currentPage, setCurrentPage] = useState<number>(1);
     const postsPerPage = 20;
-
 
     
     // 初次載入頁面:跳轉的過濾資料或全部資料
@@ -228,25 +226,19 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     };
     
 
-    /*觀看數 useEffect(() => {
-        let data = [...institutionData];
-        if (sortByViews) {
-            data.sort((a, b) => (views[b.hosp_name] || 0) - (views[a.hosp_name] || 0));
-        }
-        setCurrentData(data);
-    }, [institutionData, sortByViews, views]);
+const handleIncrement = async (institution: InstitutionInfo) => {
+    const docRef = doc(db, 'medicalInstitutions', institution.hosp_name);
+    router.push(`/search/${encodeURIComponent(institution.hosp_name)}`);
 
-    const handleSortByViews = (): void => {
-        setSortByViews(!sortByViews);
-        setCurrentPage(1);
-    };
-*/
-    /*const handleIncrement = (hosp_name: string, url: string) => {
-        incrementView(hosp_name);
-        router.push(url); 
-    };
-    */
-
+    try {
+        await updateDoc(docRef, {
+            view: increment(1)
+        });
+       
+    } catch (error) {
+        console.error('Failed to increment views:', error);
+    }
+ };
     
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
     const indexOfLastPost = currentPage * postsPerPage;
@@ -303,12 +295,6 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                         {/*選標籤*/}
                         <div className="mx-w-screen-md h-9 flex justify-center mb-[20px]">
                             <div className="w-[150px] bg-2 bg-[#e6e6e6]  rounded-l-md text-black text-center py-1">排序:</div>
-                            <button 
-                                className="font-bold w-36 bg-[#ffffff]  border border-[#e6e6e6] hover:bg-[#acb8b6]  hover:text-[#ffffff] text-[#707070] text-center py-1"
-                                //onClick={handleSortByViews}
-                            >
-                                熱門度
-                            </button>
                             <div className="relative w-36">
                                 <button
                                     onClick={() => toggleDropdowns('institutions')}
@@ -384,7 +370,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                         ) : (
                             currentPosts.map((institution) => (
                                     <div  key={institution.hosp_name} className="relative h-[320px] border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
-                                        <Link href={`/search/${encodeURIComponent(institution.hosp_name)}`} className="h-full flex flex-col">
+                                         <button onClick={() => handleIncrement(institution)} className="h-full w-full flex flex-col">
                                             {institution.imageUrl && (
                                                 <Image
                                                     src={institution.imageUrl}
@@ -400,7 +386,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                                 <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
                                                 <span className="ml-2 text-black mr-[10px]">觀看數:{institution.view}</span>
                                             </div>
-                                        </Link>
+                                        </button>
                                         {!user ? (
                                             <>
                                                 <button type="button"  className="absolute top-1.5 right-1.5 z-10" onClick={() => setIsSignInModalVisible(true)}>

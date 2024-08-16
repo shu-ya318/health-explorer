@@ -1,10 +1,10 @@
 {
   "pages": {
-    "/page": [
+    "/search/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/page.css",
-      "static/chunks/app/page.js"
+      "static/css/app/search/page.css",
+      "static/chunks/app/search/page.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -12,27 +12,17 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/cancerScreening/page": [
+    "/search/[hosp_name]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/cancerScreening/page.js"
+      "static/css/app/search/[hosp_name]/page.css",
+      "static/chunks/app/search/[hosp_name]/page.js"
     ],
-    "/cancerScreening/result/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/cancerScreening/result/page.js"
-    ],
-    "/search/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/search/page.css",
-      "static/chunks/app/search/page.js"
-    ],
-    "/favorite/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/favorite/page.css",
-      "static/chunks/app/favorite/page.js"
+      "static/css/app/page.css",
+      "static/chunks/app/page.js"
     ]
   }
 }
