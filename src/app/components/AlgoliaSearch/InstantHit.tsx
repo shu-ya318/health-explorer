@@ -1,4 +1,5 @@
 import { Highlight } from "react-instantsearch";
+import Link from 'next/link';
 
 
 //錯誤設hosp_name，改同值的objectID仍無法被query搜尋
