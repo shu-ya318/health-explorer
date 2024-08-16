@@ -134,6 +134,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     const handleSearch = async (): Promise<void> => {
         const searchTerm = searchInputRef.current?.value.trim();
         setLoading(true);
+
         index.search<InstitutionInfo>(searchTerm || '')
             .then(({ hits }) => {
                 setCurrentData(hits as InstitutionInfo[]);
@@ -151,6 +152,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
 
     const handleCancerFilter = async (cancerType: string) => {
         setLoading(true);
+
         const searchOptions = { query: cancerType };
         index.search<InstitutionInfo>(cancerType, searchOptions)
             .then(({ hits }) => {
@@ -173,6 +175,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
         
         const searchOptions = {facetFilters: [[`cancer_screening:${filterValue}`]]};
         console.error(searchOptions);
+
         index.search<InstitutionInfo>(value, searchOptions)
         .then(({ hits }) => {
             setCurrentData(hits);
@@ -247,9 +250,9 @@ const handleIncrement = async (institution: InstitutionInfo) => {
 
 
     return (
-        <main className="w-full h-auto flex flex-col justify-center items-center flex-grow bg-[#ffffff]" >
+        <main className="w-full h-auto flex flex-col justify-center items-center flex-grow bg-[#F0F0F0]" >
                 <div className="w-[1280px]">
-                    {/*搜  flex-row */}
+                    {/*搜*/}
                     <div className="w-full h-10 mt-[60px]  mb-[30px]"> 
                         <div className="flex max-w-screen-md h-full mx-auto"> 
                             <div className="flex relative w-full h-full ">
@@ -273,7 +276,7 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                         </div>
                     </div>
                     {/*癌篩分類*/}
-                    <div className="max-w-screen-md h-[220px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[20px] rounded-lg border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC] "> 
+                    <div className="max-w-screen-md h-[220px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[20px] rounded-lg border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC] bg-[#FFFFFF]"> 
                         <div className="text-[#003E3E] text-center font-bold text-2xl mt-[5px]">依癌篩資格搜尋</div>
                         <div  className="flex w-full justify-between mb-[20px]">
                             {cancers.map((cancer, index) => (
@@ -294,13 +297,13 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                         <hr className="w-full border-solid border border-[#acb8b6] my-[10px]"/>
                         {/*選標籤*/}
                         <div className="mx-w-screen-md h-9 flex justify-center mb-[20px]">
-                            <div className="w-[150px] bg-2 bg-[#e6e6e6]  rounded-l-md text-black text-center py-1">排序:</div>
+                            <div className="w-[150px] bg-2 bg-[#E0E0E0]  rounded-l-md text-black text-center py-1">排序:</div>
                             <div className="relative w-36">
                                 <button
                                     onClick={() => toggleDropdowns('institutions')}
-                                    className={`flex justify-around items-center font-bold border border-[#e6e6e6] ${isOpenInstitutions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#ffffff] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
+                                    className={`text-center pl-[5px] w-full h-full flex justify-around items-center font-bold border border-[#E0E0E0] ${isOpenInstitutions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'}`}
                                 >
-                                    依機構
+                                    依機構類型
                                     <Image src="/images/down_small_line.svg" alt="institution" width={25} height={25} />
                                 </button>
                                 {isOpenInstitutions && (
@@ -319,9 +322,9 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             <div className="relative w-36">
                                 <button
                                     onClick={() => toggleDropdowns('divisions')}
-                                    className={`flex justify-around items-center font-bold border border-[#e6e6e6] ${isOpenDivisions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#ffffff] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
+                                    className={`flex justify-around items-center font-bold border border-[#E0E0E0] ${isOpenDivisions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
                                 >
-                                    依科別
+                                    依看診科別
                                     <Image src="/images/down_small_line.svg" alt="division" width={25} height={25} />
                                 </button>
                                 {isOpenDivisions && (
@@ -341,9 +344,9 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             <div className="relative w-36">
                                 <button
                                     onClick={() => toggleDropdowns('districts')}
-                                    className={`rounded-r-md flex justify-around items-center font-bold border border-[#e6e6e6] ${isOpenDistricts ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#ffffff] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
+                                    className={`rounded-r-md flex justify-around items-center font-bold border border-[#E0E0E0] ${isOpenDistricts ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
                                 >
-                                    依行政區
+                                    依所在地區
                                     <Image src="/images/down_small_line.svg" alt="district" width={25} height={25} />
                                 </button>
                                 {isOpenDistricts && (
@@ -362,35 +365,48 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             </div>
                         </div>
                         {/*卡片盒 */} 
-                        <div className="w-full h-auto m-auto grid grid-cols-4 gap-20 justify-center items-start box-border mt-[20px]">
+                        <div className="w-full h-auto m-auto grid grid-cols-2 justify-center items-start box-border mt-[20px] gap-[2%]">
                         {loading ? (
                             Array.from({ length: postsPerPage }, (_, index) => (
-                                <Skeleton key={index} height={320} width={250} className="m-[10px]" />
+                                <Skeleton key={index} height={150} width={650} className="m-[10px]" />
                             ))
                         ) : (
                             currentPosts.map((institution) => (
-                                    <div  key={institution.hosp_name} className="relative h-[320px] border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
-                                         <button onClick={() => handleIncrement(institution)} className="h-full w-full flex flex-col">
+                                    <div  
+                                        key={institution.hosp_name} 
+                                        className="relative h-auto  border border-gray-300 overflow-hidden bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC] h-[150px] fill-two-columns rounded-sm mb-[10px]"
+                                    >
+                                         <button onClick={() => handleIncrement(institution)} className="h-full w-full flex">
                                             {institution.imageUrl && (
                                                 <Image
                                                     src={institution.imageUrl}
                                                     alt="institution"
-                                                    width={250}
-                                                    height={200}
-                                                    className="w-full h-[200px] object-cover object-center"
+                                                    width={155}
+                                                    height={150}
+                                                    className="object-cover object-center h-[150px] w-[180px]"
                                                     unoptimized={true}
                                                 />
                                             )}
-                                            <div className="w-full h-[30px] text-black text-left font-bold my-[20px] mx-[10px] pr-[15px]">{institution.hosp_name}</div>
-                                            <div className="w-full h-[30px] flex items-center justify-end">
-                                                <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
-                                                <span className="ml-2 text-black mr-[10px]">觀看數:{institution.view}</span>
+                                            <div className="flex flex-col justify-between py-[10px] pl-[10px]">
+                                                <div className="w-full h-[30px] text-black text-left font-bold  pr-[15px] text-[18px]">{institution.hosp_name}</div>
+                                                <div className="text-black text-left h-[30px] ">{institution.division}</div>
+                                                <div className="text-black text-left h-[30px] ">{institution.cancer_screening}</div>
+                                                <div className="w-full h-[30px] flex items-center">
+                                                    <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
+                                                    <span className="ml-2 text-black">觀看數:{institution.view}</span>
+                                                </div>
                                             </div>
                                         </button>
                                         {!user ? (
                                             <>
-                                                <button type="button"  className="absolute top-1.5 right-1.5 z-10" onClick={() => setIsSignInModalVisible(true)}>
-                                                    <Image src="/images/heart_line.svg" alt="collection" width={40} height={40} className="border-solid border-2 border-[#6898a5] rounded-full" />
+                                                <button type="button"  className="absolute top-[10px] left-[110px] z-10 " onClick={() => setIsSignInModalVisible(true)}>
+                                                    <Image 
+                                                        src="/images/heart_line.svg" 
+                                                        alt="collection" 
+                                                        width={40} 
+                                                        height={40} 
+                                                        className="border-solid border-2 border-[#6898a5] rounded-full p-[2px]" 
+                                                    />
                                                 </button>
                                                 {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
                                                 {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
@@ -399,13 +415,16 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                             <>
                                                 {(() => {
                                                     const isFavorited = state.favorites.some(item => item.userId === user.uid && item.hosp_name === institution.objectID);
+                                                    
                                                     const handleHeartClick = isFavorited ? () => handleRemoveClick(institution.objectID, user.uid) : () => handleAddClick(institution, user.uid);
                                                     return (
-                                                        <button type="button" className="absolute top-1.5 right-1.5 z-10" onClick={handleHeartClick}>
+                                                        <button type="button" className="absolute top-[10px] left-[140px] z-10 " onClick={handleHeartClick}>
                                                             <Image 
-                                                                src="/images/heart_line.svg" 
-                                                                alt="collection" width={40} height={40} 
-                                                                className={`${isFavorited ? 'bg-[#FFFFFF] border-[10px]  shadow-[0_0_10px_#6898a5]' : 'bg-transparent '} border-solid border-2  border-[#6898a5] rounded-full`}
+                                                                src={isFavorited? "/images/heart_fill.svg" : "/images/heart_line.svg"} 
+                                                                alt="collection" 
+                                                                width={30} 
+                                                                height={30} 
+                                                                className={`${isFavorited ? 'bg-[#FFFFFF] shadow-[0_0_10px_#6898a5] shadow-[0_0_3px_#6898a5]' : 'bg-transparent '} border-solid border-2  border-[#6898a5] rounded-full p-[2px] transition-all duration-300 hover:scale-110 hover:shadow-[0_0_3px_#6898a5]`}
                                                             />
                                                         </button>
                                                     );
