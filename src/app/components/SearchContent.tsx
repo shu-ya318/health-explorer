@@ -3,7 +3,6 @@ import {useState, useEffect, ChangeEvent, FormEvent, useRef} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';   
 import Image from 'next/image';
 import Link from 'next/link';
-
 import { db } from '../lib/firebaseConfig';
 import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot, updateDoc, increment, getDoc } from 'firebase/firestore';
 import { useFavorite} from '../contexts/FavoriteContext'; 
@@ -250,16 +249,36 @@ const handleIncrement = async (institution: InstitutionInfo) => {
 
 
     return (
-        <main className="w-full h-auto flex flex-col justify-center items-center flex-grow bg-[#F0F0F0]" >
-                <div className="w-[1280px]">
+        <main className="w-full h-auto flex flex-col justify-center items-center flex-grow bg-[#FCFCFC]" >
+                <div className="flex w-full h-auto relative">
+                    <div className="flex  w-full h-[350px]"  style={{ backgroundImage: `url('images/searchPage_banner.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>   
+                    </div>
+                    {/*癌篩分類*/}
+                    <div style={{ bottom: '-170px' }} className="absolute inset-x-0 max-w-screen-md h-[200px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[20px] rounded-lg border-solid border border-[#6898a5] shadow-[0_0_5px_#AABBCC] bg-[#FFFFFF]"> 
+                        <div className="text-[#003E3E] text-center font-bold text-[22px] mt-[10px]">依癌篩資格搜尋</div>
+                        <div  className="flex w-full justify-between mb-[20px]">
+                            {cancers.map((cancer, index) => (
+                                <button 
+                                    key={index} 
+                                    className="w-2/12 flex flex-col justify-between text-[#0e4b66] transition-transform duration-300 hover:scale-110 hover:shadow-lg hover:shadow-gray-400 hover:bg-gradient-to-b  from-[#eff4f5]  to-[#a7bdc1]"
+                                    onClick={() => handleCancerFilter(cancer.filter)}
+                                >
+                                    <div className="w-full h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
+                                    <div className="w-full text-center text-[20px] text-[#013f5b] font-bold mb-[10px]">{cancer.filter}</div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+                <div className="w-[1200px] pt-[80px]">
                     {/*搜*/}
                     <div className="w-full h-10 mt-[60px]  mb-[30px]"> 
                         <div className="flex max-w-screen-md h-full mx-auto"> 
                             <div className="flex relative w-full h-full ">
                                 <input
-                                    className="flex-grow h-full px-4 text-lg font-bold text-gray-500 border-solid border-2 border-[#6898a5] shadow-[0_0_3px_#AABBCC] rounded-l-md"
+                                    className="flex-grow h-full px-4 text-lg font-bold text-gray-500 border-solid border border-[#6898a5] shadow-[0_0_3px_#AABBCC] rounded-l-md"
                                     type="text"
-                                    placeholder="輸入關鍵字搜尋"
+                                    placeholder="請輸入關鍵字搜尋機構"
                                     ref={searchInputRef}
                                 />
                                 <button className="hover:scale-110 absolute top-2 right-10 z-10" onClick={deleteSearch}>
@@ -275,39 +294,23 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             </button>
                         </div>
                     </div>
-                    {/*癌篩分類*/}
-                    <div className="max-w-screen-md h-[220px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[20px] rounded-lg border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC] bg-[#FFFFFF]"> 
-                        <div className="text-[#003E3E] text-center font-bold text-2xl mt-[5px]">依癌篩資格搜尋</div>
-                        <div  className="flex w-full justify-between mb-[20px]">
-                            {cancers.map((cancer, index) => (
-                                <button 
-                                    key={index} 
-                                    className="w-2/12 flex flex-col justify-between text-[#0e4b66] transition-transform duration-300 hover:scale-110 hover:shadow-lg hover:shadow-gray-400"
-                                    onClick={() => handleCancerFilter(cancer.filter)}
-                                >
-                                    <div className="w-full h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
-                                    <hr className="w-9/12 mx-auto border-solid border-2 border-[#acb8b6]"/>
-                                    <div className="w-full text-center text-lg text-[#013f5b] font-bold mb-[15px]">{cancer.filter}</div>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
                     {/*渲資*/}
                     <div className="h-auto w-full flex flex-col items-start">
-                        <hr className="w-full border-solid border border-[#acb8b6] my-[10px]"/>
+                        <p className="text-[#595959] text-left">共有<strong>{currentData.length}</strong>個機構符合搜尋結果</p>
+                        <hr className="w-full border-solid border border-[#E0E0E0] my-[20px]"/>
                         {/*選標籤*/}
                         <div className="mx-w-screen-md h-9 flex justify-center mb-[20px]">
-                            <div className="w-[150px] bg-2 bg-[#E0E0E0]  rounded-l-md text-black text-center py-1">排序:</div>
+                            <div className="w-[150px] bg-2 bg-[#E0E0E0]  rounded-l-md text-black text-center text-[16px] py-1">排序:</div>
                             <div className="relative w-36">
                                 <button
                                     onClick={() => toggleDropdowns('institutions')}
-                                    className={`text-center pl-[5px] w-full h-full flex justify-around items-center font-bold border border-[#E0E0E0] ${isOpenInstitutions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'}`}
+                                    className={`text-center pl-[5px] w-full h-full flex justify-around items-center text-[16px]  border border-[#E0E0E0] ${isOpenInstitutions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'}`}
                                 >
-                                    依機構類型
-                                    <Image src="/images/down_small_line.svg" alt="institution" width={25} height={25} />
+                                    依機構
+                                    <Image src="/images/down_small_line.svg" alt="institution" width={18} height={18} />
                                 </button>
                                 {isOpenInstitutions && (
-                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] p-[10px]">
+                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] p-[10px] shadow-[0_0_5px_#AABBCC]">
                                         {institutions.map((institution) => (
                                             <li key={institution} 
                                                 className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-2 border-solid border border-[#e6e6e6] rounded-md  cursor-pointer"
@@ -322,13 +325,13 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             <div className="relative w-36">
                                 <button
                                     onClick={() => toggleDropdowns('divisions')}
-                                    className={`flex justify-around items-center font-bold border border-[#E0E0E0] ${isOpenDivisions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
+                                    className={`flex justify-around items-center text-[16px] border border-[#E0E0E0] ${isOpenDivisions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
                                 >
-                                    依看診科別
-                                    <Image src="/images/down_small_line.svg" alt="division" width={25} height={25} />
+                                    依科別
+                                    <Image src="/images/down_small_line.svg" alt="division" width={18} height={18} />
                                 </button>
                                 {isOpenDivisions && (
-                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] p-[10px]">
+                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] p-[10px] shadow-[0_0_5px_#AABBCC]">
                                         {divisions.map((division) => (
                                             <li 
                                                 key={division} 
@@ -344,13 +347,13 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             <div className="relative w-36">
                                 <button
                                     onClick={() => toggleDropdowns('districts')}
-                                    className={`rounded-r-md flex justify-around items-center font-bold border border-[#E0E0E0] ${isOpenDistricts ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
+                                    className={`rounded-r-md flex justify-around items-center text-[16px] border border-[#E0E0E0] ${isOpenDistricts ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
                                 >
-                                    依所在地區
-                                    <Image src="/images/down_small_line.svg" alt="district" width={25} height={25} />
+                                    依地區
+                                    <Image src="/images/down_small_line.svg" alt="district" width={18} height={18} />
                                 </button>
                                 {isOpenDistricts && (
-                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] p-[10px]">
+                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] p-[10px] shadow-[0_0_5px_#AABBCC]">
                                         {districts.map((district) => (
                                             <li 
                                                 key={district} 
@@ -365,41 +368,41 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             </div>
                         </div>
                         {/*卡片盒 */} 
-                        <div className="w-full h-auto m-auto grid grid-cols-2 justify-center items-start box-border mt-[20px] gap-[2%]">
+                        <div className="w-full h-auto m-auto grid grid-cols-2 justify-center items-start box-border my-[10px] gap-[2%]">
                         {loading ? (
-                            Array.from({ length: postsPerPage }, (_, index) => (
-                                <Skeleton key={index} height={150} width={650} className="m-[10px]" />
+                            Array.from({ length: postsPerPage-14 }, (_, index) => (
+                                <Skeleton key={index} height={150} width={600} className="m-[5px]" />
                             ))
                         ) : (
                             currentPosts.map((institution) => (
                                     <div  
                                         key={institution.hosp_name} 
-                                        className="relative h-auto  border border-gray-300 overflow-hidden bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC] h-[150px] fill-two-columns rounded-sm mb-[10px]"
+                                        className="relative h-auto  border border-gray-300 overflow-hidden bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC] h-[150px] fill-two-columns rounded-sm mb-[25px]"
                                     >
                                          <button onClick={() => handleIncrement(institution)} className="h-full w-full flex">
                                             {institution.imageUrl && (
                                                 <Image
                                                     src={institution.imageUrl}
                                                     alt="institution"
-                                                    width={155}
+                                                    width={150}
                                                     height={150}
-                                                    className="object-cover object-center h-[150px] w-[180px]"
+                                                    className="object-cover object-center h-[150px] w-[150px]"
                                                     unoptimized={true}
                                                 />
                                             )}
-                                            <div className="flex flex-col justify-between py-[10px] pl-[10px]">
-                                                <div className="w-full h-[30px] text-black text-left font-bold  pr-[15px] text-[18px]">{institution.hosp_name}</div>
-                                                <div className="text-black text-left h-[30px] ">{institution.division}</div>
-                                                <div className="text-black text-left h-[30px] ">{institution.cancer_screening}</div>
+                                            <div className="flex flex-col justify-between py-[10px] pl-[12px]">
+                                                <div className="w-full h-[30px]  text-left text-[#3E3A39] font-bold  pr-[15px] text-[18px]">{institution.hosp_name}</div>
+                                                <div className=" text-left text-[16px] text-[#595959] h-[30px]">{institution.division}</div>
+                                                <div className=" text-left text-[16px] text-[#595959] h-[30px]">{institution.cancer_screening}</div>
                                                 <div className="w-full h-[30px] flex items-center">
                                                     <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
-                                                    <span className="ml-2 text-black">觀看數:{institution.view}</span>
+                                                    <span className="ml-2  text-[16px] text-[#707070] mt-[3px]">觀看數:{institution.view}</span>
                                                 </div>
                                             </div>
                                         </button>
                                         {!user ? (
                                             <>
-                                                <button type="button"  className="absolute top-[10px] left-[110px] z-10 " onClick={() => setIsSignInModalVisible(true)}>
+                                                <button type="button"  className="absolute top-[10px] left-[100px] z-10 " onClick={() => setIsSignInModalVisible(true)}>
                                                     <Image 
                                                         src="/images/heart_line.svg" 
                                                         alt="collection" 
@@ -418,13 +421,13 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                                     
                                                     const handleHeartClick = isFavorited ? () => handleRemoveClick(institution.objectID, user.uid) : () => handleAddClick(institution, user.uid);
                                                     return (
-                                                        <button type="button" className="absolute top-[10px] left-[140px] z-10 " onClick={handleHeartClick}>
+                                                        <button type="button" className="absolute top-[10px] left-[100px] z-10 " onClick={handleHeartClick}>
                                                             <Image 
                                                                 src={isFavorited? "/images/heart_fill.svg" : "/images/heart_line.svg"} 
                                                                 alt="collection" 
                                                                 width={30} 
                                                                 height={30} 
-                                                                className={`${isFavorited ? 'bg-[#FFFFFF] shadow-[0_0_10px_#6898a5] shadow-[0_0_3px_#6898a5]' : 'bg-transparent '} border-solid border-2  border-[#6898a5] rounded-full p-[2px] transition-all duration-300 hover:scale-110 hover:shadow-[0_0_3px_#6898a5]`}
+                                                                className={`${isFavorited ? 'bg-[#FFFFFF] shadow-[0_0_5px_#6898a5]' : 'bg-transparent '} border-solid border-2  border-[#6898a5] rounded-full p-[2px] transition-all duration-300 hover:scale-110 hover:shadow-[0_0_3px_#6898a5]`}
                                                             />
                                                         </button>
                                                     );
@@ -436,7 +439,7 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                         )}
                         </div>
                         {loading ? (
-                            <Skeleton  height={50} width={1280} className="m-[10px]" />
+                            <Skeleton  height={50} width={1280} className="m-[20px]" />
                         ):( 
                             <Pagination
                                 postsPerPage={postsPerPage}
