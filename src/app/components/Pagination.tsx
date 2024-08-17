@@ -52,19 +52,19 @@ const Pagination: React.FC<PaginationProps> = ({ postsPerPage, totalPosts, pagin
 
 
     return (
-        <div className="w-full flex justify-center h-[40px] my-[40px]">
+        <div className="w-full flex justify-center h-[40px] mt-[60px] mb-[40px]">
             <div className="w-[88px] flex justify-between h-full">
                 <button
                     onClick={handleFirstPage}
                     disabled={currentPage === 1}
-                    className={`border-solid border border-[#6898a5] ${currentPage === 1 ? 'bg-gray-300' : 'hover:bg-[#abb9b9]'} rounded-md w-[40px] p-[10px]`}
+                    className={`border-solid border border-[#24657d] ${currentPage === 1 ? 'bg-gray-300' : 'hover:bg-[#abb9b9]'} rounded-md w-[40px] p-[10px]`}
                 >
                     <Image src="/images/angles-left-solid.svg" alt="First Page" width={20} height={20} />
                 </button>
                 <button
                     onClick={handlePrevbtn}
                     disabled={currentPage === 1}
-                    className={`border-solid border border-[#6898a5] ${currentPage === 1 ? 'bg-gray-300' : 'hover:bg-[#6898a5]'} rounded-md w-[40px] py-[10px] px-[13px]`}
+                    className={`border-solid border border-[#24657d] ${currentPage === 1 ? 'bg-gray-300' : 'hover:bg-[#6898a5]'} rounded-md w-[40px] py-[10px] px-[13px]`}
                 >
                     <Image src="/images/angle-left-solid.svg" alt="Previous Page" width={12} height={12} />
                 </button>
@@ -73,7 +73,11 @@ const Pagination: React.FC<PaginationProps> = ({ postsPerPage, totalPosts, pagin
                 {pageNumbers.map(number => {
                     if (number <= maxPageNumberLimit && number > minPageNumberLimit) {
                         return (
-                            <button key={number} onClick={() => paginate(number)} className={`${currentPage === number ? 'bg-[#acb8b6] text-white' : 'bg-[#e6e6e6] hover:bg-[#acb8b6]'} rounded-md w-[40px] p-[10px] mx-[10px] `}>
+                            <button 
+                                key={number} 
+                                onClick={() => paginate(number)} 
+                                className={`${currentPage === number ? 'bg-[#acb8b6] text-white' : 'bg-[#e6e6e6] hover:bg-[#acb8b6]'} rounded-md w-[40px] px-[10px] mx-[10px] text-center`}
+                            >
                                 {number}
                             </button>
                         );
@@ -86,14 +90,14 @@ const Pagination: React.FC<PaginationProps> = ({ postsPerPage, totalPosts, pagin
                 <button
                     onClick={handleNextbtn}
                     disabled={currentPage === pageNumbers[pageNumbers.length - 1]}
-                    className={`border-solid border border-[#6898a5] ${currentPage === pageNumbers[pageNumbers.length - 1] ? 'bg-gray-300' : 'hover:bg-[#6898a5]'} rounded-md w-[40px] py-[10px] px-[13px]`}
+                    className={`border-solid border border-[#24657d] ${currentPage === pageNumbers[pageNumbers.length - 1] ? 'bg-gray-300' : 'hover:bg-[#6898a5]'} rounded-md w-[40px] py-[10px] px-[13px]`}
                 >
                     <Image src="/images/angle-right-solid.svg" alt="Next Page" width={12} height={12} />
                 </button>
                 <button
                     onClick={handleLastPage}
                     disabled={currentPage === pageNumbers[pageNumbers.length - 1]}
-                    className={`border-solid border border-[#6898a5] ${currentPage === pageNumbers[pageNumbers.length - 1] ? 'bg-gray-300' : 'hover:bg-[#6898a5]'} rounded-md w-[40px] p-[10px]`}
+                    className={`border-solid border border-[#24657d] ${currentPage === pageNumbers[pageNumbers.length - 1] ? 'bg-gray-300' : 'hover:bg-[#6898a5]'} rounded-md w-[40px] p-[10px]`}
                 >
                     <Image src="/images/angles-right-solid.svg" alt="Last Page" width={20} height={20} />
                 </button>

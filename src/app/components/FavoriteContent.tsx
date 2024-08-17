@@ -105,8 +105,16 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
           :( 
             <> 
                 <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#F0F0F0]" >
-                    <div className="w-full flex flex-col min-h-screen bg-[rgba(255,255,255,0.2)] backdrop-blur-sm my-auto pt-5 pb-10 flex justify-center items-center">
-                        <div className="max-w-7xl w-11/12 flex flex-row min-h-screen">
+                    <div className="flex w-full h-auto relative">
+                        <div className="flex  w-full h-[360px]"  style={{ backgroundImage: `url('images/favoritePage_banner.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}> 
+                            <div className="relative top-0 left-0 w-full h-full z-10 flex items-center justify-center bg-black/10">
+                                <div className="text-[#ffffff] font-bold text-[56px] text-center">收藏清單</div>  
+                            </div>
+                        </div>  
+                    </div>
+                    {/*收藏項目*/}
+                    <div className="w-full flex flex-col min-h-screen bg-[rgba(255,255,255,0.2)] backdrop-blur-sm my-auto pt-5 pb-10 flex justify-center items-center mt-[20px]">
+                        <div className="w-[1200px] flex flex-row min-h-screen  shadow-[0_0_5px_#AABBCC] rounded-lg">
                             <div className="w-full flex flex-col justify-start items-center rounded-tl-lg bg-[rgba(255,255,255,0.6)] backdrop-blur-md py-7 px-8 text-lg shadow-md">
                                 {favoriteData.length === 0 ? (
                                     <>
@@ -122,54 +130,83 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                 ) : (
                                 favoriteData.map((item, index) => (
                                     <>
-                                        <div key={index} className="w-11/12 grid grid-cols-3 gap-5">
-                                            {item.id && (
-                                                <button type="button" onClick={() => item.id && handleDeleteClick(item.id)}>
-                                                    <Image 
-                                                        src="/images/heart_line.svg" 
-                                                        alt="collection" 
-                                                        width={40} 
-                                                        height={40} 
-                                                        className="hover:border-2 hover:bg-transparent  w-7.5 h-7.5  border-solid  border-[#6898a5] bg-[#FFFFFF] border-[10px] shadow-[0_0_10px_#6898a5] rounded-full" 
-                                                    />
-                                                </button>
-                                            )}
-                                                <div className="relative w-full h-auto aspect-square flex justify-center items-center overflow-hidden">
-                                                    {item.imageUrl && <div className="bg-cover bg-center w-full h-full" style={{backgroundImage: `url(${item.imageUrl})`}}></div>}
+                                        <div key={index} className="h-auto w-full flex justify-between">
+                                            <div className="relative w-[250px] h-[250px]  aspect-square flex items-center">
+                                                {item.imageUrl && <div className="bg-cover bg-center w-full h-full" style={{backgroundImage: `url(${item.imageUrl})`}}></div>}
+                                                {item.id && (
+                                                    <button type="button" className="absolute top-[15px] left-[200px] z-10" onClick={() => item.id && handleDeleteClick(item.id)}>
+                                                        <Image 
+                                                            src="/images/heart_fill.svg" 
+                                                            alt="collection" 
+                                                            width={35} 
+                                                            height={35} 
+                                                            className="bg-[#FFFFFF] border-solid border-2  border-[#6898a5] rounded-full p-[2px]  transition-all duration-300 hover:scale-110 shadow-[0_0_5px_#6898a5]  hover:bg-transparent  hover:shadow-[0_0_3px_#6898a5]" 
+                                                        />
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div className="flex flex-col shrink-0 w-[500px] h-full mr-[10px]">
+                                                <div className="flex flex-row justify-start items-center leading-12 mb-4">
+                                                    <span className="font-bold text-lg text-[#1D445D] mr-1.5">機構名稱:</span>
+                                                    <span className="text-lg text-[#1D445D] mr-1.5">{item.hosp_name}</span>
                                                 </div>
-                                                <div className="w-full flex flex-col shrink-0">
-                                                    <div className="flex flex-row justify-start items-center leading-12">
-                                                        <span className="text-lg font-medium text-[#1D445D] mr-1.5">機構名稱:</span>
-                                                        <span className="text-lg font-medium text-[#1D445D] mr-1.5">{item.hosp_name}</span>
-                                                    </div>
-                                                    <div className="flex flex-row justify-start items-center leading-12">
-                                                        <span className="text-lg font-medium text-[#1D445D] mr-1.5">電話:</span>
-                                                        <span className="text-lg font-medium text-[#1D445D] mr-1.5">{item.tel}</span>
-                                                    </div>
-                                                    <div className="flex flex-row justify-start items-center leading-12">
-                                                        <span className="text-lg font-medium text-[#1D445D] mr-1.5">地址:</span>
-                                                        <span className="text-lg font-medium text-[#1D445D] mr-1.5">{item.hosp_addr}</span>
-                                                    </div>
+                                                <div className="flex flex-row justify-start items-center leading-12 mb-4">
+                                                    <span className="font-bold text-lg text-[#1D445D] mr-1.5 ">電話:</span>
+                                                    <span className="text-lg text-[#1D445D] mr-1.5">{item.tel}</span>
                                                 </div>
+                                                <div className="flex flex-row justify-start items-center leading-12 mb-4">
+                                                    <span className="font-bold text-lg text-[#1D445D] mr-1.5 ">地址:</span>
+                                                    <span className="text-lg text-[#1D445D] mr-1.5">{item.hosp_addr}</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="w-full h-px bg-[#1D445D] my-5"></div>
+                                        <hr className="w-full  border border-solid border-[#e8e8e8] my-5"/>
                                     </>
                                     ))
                                 )}
                                 <div ref={lastElementRef}></div>
                             </div>
-                            <div className="w-2/5 min-w-[285px] flex flex-col justify-start items-center bg-[rgba(182,227,255,0.6)] backdrop-blur-md rounded-tr-lg rounded-br-lg py-10 px-8 text-lg shadow-md">
-                                <div className="text-2xl mb-7.5 text-[#1D445D] font-bold mb-[30px]">收藏清單匯出</div>
-                                <button 
-                                    className={`w-full h-12 bg-[#6898a5] text-white text-3xl mt-8.5  rounded-md flex justify-center items-center hover:bg-[#36B2D8] active:bg-[#3686A5] ${favoriteData.length === 0 ? 'bg-gray-400 pointer-events-none' : ''}`} 
-                                    onClick={() => {
-                                        if (favoriteData.length > 0) {
-                                        window.print();
-                                        }
-                                    }}
-                                >
-                                匯出PDF檔
-                                </button >
+                            <div className="w-2/5 min-w-[285px] flex flex-col justify-start items-center bg-gradient-to-b  from-[#eff4f5]  to-[#c8d6da] backdrop-blur-md rounded-tr-lg rounded-br-lg py-10 px-8 text-lg shadow-md">
+                                <div className="text-2xl mb-7.5 text-[#1D445D] font-bold mb-[30px]">匯出格式</div>
+                                <div className="flex flex-col justify-between items-center w-[200px] h-auto text-[#1D445D] ">
+                                    <button 
+                                            className={`flex justify-center items-center w-full rounded-md py-4.5  h-11  mt-5 mb-5 bg-[#FFEEDD] hover:bg-[#FFC78E] hover:text-[#ffffff] border-2 border-solid border-[#eb980a]  text-center text-[20px] transition-all duration-300 hover:scale-110
+                                                        ${favoriteData.length === 0 ? 'bg-gray-400 pointer-events-none' : ''}`} 
+                                            onClick={() => {
+                                                if (favoriteData.length > 0) {
+                                                window.print();
+                                                }
+                                            }}
+                                    >
+                                    PDF檔
+                                        <Image src="/images/file-pdf-solid.svg" alt="PDF" width={25} height={25} className="ml-[10px]"/>
+                                    </button >
+                                    <button 
+                                            className={`flex justify-center items-center w-full rounded-md py-4.5  h-11  mt-5 mb-5 bg-[#D1E9E9] hover:bg-[#B3D9D9] hover:text-[#ffffff] border-2 border-solid border-[#1f5127]  text-center text-[20px] transition-all duration-300 hover:scale-110
+                                                        ${favoriteData.length === 0 ? 'bg-gray-400 pointer-events-none' : ''}`} 
+                                            onClick={() => {
+                                                if (favoriteData.length > 0) {
+                                                window.print();
+                                                }
+                                            }}
+                                    >
+                                    CSV檔
+                                        <Image src="/images/file-csv-solid.svg" alt="CSV" width={25} height={25} className="ml-[10px]"/>
+                                    </button >
+                                    <button 
+                                            className={`flex justify-center items-center w-full rounded-md py-4.5  h-11  mt-5 mb-5 bg-[#D2E9FF] hover:bg-[#C4E1FF] hover:text-[#ffffff] border-2 border-solid border-[#19a8e6]  text-center text-[20px] transition-all duration-300 hover:scale-110
+                                                        ${favoriteData.length === 0 ? 'bg-gray-400 pointer-events-none' : ''}`} 
+                                            onClick={() => {
+                                                if (favoriteData.length > 0) {
+                                                window.print();
+                                                }
+                                            }}
+                                    >
+                                    WORD檔
+                                        <Image src="/images/file-word-solid.svg" alt="PDF" width={25} height={25} className="ml-[10px]"/>
+                                    </button >
+                                </div>
+                                    
                             </div>
                         </div>
                     </div>

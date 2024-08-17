@@ -419,11 +419,10 @@ async function createFirestoreData(institutionData: FirebaseInstitutionData[]) {
 export async function initInstitutionData(){
     const snapshot = await getDocs(collection(db, 'medicalInstitutions'));
     if (snapshot.size > 1) {
-        console.log('Firestore data is fully initialized; no API calls');
+        console.log('Firestore data is initialized; no fetch data!');
         return;
     } 
     
     const institutionData = await fetchAndFormatData(); 
     await createFirestoreData(institutionData);
-    console.log(institutionData);
 }

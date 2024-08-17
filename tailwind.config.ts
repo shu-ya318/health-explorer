@@ -13,6 +13,10 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      //自定義 網格間距
+      gridTemplateColumns: {
+        'fill-two-columns': 'repeat(auto-fill, minmax(48%, 1fr))',
+      },
     },
   },
   plugins: [],

@@ -1,6 +1,5 @@
 {
-  "/cancerScreening/result/page": "app/cancerScreening/result/page.js",
   "/page": "app/page.js",
-  "/cancerScreening/page": "app/cancerScreening/page.js",
-  "/search/page": "app/search/page.js"
+  "/search/page": "app/search/page.js",
+  "/favorite/page": "app/favorite/page.js"
 }

@@ -200,7 +200,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
             <AnimatePresence>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                     <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#F0F0F0]" >
-                        <div className="mt-[100px] bg-[#ffffff] w-[1280px] flex flex-col items-center my-[50px] border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC]"> 
+                        <div className="mt-[100px] bg-[#ffffff] w-[1200px] flex flex-col items-center my-[50px] border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC]"> 
                             <div className="w-[1200px]">
                                 <div className="w-full flex  flex-col items-center">
                                     <h3 className="text-3xl text-black font-bold text-center mt-[40px]">{institutionDetails.hosp_name}</h3>
