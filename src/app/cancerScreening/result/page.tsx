@@ -99,7 +99,7 @@ const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
                             </div>
                             <button 
                                 type="button"  
-                                className="flex items-center justify-center w-[200px] bg-[#24657d] rounded-md h-11 hover:bg-[#7199a1]  font-bold text-white text-center text-[18px] transition-all duration-300 hover:scale-110 hover:text-black" 
+                                className="flex items-center justify-center w-[200px] px-[5px] bg-[#24657d] rounded-md h-11 hover:bg-[#7199a1]  font-bold text-white text-center text-[18px] transition-all duration-300 hover:scale-110 hover:text-black" 
                                 onClick={() => handleSearchClick("醫院")} 
                             >
                                 <Image className="w-auto h-auto mr-[5px]" src="/images/search.png" alt="Search" width={40} height={40}/>
@@ -117,7 +117,7 @@ const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
                     {/*符合資格*/}
                     {oralCancerQualification && (
                         <div className="flex h-[130px] w-full justify-between items-center">
-                            <div className="flex text-lg  w-[70%] h-full justify-start items-center text-[#1D445D] font-bold ">
+                            <div className="flex text-lg  w-[70%] h-full justify-start items-center text-[#1D445D] font-bold">
                                 <Image src="/images/square-check-regular.svg" alt="" width={25} height={25} className="mr-[10px]"/>
                                 <p className="text-center">每<strong className="mx-[6px]">2</strong>年可進行一次免費口腔癌篩檢。</p>
                             </div>
