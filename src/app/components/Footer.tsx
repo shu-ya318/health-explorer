@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
             </Link>
           </div>
             <div className="flex flex-col justify-start items-start">
-                <Link href='#' target="_blank" className="mb-2.5 mr-7.5 text-white no-underline  transition-colors cursor-pointer flex items-center shrink-0 hover:text-[#acb8b6]">
+                <Link href='https://github.com/shu-ya318/health-explorer' target="_blank" className="mb-2.5 mr-7.5 text-white no-underline  transition-colors cursor-pointer flex items-center shrink-0 hover:text-[#acb8b6]">
                     <Image src="/images/github.svg"   alt="GitHub" width={28} height={28} className="mr-2.5"  />
                     GitHub
                 </Link>
@@ -44,10 +44,6 @@ const Footer: React.FC = () => {
                 </Link>
             </div>
         </div>
-         {/* 
-        {isLoginModalVisible && <LoginModal onClose={() => setIsLoginModalVisible(false)} onShowRegister={setIsRegisterModalVisible} />}
-        {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowLogin={setIsLoginModalVisible} />}
-         */} 
     </footer>
     );
   }

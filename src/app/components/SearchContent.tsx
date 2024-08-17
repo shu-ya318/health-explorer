@@ -285,10 +285,10 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                 </button>                               
                             </div>
                             <button 
-                                className="flex w-32 h-full bg-[#24657d] hover:bg-[#7199a1] hover:text-black rounded-r-md items-center  justify-center font-bold"
+                                className="w-32 h-full bg-[#24657d] hover:bg-[#7199a1] hover:text-black rounded-r-md flex items-center justify-center font-bold"
                                 onClick={handleSearch}
                             >
-                                <Image className="w-auto h-auto" src="/images/search.png" alt="Search" width={40} height={40}/>
+                                <Image className="w-auto h-auto" src="/images/search.png" alt="Search" width={30} height={30}/>
                                 搜尋
                             </button>
                         </div>

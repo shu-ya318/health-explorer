@@ -96,7 +96,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
         </div>
 
         <div className="flex flex-col justify-center items-center bg-gradient-to-b  from-[#eff4f5] via-[#c8d6da] to-[#a7bdc1]">
-          <div  data-aos="fade-right" className="max-w-[1200px] w-[92%] bg-white/50 backdrop-blur-[10px] rounded-[10px] shadow-[0_0_8px_rgb(0,0,0)] flex flex-col justify-between items-center p-[20px] my-20">
+          <div  data-aos="fade-right" className="max-w-[1200px] w-[92%] bg-white  backdrop-blur-[10px] rounded-[10px] shadow-[0_0_8px_rgb(0,0,0)] flex flex-col justify-between items-center p-[20px] my-20">
             <div className="text-[32px] font-bold mb-[30px] text-[#003E3E]">醫療機構搜尋分類</div>
             <div className="grid grid-cols-4 gap-40">
               {searches.map((search, index) => (
