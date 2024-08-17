@@ -127,7 +127,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
               {cancers.map((cancer, index) => (
                   <button  
                     key={index} 
-                    className="flex flex-col justify-between  p-[20px] text-[#336666] hover:bg-white rounded-[10px] transition-transform duration-300 hover:scale-105 hover:shadow-lg hover:shadow-gray-400 hover:bg-gradient-to-b  from-[#eff4f5]  to-[#a7bdc1]" 
+                    className="flex flex-col justify-between  p-[20px] text-[#336666] hover:bg-white rounded-[10px] transition-transform duration-300 hover:scale-105 hover:shadow-lg hover:shadow-gray-400 hover:bg-gradient-to-b  from-[#eff4f5] via-[#c8d6da] to-[#a7bdc1]" 
                     onClick={() => handleSearchClick(cancer.filter)}
                   >
                     <div className="w-[120px] h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>

@@ -251,10 +251,9 @@ const handleIncrement = async (institution: InstitutionInfo) => {
     return (
         <main className="w-full h-auto flex flex-col justify-center items-center flex-grow bg-[#FCFCFC]" >
                 <div className="flex w-full h-auto relative">
-                    <div className="flex  w-full h-[350px]"  style={{ backgroundImage: `url('images/searchPage_banner.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>   
-                    </div>
+                    <div className="flex  w-full h-[400px]"  style={{ backgroundImage: `url('images/searchPage_banner.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
                     {/*癌篩分類*/}
-                    <div style={{ bottom: '-170px' }} className="absolute inset-x-0 max-w-screen-md h-[200px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[20px] rounded-lg border-solid border border-[#6898a5] shadow-[0_0_5px_#AABBCC] bg-[#FFFFFF]"> 
+                    <div style={{ bottom: '-165px' }} className="absolute inset-x-0 max-w-screen-md h-[200px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[20px] rounded-lg border-solid border border-[#6898a5] shadow-[0_0_5px_#AABBCC] bg-[#FFFFFF]"> 
                         <div className="text-[#003E3E] text-center font-bold text-[22px] mt-[10px]">依癌篩資格搜尋</div>
                         <div  className="flex w-full justify-between mb-[20px]">
                             {cancers.map((cancer, index) => (
@@ -303,8 +302,8 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             <div className="w-[150px] bg-2 bg-[#E0E0E0]  rounded-l-md text-black text-center text-[16px] py-1">排序:</div>
                             <div className="relative w-36">
                                 <button
-                                    onClick={() => toggleDropdowns('institutions')}
                                     className={`text-center pl-[5px] w-full h-full flex justify-around items-center text-[16px]  border border-[#E0E0E0] ${isOpenInstitutions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'}`}
+                                    onClick={() => toggleDropdowns('institutions')}
                                 >
                                     依機構
                                     <Image src="/images/down_small_line.svg" alt="institution" width={18} height={18} />
@@ -324,8 +323,8 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             </div>
                             <div className="relative w-36">
                                 <button
-                                    onClick={() => toggleDropdowns('divisions')}
                                     className={`flex justify-around items-center text-[16px] border border-[#E0E0E0] ${isOpenDivisions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
+                                    onClick={() => toggleDropdowns('divisions')}
                                 >
                                     依科別
                                     <Image src="/images/down_small_line.svg" alt="division" width={18} height={18} />
@@ -346,8 +345,8 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             </div>
                             <div className="relative w-36">
                                 <button
+                                    className={`rounded-r-md flex justify-around items-center text-[16px] border border-[#E0E0E0] ${isOpenDistricts ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`} 
                                     onClick={() => toggleDropdowns('districts')}
-                                    className={`rounded-r-md flex justify-around items-center text-[16px] border border-[#E0E0E0] ${isOpenDistricts ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
                                 >
                                     依地區
                                     <Image src="/images/down_small_line.svg" alt="district" width={18} height={18} />
@@ -421,7 +420,7 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                                     
                                                     const handleHeartClick = isFavorited ? () => handleRemoveClick(institution.objectID, user.uid) : () => handleAddClick(institution, user.uid);
                                                     return (
-                                                        <button type="button" className="absolute top-[10px] left-[100px] z-10 " onClick={handleHeartClick}>
+                                                        <button type="button" className="absolute top-[10px] left-[100px] z-10" onClick={handleHeartClick}>
                                                             <Image 
                                                                 src={isFavorited? "/images/heart_fill.svg" : "/images/heart_line.svg"} 
                                                                 alt="collection" 
