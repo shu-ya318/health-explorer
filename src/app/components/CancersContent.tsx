@@ -39,13 +39,13 @@ const CancersContext: React.FC<CancersContextProps> = ({ id, title, isLast, hand
 
     return (
         <>
-            <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#F0F0F0] text-black" >
-                <div className="w-[1280px] h-auto mt-[100px] bg-[#ffffff] flex flex-col items-center my-[50px] border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC] text-black"> 
-                    <div className="w-full flex flex-col justify-between mx-auto my-[30px]">
-                          <h2 className="font-bold mb-[40px] text-center text-2xl">{title}</h2>
+            <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#F0F0F0] text-black" style={{ backgroundImage: `url('images/cancerScreeningForm_banner.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                <div className="w-[1024px] h-[400px] my-[150px] bg-[#ffffff] flex flex-col items-center my-[150px] border-solid border-2 border-[#6898a5] rounded-lg shadow-[0_0_5px_#AABBCC] text-black opacity-95"> 
+                    <div className="w-full flex flex-col justify-between mx-auto my-[20px] text-[#1D445D]">
+                          <h2 className="font-bold mb-[40px] mt-[25px] text-center text-2xl">{title}</h2>
                         {id === "1" && (
                             <input 
-                                className="border-solid border border-[#6898a5] rounded-md w-[230px] h-[35px] mx-auto my-[30px]"
+                                className="border-solid border-2 border-[#6898a5] rounded-md w-[230px] h-[35px] mx-auto mt-[50px] mb-[70px]"
                                 type="text"
                                 value={inputYear}
                                 onChange={handleYearInput}
@@ -55,9 +55,9 @@ const CancersContext: React.FC<CancersContextProps> = ({ id, title, isLast, hand
                         {itemOptions && (
                             <div className="w-[400px] flex flex-col justify-between mx-auto mt-[10px] text-[22px]">
                                 {itemOptions.split(";").map((element: string, index: number) => (
-                                    <div key={`${element}-${index}`} className="mb-[40px]">
+                                    <div key={`${element}-${index}`} className="mb-[40px] text-[#1D445D]">
                                         <label>
-                                            <input type="radio" name={id} value={index + 1} onChange={handleOptionChange} />
+                                            <input type="radio" className="mr-[10px]" name={id} value={index + 1} onChange={handleOptionChange} />
                                             {element}
                                         </label>
                                     </div>
@@ -66,7 +66,7 @@ const CancersContext: React.FC<CancersContextProps> = ({ id, title, isLast, hand
                         )}
                         <div className="flex items-center ">
                                     <button 
-                                        className="mx-auto my-6  w-[150px] bg-[#24657d] rounded-md py-4.5 px-2.5  h-9  hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[14px]"
+                                        className="mx-auto mb-6  w-[150px] bg-[#24657d] rounded-md py-4.5 px-2.5  h-9  hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[14px]"
                                         style={{ display: showClick ? "block" : "none" }}
                                         onClick={handleNextClick}
                                     >

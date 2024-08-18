@@ -114,8 +114,8 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                     </div>
                     {/*收藏項目*/}
                     <div className="w-full flex flex-col min-h-screen bg-[rgba(255,255,255,0.2)] backdrop-blur-sm my-auto pt-5 pb-10 flex justify-center items-center mt-[20px]">
-                        <div className="w-[1200px] flex flex-row min-h-screen  shadow-[0_0_5px_#AABBCC] rounded-lg">
-                            <div className="w-full flex flex-col justify-start items-center rounded-tl-lg bg-[rgba(255,255,255,0.6)] backdrop-blur-md py-7 px-8 text-lg shadow-md">
+                        <div className="w-[1200px] flex min-h-screen  shadow-[0_0_5px_#AABBCC] rounded-lg">
+                            <div className="w-full flex flex-col justify-start items-center bg-[rgba(255,255,255,0.6)] backdrop-blur-md py-7 px-8">
                                 {favoriteData.length === 0 ? (
                                     <>
                                         <div className="text-2xl text-gray-600 text-center my-auto">目前無收藏機構，推薦前往搜尋頁進行挑選</div>
@@ -171,7 +171,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                 <div className="flex flex-col justify-between items-center w-[200px] h-auto text-[#1D445D] ">
                                     <button 
                                             className={`flex justify-center items-center w-full rounded-md py-4.5  h-11  mt-5 mb-5 bg-[#FFEEDD] hover:bg-[#FFC78E] hover:text-[#ffffff] border-2 border-solid border-[#eb980a]  text-center text-[20px] transition-all duration-300 hover:scale-110
-                                                        ${favoriteData.length === 0 ? 'bg-gray-400 pointer-events-none' : ''}`} 
+                                                        ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none  text-white' : ''}`} 
                                             onClick={() => {
                                                 if (favoriteData.length > 0) {
                                                 window.print();
@@ -183,7 +183,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                     </button >
                                     <button 
                                             className={`flex justify-center items-center w-full rounded-md py-4.5  h-11  mt-5 mb-5 bg-[#D1E9E9] hover:bg-[#B3D9D9] hover:text-[#ffffff] border-2 border-solid border-[#1f5127]  text-center text-[20px] transition-all duration-300 hover:scale-110
-                                                        ${favoriteData.length === 0 ? 'bg-gray-400 pointer-events-none' : ''}`} 
+                                                        ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
                                             onClick={() => {
                                                 if (favoriteData.length > 0) {
                                                 window.print();
@@ -195,7 +195,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                     </button >
                                     <button 
                                             className={`flex justify-center items-center w-full rounded-md py-4.5  h-11  mt-5 mb-5 bg-[#D2E9FF] hover:bg-[#C4E1FF] hover:text-[#ffffff] border-2 border-solid border-[#19a8e6]  text-center text-[20px] transition-all duration-300 hover:scale-110
-                                                        ${favoriteData.length === 0 ? 'bg-gray-400 pointer-events-none' : ''}`} 
+                                                        ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
                                             onClick={() => {
                                                 if (favoriteData.length > 0) {
                                                 window.print();
