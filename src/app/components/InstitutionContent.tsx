@@ -11,9 +11,9 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { db } from '../lib/firebaseConfig';
 import { collection, doc, getDocs, getDoc, query, where, deleteDoc, updateDoc, increment } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-import { useFavorite} from '../contexts/FavoriteContext'; 
+import { useFavorite} from '../hooks/useFavorite'; 
 import { FirebaseFavoriteData, InstitutionInfo} from '../lib/types';
-import { useAuth } from '../contexts/AuthContext'; 
+import { useAuth } from '../hooks/useAuth'; 
 import algoliasearch from 'algoliasearch/lite';
 import SignInModal from './auth/SignInModal';
 import RegisterModal from './auth/RegisterModal';
@@ -199,9 +199,9 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
             {isLoaded && institutionDetails ? (
             <AnimatePresence>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                    <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#F0F0F0]" >
+                    <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#FCFCFC]" >
                         <div className="mt-[100px] bg-[#ffffff] w-[1200px] flex flex-col items-center my-[50px] border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC]"> 
-                            <div className="w-[1200px]">
+                            <div className="w-[1200px] px-[30px]">
                                 <div className="w-full flex  flex-col items-center">
                                     <h3 className="text-3xl text-black font-bold text-center mt-[40px]">{institutionDetails.hosp_name}</h3>
                                     {!user ? (
@@ -259,13 +259,13 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                     <hr className="w-full border border-[#acb8b6] my-[30px]"/>
                                     <h3 className="text-2xl text-black underline decoration-[#6898a5] decoration-4 font-bold mt-[5px] mb-[30px]">地圖實景</h3>
                                     {loading ? (
-                                        <Skeleton height={450} width={1200} className="my-[40px] mx-auto" />
+                                        <Skeleton height={450} width={1140} className="my-[40px] mx-auto" />
                                     ) : (
                                         <GoogleMap
                                             zoom={15}
                                             center={mapCenter}
                                             mapTypeId={google.maps.MapTypeId.ROADMAP}
-                                            mapContainerStyle={{ width: "1200px", height: "450px" }}
+                                            mapContainerStyle={{ width: "1140px", height: "450px" }}
                                             onLoad={(map) => console.log("Map Loaded")}
                                         >
                                             <Marker
@@ -278,7 +278,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                     {/*輪播薦*/}
                                     <hr className="w-full border-solid border border-[#acb8b6] my-[30px]"/>
                                     {loading ? (
-                                        <Skeleton height={320} width={1200} className="my-[40px] mx-auto" />
+                                        <Skeleton height={320} width={1140} className="my-[40px] mx-auto" />
                                     ) : (
                                     <div className="w-full">
                                         <h3 className="text-black font-bold text-2xl  underline decoration-[#6898a5] decoration-4 my-[10px]">您可能也想比較...</h3>

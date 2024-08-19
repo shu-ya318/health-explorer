@@ -81,28 +81,24 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
   return (       
     <AnimatePresence>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-        <div className="relative w-full h-[640px] bg-[url('/images/homeBanner.webp')] bg-cover bg-center">
-          <div className="absolute top-[75%] left-[27%] -translate-x-[80%] -translate-y-[80%] flex flex-col justify-between">
-            <div className="flex flex-col animate__animated  animate__backInLeft animate__slow">
-              <h1 className="text-center text-[50px] font-bold text-white">健康探索者</h1>
-              <h3 className="text-center text-[30px] font-medium text-white">診救健康醫起來</h3>
-            </div>
-            <div className="text-center mt-20 cursor-pointer"  data-aos="fade-up" onClick={ scrollDown }>
-              <span className="font-semibold text-xl text-black">往下看更多</span>
+        <div className="relative w-full h-[670px] bg-[url('/images/image.png')] bg-cover bg-center bg-no-repeat">
+          <div className="absolute top-[72%] left-[53%] -translate-x-[80%] -translate-y-[80%] flex flex-col justify-between">
+            <div className="text-center mt-22 cursor-pointer"  data-aos="fade-up" onClick={ scrollDown }>
+              <span className="font-bold text-[32px] text-black">立即探索</span>
               <br/>
-              <Image src="/images/angles-down-solid.svg" alt="scroll-down" width={36} height={36} className="mx-auto w-9 h-9 mt-10 animate-bounce" />
+              <Image src="/images/angles-down-solid.svg" alt="scroll-down" width={36} height={46} className="mx-auto w-[36px] h-[66px] mt-6 animate-bounce" />
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col justify-center items-center bg-gradient-to-b  from-[#eff4f5] via-[#c8d6da] to-[#a7bdc1]">
-          <div  data-aos="fade-right" className="max-w-[1200px] w-[92%] bg-white  backdrop-blur-[10px] rounded-[10px] shadow-[0_0_8px_rgb(0,0,0)] flex flex-col justify-between items-center p-[20px] my-20">
+        <div className="flex flex-col justify-center items-center bg-gradient-to-b  from-[#FCFCFC] via-[#c8d6da] to-[#a7bdc1]">
+          <div  data-aos="fade-right" className="max-w-[1200px] w-[92%] bg-white  backdrop-blur-[5px] rounded-[10px] shadow-[0_0_8px_rgb(0,0,0)] flex flex-col justify-between items-center p-[20px] my-20">
             <div className="text-[32px] font-bold mb-[30px] text-[#003E3E]">醫療機構搜尋分類</div>
             <div className="grid grid-cols-4 gap-40">
               {searches.map((search, index) => (
                   <button 
                     key={index} 
-                    className="flex flex-col justify-between  p-[10px] text-[#336666] hover:bg-[#F0FFF0] rounded-[10px] transition-transform duration-300 hover:scale-110 hover:bg-gradient-to-b  from-[#eff4f5] via-[#c8d6da] to-[#a7bdc1] hover:shadow-lg hover:shadow-gray-400" 
+                    className="flex flex-col justify-between  p-[10px] text-[#336666] hover:bg-[#eff4f5] rounded-[10px] transition-transform duration-300 hover:scale-110 hover:bg-gradient-to-b  from-[#eff4f5] via-[#c8d6da] to-[#a7bdc1] hover:shadow-lg hover:shadow-gray-400" 
                     onClick={() => handleSearchClick(search.filter)}
                   >
                     <div className="w-full h-[80px] bg-contain bg-center bg-no-repeat mb-[10px]" style={{ backgroundImage: `url(${search.image})` }}></div>
@@ -121,7 +117,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
         </div>
 
         <div className="flex flex-col justify-center items-center bg-gradient-to-b  from-[#a7bdc1] via-[#c8d6da] to-[#eff4f5]">
-          <div data-aos="fade-left" className="max-w-[1200px] w-[92%] bg-white backdrop-blur-[10px] rounded-[10px] shadow-[0_0_8px_rgb(0,0,0)] flex flex-col justify-between items-center p-[20px] my-20">
+          <div data-aos="fade-left" className="max-w-[1200px] w-[92%] bg-white backdrop-blur-[5px] rounded-[10px] shadow-[0_0_8px_rgb(0,0,0)] flex flex-col justify-between items-center p-[20px] my-20">
             <div  className="text-[32px] font-bold mb-[30px] text-[#003E3E]">癌症篩檢搜尋分類</div>
             <div className="grid grid-cols-5 gap-20">
               {cancers.map((cancer, index) => (

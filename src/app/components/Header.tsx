@@ -3,9 +3,10 @@ import { useState, MouseEvent} from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useAuth } from '../contexts/AuthContext'; 
+import { useAuth } from '../hooks/useAuth'; 
 import SignInModal from './auth/SignInModal';
 import RegisterModal from './auth/RegisterModal';
+import 'animate.css';
 
 
 const Header: React.FC = () => {
@@ -38,33 +39,43 @@ const Header: React.FC = () => {
 
 
   return (
-    <header className="bg-[#24657d] flex justify-center text-white  items-center">
-      <div className="w-11/12 max-w-[1200px] flex justify-between items-center px-5 h-14  text-base">
-          <div className="flex items-center text-white no-underline font-bold cursor-pointer">
-              <Image src="/images/LOGO.webp" alt="Logo" width={47} height={47} className="mr-2.5" />
-              <Link href='/' className="hover:text-[#acb8b6]">健康探索者</Link>
-          </div>
-          <div className="flex items-center text-white no-underline font-bold cursor-pointer">
+    <header className="bg-[#FFFFFF] flex flex-col   items-center">
+      <div className="w-full px-[5%] justify-center  flex flex-col justify-between items-center  h-[130px] text-[#1e94b4] border border-solid border-[#FFFFFF]">
+          <Link 
+            href='/' 
+            className="flex items-center no-underline font-bold   mt-4 cursor-pointer animate__animated  animate__backInLeft animate__slow"
+          >
+              <Image src="/images/LOGO.png" alt="Logo" width={56} height={56} className="mr-4 border border-solid rounded-lg border-[#50bfd9]"/>
+              <div className="flex flex-col hover:text-[#B0DFEB]">
+              <ruby className="text-[24px] text-center">
+                健康探索者 
+                <rt className="text-[12px]">HealthExplorer</rt>
+              </ruby>
+              </div>
+          </Link>
+          <div className="flex items-center no-underline font-bold cursor-pointer">
             <button  
               type="button" 
-              className="text-white font-bold cursor-pointer my-2.5 px-2.5 h-9 flex items-center hover:text-[#acb8b6] mr-30" 
+              className="font-bold cursor-pointer my-2.5 px-2.5 h-9 flex items-center hover:text-[#acb8b6] mr-30" 
               onClick={handleFavoriteClick}
             >
               我的收藏
             </button >
+            <hr className="h-[20%] border border-[#e6e6e6] ml-[10px]"/>
             {!user ? (
                  <>
                   <button 
                     type="button" 
-                    className="text-black bg-[#ffffff] rounded-md my-2.5 px-2.5 h-9 flex items-center hover:bg-[#acb8b6] hover:text-white mr-3 ml-3" 
+                    className="rounded-md my-2.5 px-2 h-9 flex items-center hover:bg-[#acb8b6] hover:text-white mr-3 ml-3" 
                     onClick={() => setIsSignInModalVisible(true)} 
                   >
                     登入
                   </button>
                   {isSignInModalVisible && <SignInModal  onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
+                  <hr className="h-[20%] border border-[#e6e6e6] mr-[10px]"/>
                   <button 
                     type="button" 
-                    className="text-white bg-[#acb8b6] rounded-md my-2.5 px-2.5 h-9 flex items-center hover:bg-[#ffffff] hover:text-black"
+                    className="rounded-md my-2.5 px-2 h-9 flex items-center hover:text-black"
                     onClick={() => setIsRegisterModalVisible(true)}
                   >
                     註冊

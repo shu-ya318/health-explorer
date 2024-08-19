@@ -7,16 +7,16 @@ import 'react-loading-skeleton/dist/skeleton.css';
 
 import { db } from '../lib/firebaseConfig';
 import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot, Timestamp } from 'firebase/firestore';
-import { useFavorite} from '../contexts/FavoriteContext'; 
+import { useFavorite} from '../hooks/useFavorite'; 
 import { FirebaseFavoriteData} from '../lib/types';
-import { useAuth } from '../contexts/AuthContext'; 
+import { useAuth } from '../hooks/useAuth'; 
 
 import HomePage  from '../page'; 
 
 
 const FavoriteContent: React.FC = (): React.ReactElement | null  => {
     const { uid } = useAuth().user || {}; 
-    const { state, fetchFavoriteData, addFavorite, removeFavorite} = useFavorite();
+    const { state, fetchFavoriteData, removeFavorite} = useFavorite();
 
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     const [loading, setLoading] = useState<boolean>(false);
@@ -104,10 +104,10 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
          <HomePage/>
           :( 
             <> 
-                <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#F0F0F0]" >
+                <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#FCFCFC]" >
                     <div className="flex w-full h-auto relative">
                         <div className="flex  w-full h-[360px]"  style={{ backgroundImage: `url('images/favoritePage_banner.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}> 
-                            <div className="relative top-0 left-0 w-full h-full z-10 flex items-center justify-center bg-black/10">
+                            <div className="relative top-0 left-0 w-full h-full z-10 flex items-center justify-center bg-black/7">
                                 <div className="text-[#ffffff] font-bold text-[56px] text-center">收藏清單</div>  
                             </div>
                         </div>  

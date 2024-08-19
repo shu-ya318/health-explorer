@@ -5,11 +5,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { db } from '../lib/firebaseConfig';
 import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot, updateDoc, increment, getDoc } from 'firebase/firestore';
-import { useFavorite} from '../contexts/FavoriteContext'; 
+import { useFavorite} from '../hooks/useFavorite'; 
 import { FirebaseFavoriteData, InstitutionInfo} from '../lib/types';
 import algoliasearch,{ SearchIndex }  from 'algoliasearch';
 import Pagination from '../components/Pagination';
-import { useAuth } from '../contexts/AuthContext'; 
+import { useAuth } from '../hooks/useAuth'; 
 import SignInModal from './auth/SignInModal';
 import RegisterModal from './auth/RegisterModal';
 import Skeleton from 'react-loading-skeleton';
@@ -255,7 +255,7 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                     {/*癌篩分類*/}
                     <div style={{ bottom: '-165px' }} className="absolute inset-x-0 max-w-screen-md h-[200px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[20px] rounded-lg border-solid border border-[#6898a5] shadow-[0_0_5px_#AABBCC] bg-[#FFFFFF]"> 
                         <div className="text-[#003E3E] text-center font-bold text-[24px] mt-[10px]">依癌篩資格搜尋</div>
-                        <div  className="flex w-full justify-between mb-[20px]">
+                        <div  className="flex w-full justify-between mb-[25px]">
                             {cancers.map((cancer, index) => (
                                 <button 
                                     key={index} 

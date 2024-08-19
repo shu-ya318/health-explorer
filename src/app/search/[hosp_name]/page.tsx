@@ -1,7 +1,7 @@
 'use client';
 import InstitutionContent from '../../components/InstitutionContent';
-import { FavoriteProvider } from '../../contexts/FavoriteContext';
-import { useAuth } from '../../contexts/AuthContext';
+import { FavoriteProvider } from '../../hooks/useFavorite';
+import { useAuth } from '../../hooks/useAuth';
 // import { InstitutionsProvider } from '../../contexts/InstitutionsContext';
 
 

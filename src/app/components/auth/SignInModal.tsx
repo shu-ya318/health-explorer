@@ -1,6 +1,6 @@
 'use client';
 import { useState, MouseEvent} from 'react';
-import { useAuth } from '../../contexts/AuthContext';         
+import { useAuth } from '../../hooks/useAuth';         
 import { UserCredential,AuthError }from 'firebase/auth';
 import Image from 'next/image';
 
@@ -47,7 +47,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ onClose, onShowRegister }) =>
         <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50" onClick={onClose}>
             <div className="max-w-[926px] w-[92%] rounded-lg shadow-lg h-[490px] flex" onClick={e => e.stopPropagation()}>
                 <div className="bg-[#4b96af] backdrop-blur-sm p-7 rounded-l-lg flex flex-col justify-center items-center w-1/2">
-                    <div style={{ backgroundImage: "url('/images/logo.webp')"}}
+                    <div style={{ backgroundImage: "url('/images/logo.jpg')"}}
                          className="w-[300px] h-[300px] bg-cover bg-center mb-2.5"></div>
                     <div className="text-white text-3xl font-bold mt-4">健康探索者</div>
                 </div>
