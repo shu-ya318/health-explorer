@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
      改連結
    */
     return (
-      <footer className="bg-[#1e94b4] flex justify-center items-center text-white text-lg p-[50px_0]">
+      <footer className="bg-[#4D8EB4] flex justify-center items-center text-white text-lg p-[50px_0]">
         <div className="w-11/12 max-w-[1200px] flex justify-between items-start p-2.5">
           <div className="text-xl flex flex-row justify-center items-center mr-10">
             <Image src="/images/LOGO.png" alt="LOGO" width={80} height={80} className="mr-2.5" />
