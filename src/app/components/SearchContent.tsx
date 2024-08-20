@@ -72,7 +72,6 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     const postsPerPage = 20;
 
     
-    // 初次載入頁面:跳轉的過濾資料或全部資料
     useEffect(() => {
         const fetchAndSetData = async () => {
             setLoading(true);
@@ -251,19 +250,21 @@ const handleIncrement = async (institution: InstitutionInfo) => {
     return (
         <main className="w-full h-auto flex flex-col justify-center items-center flex-grow bg-[#FCFCFC]" >
                 <div className="flex w-full h-auto relative">
-                    <div className="flex  w-full h-[400px]"  style={{ backgroundImage: `url('images/searchPage_banner.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+                    <div className="flex  w-full h-[400px]">
+                        <Image  src="/images/searchPage_banner.jpg" alt="icon" width={1720} height={400} className="w-full h-full object-cover"/>
+                    </div>
                     {/*癌篩分類*/}
-                    <div style={{ bottom: '-165px' }} className="absolute inset-x-0 max-w-screen-md h-[200px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[20px] rounded-lg border-solid border border-[#6898a5] shadow-[0_0_5px_#AABBCC] bg-[#FFFFFF]"> 
-                        <div className="text-[#003E3E] text-center font-bold text-[24px] mt-[10px]">依癌篩資格搜尋</div>
+                    <div style={{ bottom: '-165px' }} className="absolute inset-x-0 max-w-screen-md h-[200px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[20px] rounded-lg border-solid border border-[#2D759E] shadow-[0_0_5px_#AABBCC] bg-[#FCFCFC]"> 
+                        <div className="text-[#2D759E] text-center font-bold text-[24px] mt-[10px]">依癌篩資格搜尋</div>
                         <div  className="flex w-full justify-between mb-[25px]">
                             {cancers.map((cancer, index) => (
                                 <button 
                                     key={index} 
-                                    className="w-2/12 flex flex-col justify-between text-[#0e4b66] transition-transform duration-300 hover:scale-110 hover:shadow-lg hover:shadow-gray-400 hover:bg-gradient-to-b  from-[#eff4f5]  to-[#a7bdc1]"
+                                    className="w-2/12 flex flex-col justify-between transition-transform duration-300 hover:scale-110 hover:rounded-lg  hover:shadow-lg hover:shadow-gray-400 hover:bg-gradient-to-b  from-[#FFFFFF] via-[#C3D8EA] to-[#77ACCC]"
                                     onClick={() => handleCancerFilter(cancer.filter)}
                                 >
                                     <div className="w-full h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
-                                    <div className="w-full text-center text-[20px] text-[#013f5b] font-bold mb-[10px]">{cancer.filter}</div>
+                                    <div className="w-full text-center text-[20px] text-[#252525] font-bold mb-[10px]">{cancer.filter}</div>
                                 </button>
                             ))}
                         </div>
@@ -275,20 +276,20 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                         <div className="flex max-w-screen-md h-full mx-auto"> 
                             <div className="flex relative w-full h-full ">
                                 <input
-                                    className="flex-grow h-full px-4 text-lg font-bold text-gray-500 border-solid border border-[#6898a5] shadow-[0_0_3px_#AABBCC] rounded-l-md"
+                                    className="flex-grow h-full px-4 text-[18px] font-bold text-gray-500 border-solid border border-[#2D759E] shadow-[0_0_3px_#AABBCC] rounded-l-md"
                                     type="text"
                                     placeholder="請輸入關鍵字搜尋"
                                     ref={searchInputRef}
                                 />
                                 <button className="hover:scale-110 absolute top-2 right-10 z-10" onClick={deleteSearch}>
-                                    <Image className="" src="/images/xmark-solid.svg" alt="close" width={15} height={15} />
+                                    <Image src="/images/xmark-solid.svg" alt="close" width={15} height={15} />
                                 </button>                               
                             </div>
                             <button 
-                                className="w-32 h-full bg-[#24657d] hover:bg-[#7199a1] hover:text-black rounded-r-md flex items-center justify-center font-bold"
+                                className="w-32 h-full bg-[#2D759E] hover:bg-[#5B98BC] text-white rounded-r-md flex items-center justify-center font-bold"
                                 onClick={handleSearch}
                             >
-                                <Image className="w-auto h-auto" src="/images/search.png" alt="Search" width={30} height={30}/>
+                                <Image className="w-auto h-auto mr-[7px]" src="/images/search.png" alt="Search" width={30} height={30}/>
                                 搜尋
                             </button>
                         </div>
@@ -302,17 +303,17 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             <div className="w-[150px] bg-2 bg-[#E0E0E0]  rounded-l-md text-black text-center text-[16px] py-1">排序:</div>
                             <div className="relative w-36">
                                 <button
-                                    className={`text-center pl-[5px] w-full h-full flex justify-around items-center text-[16px]  border border-[#E0E0E0] ${isOpenInstitutions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'}`}
+                                    className={`text-center pl-[5px] w-full h-full flex justify-around items-center text-[16px]  border border-[#E0E0E0] ${isOpenInstitutions ? 'bg-[#2D759E] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#2D759E] hover:text-[#ffffff] text-[#707070]'}`}
                                     onClick={() => toggleDropdowns('institutions')}
                                 >
                                     依機構
                                     <Image src="/images/down_small_line.svg" alt="institution" width={18} height={18} />
                                 </button>
                                 {isOpenInstitutions && (
-                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] py-[15px] px-[10px] shadow-[0_0_5px_#AABBCC]">
+                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#2D759E] rounded-md w-[500px] py-[15px] px-[10px] shadow-[0_0_5px_#AABBCC]">
                                         {institutions.map((institution) => (
                                             <li key={institution} 
-                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-2 border-solid border border-[#e6e6e6] rounded-md  cursor-pointer"
+                                                className="z-20 hover:bg-[#2D759E] hover:text-[#ffffff] text-center text-[#707070] py-2 border-solid border border-[#e6e6e6] rounded-md  cursor-pointer"
                                                 onClick={() => handleSelectFilter('institution', institution)} 
                                             >
                                                 {institution}
@@ -323,18 +324,18 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             </div>
                             <div className="relative w-36">
                                 <button
-                                    className={`flex justify-around items-center text-[16px] border border-[#E0E0E0] ${isOpenDivisions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
+                                    className={`flex justify-around items-center text-[16px] border border-[#E0E0E0] ${isOpenDivisions ? 'bg-[#2D759E] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#2D759E] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
                                     onClick={() => toggleDropdowns('divisions')}
                                 >
                                     依科別
                                     <Image src="/images/down_small_line.svg" alt="division" width={18} height={18} />
                                 </button>
                                 {isOpenDivisions && (
-                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] p-[10px] shadow-[0_0_5px_#AABBCC]">
+                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#2D759E] rounded-md w-[500px] p-[10px] shadow-[0_0_5px_#AABBCC]">
                                         {divisions.map((division) => (
                                             <li 
                                                 key={division} 
-                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]  rounded-md  cursor-pointer " 
+                                                className="z-20 hover:bg-[#2D759E] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]  rounded-md  cursor-pointer " 
                                                 onClick={() => handleSelectFilter('division', division)}
                                             >
                                                 {division}
@@ -345,18 +346,18 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             </div>
                             <div className="relative w-36">
                                 <button
-                                    className={`rounded-r-md flex justify-around items-center text-[16px] border border-[#E0E0E0] ${isOpenDistricts ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`} 
+                                    className={`rounded-r-md flex justify-around items-center text-[16px] border border-[#E0E0E0] ${isOpenDistricts ? 'bg-[#2D759E] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#2D759E] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`} 
                                     onClick={() => toggleDropdowns('districts')}
                                 >
                                     依地區
                                     <Image src="/images/down_small_line.svg" alt="district" width={18} height={18} />
                                 </button>
                                 {isOpenDistricts && (
-                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] p-[10px] shadow-[0_0_5px_#AABBCC]">
+                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#2D759E] rounded-md w-[500px] p-[10px] shadow-[0_0_5px_#AABBCC]">
                                         {districts.map((district) => (
                                             <li 
                                                 key={district} 
-                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]  rounded-md  cursor-pointer " 
+                                                className="z-20 hover:bg-[#2D759E] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]  rounded-md  cursor-pointer " 
                                                 onClick={() => handleSelectFilter('district', district)}
                                                 >
                                                 {district}
@@ -369,7 +370,7 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                         {/*卡片盒 */} 
                         <div className="w-full h-auto m-auto grid grid-cols-2 justify-center items-start box-border my-[10px] gap-[2%]">
                         {loading ? (
-                            Array.from({ length: postsPerPage-12 }, (_, index) => (
+                            Array.from({ length: postsPerPage-14 }, (_, index) => (
                                 <Skeleton key={index} height={150} width={600} className="m-[5px]" />
                             ))
                         ) : (

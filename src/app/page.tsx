@@ -98,7 +98,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
               {searches.map((search, index) => (
                 <button  
                   key={index}
-                  className="flex flex-col justify-between text-[#2D759E]" 
+                  className="flex flex-col justify-between" 
                   onClick={() => handleSearchClick(search.filter)}
                 >
                   <div className="overflow-hidden w-[165px] h-[165px] p-[4px] bg-[#FFFFFF] border-[4px] border-solid border-[#2D759E] rounded-full">
@@ -130,7 +130,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
               {cancers.map((cancer, index) => (
                 <button  
                     key={index}
-                    className="flex flex-col justify-between text-[#2D759E]" 
+                    className="flex flex-col justify-between" 
                     onClick={() => handleSearchClick(cancer.filter)}
                 >
                   <div className="overflow-hidden w-[160px] h-[160px] p-[4px]  bg-[#FFFFFF] border-[4px] border-solid border-[#2D759E] rounded-full">
