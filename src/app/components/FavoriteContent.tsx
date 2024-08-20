@@ -26,6 +26,8 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
     const lastElementRef = useRef<HTMLDivElement>(null);
     const [favoriteData, setFavoriteData] = useState<FirebaseFavoriteData[]>([]);
 
+    const [hover, setHover] = useState<Record<string, boolean>>({});
+
     const router = useRouter();
 
 
@@ -96,6 +98,14 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
             console.error('刪除失敗:', error);
         }
     };
+
+    const toggleHover = (id: string) => { 
+        setHover(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
+        console.log(hover);
+    };
     
   
     return (
@@ -104,58 +114,65 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
          <HomePage/>
           :( 
             <> 
-                <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#FCFCFC]" >
+                <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow" >
                     <div className="flex w-full h-auto relative">
-                        <div className="flex  w-full h-[360px]"  style={{ backgroundImage: `url('images/favoritePage_banner.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}> 
-                            <div className="relative top-0 left-0 w-full h-full z-10 flex items-center justify-center bg-black/7">
-                                <div className="text-[#ffffff] font-bold text-[56px] text-center">收藏清單</div>  
+                        <div className="relative flex  flex-col w-full h-[340px]"> 
+                            <Image  src="/images/favoritePage_banner.jpg" alt="icon" width={1720} height={340} className="w-full h-full object-cover"/>
+                            <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-20">
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#ffffff] font-bold text-[56px] text-center">收藏清單</div>  
                             </div>
                         </div>  
                     </div>
                     {/*收藏項目*/}
-                    <div className="w-full flex flex-col min-h-screen bg-[rgba(255,255,255,0.2)] backdrop-blur-sm my-auto pt-5 pb-10 flex justify-center items-center mt-[20px]">
-                        <div className="w-[1200px] flex min-h-screen  shadow-[0_0_5px_#AABBCC] rounded-lg">
-                            <div className="w-full flex flex-col justify-start items-center bg-[rgba(255,255,255,0.6)] backdrop-blur-md py-7 px-8">
+                    <div className="w-full flex flex-col min-h-screen bg-[#F0F0F0] backdrop-blur-sm my-auto pt-5 pb-10 flex justify-center items-center pt-[30px]">
+                        <div className="w-[1200px] flex min-h-screen  shadow-[0_0_10px_#AABBCC] rounded-lg">
+                            <div className="w-full flex flex-col justify-start items-center bg-[#FFFFFF] backdrop-blur-md py-7 px-8 rounded-l-lg">
                                 {favoriteData.length === 0 ? (
                                     <>
                                         <div className="text-2xl text-gray-600 text-center my-auto">目前無收藏機構，推薦前往搜尋頁進行挑選</div>
                                         <button 
                                             type="button" 
-                                            className="w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-11  mb-10 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]"
+                                            className="w-64 bg-[#5B98BC] rounded-md py-4.5 px-2.5  h-11  mb-[60px] hover:bg-[#9FC5DF] font-bold text-white text-center text-[20px] transition-all duration-300 hover:scale-110"
                                             onClick={()=>router.push('/search')} 
                                         >
                                         開始搜尋
                                         </button>
                                     </>
                                 ) : (
-                                favoriteData.map((item, index) => (
+                                favoriteData.map((item) => (
                                     <>
-                                        <div key={index} className="h-auto w-full flex justify-between">
+                                        <div key={item.id} className="h-auto w-full flex justify-between">
                                             <div className="relative w-[250px] h-[250px]  aspect-square flex items-center">
                                                 {item.imageUrl && <div className="bg-cover bg-center w-full h-full" style={{backgroundImage: `url(${item.imageUrl})`}}></div>}
                                                 {item.id && (
-                                                    <button type="button" className="absolute top-[15px] left-[200px] z-10" onClick={() => item.id && handleDeleteClick(item.id)}>
+                                                    <button 
+                                                        type="button" 
+                                                        className={`absolute top-[15px] left-[200px] z-10 ${hover[item.id] ? ' border-none' : 'bg-transparent border-[#2D759E]'}`}
+                                                        onClick={() => item.id && handleDeleteClick(item.id)}
+                                                        onMouseEnter={() => toggleHover(item.id as string)}
+                                                        onMouseLeave={() => toggleHover(item.id as string)}
+                                                    >
                                                         <Image 
-                                                            src="/images/heart_fill.svg" 
+                                                            src={hover[item.id] ? "/images/diamond_white.png" : "/images/diamond_selected.png"}  
                                                             alt="collection" 
-                                                            width={35} 
-                                                            height={35} 
-                                                            className="bg-[#FFFFFF] border-solid border-2  border-[#6898a5] rounded-full p-[2px]  transition-all duration-300 hover:scale-110 shadow-[0_0_5px_#6898a5]  hover:bg-transparent  hover:shadow-[0_0_3px_#6898a5]" 
+                                                            width={36} 
+                                                            height={36} 
+                                                            className={`rounded-full p-[2px] ${hover[item.id] ? 'border-none shadow-none bg-[#0000004d]  ' : 'bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_5px_#2D759E]'}`} 
                                                         />
                                                     </button>
                                                 )}
                                             </div>
-                                            <div className="flex flex-col shrink-0 w-[500px] h-full mr-[10px]">
+                                            <div className="flex flex-col shrink-0 w-[500px] h-full mr-[10px] text-[#2D759E]">
                                                 <div className="flex flex-row justify-start items-center leading-12 mb-4">
-                                                    <span className="font-bold text-lg text-[#1D445D] mr-1.5">機構名稱:</span>
+                                                    <span className="font-bold text-lg mr-1.5">機構名稱:</span>
                                                     <span className="text-lg text-[#1D445D] mr-1.5">{item.hosp_name}</span>
                                                 </div>
                                                 <div className="flex flex-row justify-start items-center leading-12 mb-4">
-                                                    <span className="font-bold text-lg text-[#1D445D] mr-1.5 ">電話:</span>
+                                                    <span className="font-bold text-lg mr-1.5 ">電話:</span>
                                                     <span className="text-lg text-[#1D445D] mr-1.5">{item.tel}</span>
                                                 </div>
-                                                <div className="flex flex-row justify-start items-center leading-12 mb-4">
-                                                    <span className="font-bold text-lg text-[#1D445D] mr-1.5 ">地址:</span>
+                                                <div className="flex flex-row justify-start leading-12 mb-4">
+                                                    <span className="font-bold text-lg mr-1.5 w-[45px] text-nowrap">地址:</span>
                                                     <span className="text-lg text-[#1D445D] mr-1.5">{item.hosp_addr}</span>
                                                 </div>
                                             </div>
@@ -166,8 +183,8 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                 )}
                                 <div ref={lastElementRef}></div>
                             </div>
-                            <div className="w-2/5 min-w-[285px] flex flex-col justify-start items-center bg-gradient-to-b  from-[#eff4f5]  to-[#c8d6da] backdrop-blur-md rounded-tr-lg rounded-br-lg py-10 px-8 text-lg shadow-md">
-                                <div className="text-2xl mb-7.5 text-[#1D445D] font-bold mb-[30px]">匯出格式</div>
+                            <div className="w-2/5 flex flex-col justify-start items-center bg-gradient-to-b  from-[#F0F0F0] via-[#C3D8EA] to-[#77ACCC] backdrop-blur-md rounded-tr-lg rounded-br-lg py-10 px-8 text-lg shadow-md">
+                                <div className="text-[28px] mb-7.5 text-[#2D759E] font-bold mb-[30px]">匯出格式</div>
                                 <div className="flex flex-col justify-between items-center w-[200px] h-auto text-[#1D445D] ">
                                     <button 
                                             className={`flex justify-center items-center w-full rounded-md py-4.5  h-11  mt-5 mb-5 bg-[#FFEEDD] hover:bg-[#FFC78E] hover:text-[#ffffff] border-2 border-solid border-[#eb980a]  text-center text-[20px] transition-all duration-300 hover:scale-110

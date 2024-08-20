@@ -59,7 +59,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
 
   const scrollDown = () => {
     window.scrollTo({
-      top: 600,
+      top: 630,
       behavior: 'smooth'
     });
   };
@@ -81,7 +81,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
   return (       
     <AnimatePresence>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-        <div className="relative w-full h-[680px] bg-[url('/images/image.png')] bg-cover bg-center bg-no-repeat">
+        <div className="relative w-full h-[740px] bg-[url('/images/image.png')] bg-cover bg-center bg-no-repeat">
           <div className="absolute top-[72%] left-[53%] -translate-x-[80%] -translate-y-[80%] flex flex-col justify-between">
             <div className="text-center mt-22 cursor-pointer"  data-aos="fade-up" onClick={ scrollDown }>
               <span className="font-bold text-[32px] text-[#FFFFFF]  text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]">立即探索</span>
@@ -98,15 +98,15 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
               {searches.map((search, index) => (
                 <button  
                   key={index}
-                  className="flex flex-col justify-between p-[20px] text-[#2D759E]" 
+                  className="flex flex-col justify-between text-[#2D759E]" 
                   onClick={() => handleSearchClick(search.filter)}
                 >
-                  <div className="overflow-hidden w-[125px] h-[125px] p-[4px] bg-[#FFFFFF] border-[4px] border-solid border-[#2D759E] rounded-full">
+                  <div className="overflow-hidden w-[165px] h-[165px] p-[4px] bg-[#FFFFFF] border-[4px] border-solid border-[#2D759E] rounded-full">
                     <div className="relative transition-all duration-300 hover:scale-110">
-                      <Image  src={search.image} alt="icon" width={120} height={110} className="w-full h-[110px] rounded-full"/>
-                      <div className="absolute inset-0 bg-gray-900 bg-opacity-30 rounded-full"></div>
+                      <Image  src={search.image} alt="icon" width={120} height={150} className="w-full h-[150px] rounded-full"/>
+                      <div className="absolute inset-0 bg-gray-900 bg-opacity-20 rounded-full"></div>
                       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                        <Image  src={search.icon} alt="icon" width={45} height={45} className="w-[45px] h-[45px] object-contain"/>
+                        <Image  src={search.icon} alt="icon" width={85} height={85} className="w-[85px] h-[85px] object-contain"/>
                       </div>  
                     </div>  
                   </div>
@@ -130,15 +130,15 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
               {cancers.map((cancer, index) => (
                 <button  
                     key={index}
-                    className="flex flex-col justify-between p-[20px] text-[#2D759E]" 
+                    className="flex flex-col justify-between text-[#2D759E]" 
                     onClick={() => handleSearchClick(cancer.filter)}
                 >
-                  <div className="overflow-hidden w-[125px] h-[125px] p-[4px] bg-[#FFFFFF] border-[4px] border-solid border-[#2D759E] rounded-full">
+                  <div className="overflow-hidden w-[160px] h-[160px] p-[4px]  bg-[#FFFFFF] border-[4px] border-solid border-[#2D759E] rounded-full">
                     <div className="relative transition-all duration-300 hover:scale-110">
-                      <Image  src={cancer.image} alt="icon" width={120} height={100} className="w-full h-auto rounded-full object-cover"/>
-                      <div className="absolute inset-0 bg-gray-900 bg-opacity-50 rounded-full"></div>
+                      <Image  src={cancer.image} alt="icon" width={120} height={155} className="w-full h-[145px] rounded-full object-cover"/>
+                      <div className="absolute inset-0 bg-gray-900 bg-opacity-45 rounded-full"></div>
                       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                        <Image  src={cancer.icon} alt="icon" width={70} height={75} className="w-[70px] h-[75px] object-contain"/>
+                        <Image  src={cancer.icon} alt="icon" width={70} height={75} className="w-[80px] h-[85px] object-cover"/>
                       </div>  
                     </div>  
                   </div>

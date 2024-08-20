@@ -40,7 +40,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="bg-[#FFFFFF] flex flex-col items-center">
-      <div className="w-full px-[5%] justify-center  flex flex-col justify-between items-center h-[120px] text-[#1e94b4]">
+      <div className="w-full px-[5%] justify-center  flex flex-col justify-between items-center h-[115px] text-[#1e94b4]">
           <Link 
             href='/' 
             className="relative flex items-center no-underline font-bold mt-4 cursor-pointer animate__animated  animate__backInLeft animate__slow border border-solid border-[#FFFFFF]"
