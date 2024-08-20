@@ -200,10 +200,19 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
             <AnimatePresence>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                     <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#FCFCFC]" >
-                        <div className="mt-[100px] bg-[#ffffff] w-[1200px] flex flex-col items-center my-[50px] border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC]"> 
+                        <div className="flex w-full h-auto relative">
+                            <div className="relative flex  flex-col w-full h-[300px]"> 
+                                <Image  src="/images/institutionPage_banner.png" alt="icon" width={1700} height={300} className="w-auto h-[300px] object-cover"/>
+                                <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-3">
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-black text-[#ffffff] font-bold text-[36px] text-center text-shadow-[2px 2px 8px rgba(0,0,0,0.8)] bg-[#FFFFFF] opacity-90 px-[8px] py-[16px] rounded-lg">
+                                        {institutionDetails.hosp_name}
+                                    </div>  
+                                </div>
+                            </div>  
+                        </div>
+                        <div className="mt-[100px] bg-[#ffffff] w-[1200px] flex flex-col items-center my-[50px] border-solid border-2 border-[#2D759E] shadow-[0_0_5px_#AABBCC]"> 
                             <div className="w-[1200px] px-[30px]">
                                 <div className="w-full flex  flex-col items-center">
-                                    <h3 className="text-3xl text-black font-bold text-center mt-[40px]">{institutionDetails.hosp_name}</h3>
                                     {!user ? (
                                         <>
                                             <button type="button" onClick={() => setIsSignInModalVisible(true)}>
@@ -232,32 +241,32 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                 </div>
                                 {/*簡介*/}
                                     <hr className="w-full border border-[#acb8b6] my-[30px]"/>
-                                    <h3 className="text-2xl text-black underline decoration-[#6898a5] decoration-4 font-bold mb-[30px]">資訊簡介</h3>
-                                    <form className="wfull h-full flex flex-col justify-around p-[10px] ml-[10px]">
-                                        <div className="w-full flex  h-[24px] text-xl text-black mb-[25px]">
-                                            <p className="mr-[120px]">電話:</p>
+                                    <h3 className="text-2xl text-black underline decoration-[#2D759E] decoration-4 font-bold mb-[30px]">資訊簡介</h3>
+                                    <form className="wfull h-full flex flex-col justify-around p-[10px] ml-[10px] text-black ">
+                                        <div className="w-full flex  h-[24px] text-xl mb-[25px]">
+                                            <p className="mr-[120px] font-bold">電話:</p>
                                             <span className="">{institutionDetails.tel}</span>
                                         </div>
-                                        <div className="w-full flex  h-[24px] text-xl text-black mb-[25px]">
-                                            <p className="mr-[100px]">行政區:</p>
+                                        <div className="w-full flex  h-[24px] text-xl mb-[25px]">
+                                            <p className="mr-[100px] font-bold">行政區:</p>
                                             <span className="">{institutionDetails.area}</span>
                                         </div>
-                                        <div className="w-full flex  h-[24px] text-xl text-black mb-[25px]">
-                                            <p className="mr-[115px]">地址:</p>
+                                        <div className="w-full flex  h-[24px] text-xl mb-[25px]">
+                                            <p className="mr-[115px] font-bold">地址:</p>
                                             <span className="">{institutionDetails.hosp_addr}</span>
                                         </div>
-                                        <div className="w-full flex  h-[24px] text-xl text-black mb-[25px]">
-                                            <p className="mr-[120px]">科別:</p>
+                                        <div className="w-full flex  h-[24px] text-xl mb-[25px]">
+                                            <p className="mr-[120px] font-bold">科別:</p>
                                             <span className="">{institutionDetails.division}</span>
                                         </div>
-                                        <div className="w-full flex  h-[24px] text-xl text-black mb-[25px]">
-                                            <p className="mr-[40px]">癌症篩檢服務:</p>
+                                        <div className="w-full flex  h-[24px] text-xl mb-[25px]">
+                                            <p className="mr-[40px] font-bold">癌症篩檢服務:</p>
                                             <span className="">{institutionDetails.cancer_screening}</span>
                                         </div>
                                     </form>
                                     {/*地圖*/}
                                     <hr className="w-full border border-[#acb8b6] my-[30px]"/>
-                                    <h3 className="text-2xl text-black underline decoration-[#6898a5] decoration-4 font-bold mt-[5px] mb-[30px]">地圖實景</h3>
+                                    <h3 className="text-2xl text-black underline decoration-[#2D759E] decoration-4 font-bold mt-[5px] mb-[30px]">地圖實景</h3>
                                     {loading ? (
                                         <Skeleton height={450} width={1140} className="my-[40px] mx-auto" />
                                     ) : (
@@ -281,7 +290,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                         <Skeleton height={320} width={1140} className="my-[40px] mx-auto" />
                                     ) : (
                                     <div className="w-full">
-                                        <h3 className="text-black font-bold text-2xl  underline decoration-[#6898a5] decoration-4 my-[10px]">您可能也想比較...</h3>
+                                        <h3 className="text-black font-bold text-2xl  underline decoration-[#2D759E] decoration-4 my-[10px]">您可能也想比較...</h3>
                                         <div className="w-full flex justify-between mt-[50px] relative px-[60px]">
                                             <button
                                                 id="left-arrow"
@@ -351,7 +360,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                 {/*返鈕*/}
                                 <div className="flex items-center">
                                     <button 
-                                        className="mx-auto my-16  w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-11  hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]"
+                                        className="mx-auto my-16  w-64 bg-[#5B98BC] rounded-md py-4.5 px-2.5  h-11  hover:bg-[#9FC5DF]  font-bold text-white text-center text-[20px]"
                                         onClick={()=>router.push('/search')}
                                     >
                                         搜尋更多機構

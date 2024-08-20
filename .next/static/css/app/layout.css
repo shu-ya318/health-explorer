@@ -813,6 +813,9 @@ video {
 .mr-\[5px\] {
   margin-right: 5px;
 }
+.mr-\[7px\] {
+  margin-right: 7px;
+}
 .mr-\[8px\] {
   margin-right: 8px;
 }
@@ -840,9 +843,6 @@ video {
 .mt-\[3px\] {
   margin-top: 3px;
 }
-.mt-\[40px\] {
-  margin-top: 40px;
-}
 .mt-\[50px\] {
   margin-top: 50px;
 }
@@ -851,9 +851,6 @@ video {
 }
 .mt-\[60px\] {
   margin-top: 60px;
-}
-.mr-\[7px\] {
-  margin-right: 7px;
 }
 .box-border {
   box-sizing: border-box;
@@ -1434,20 +1431,12 @@ video {
   --tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
-.from-\[\#eff4f5\] {
-  --tw-gradient-from: #eff4f5 var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(239 244 245 / 0) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
 .via-\[\#C3D8EA\] {
   --tw-gradient-to: rgb(195 216 234 / 0)  var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), #C3D8EA var(--tw-gradient-via-position), var(--tw-gradient-to);
 }
 .to-\[\#77ACCC\] {
   --tw-gradient-to: #77ACCC var(--tw-gradient-to-position);
-}
-.to-\[\#a7bdc1\] {
-  --tw-gradient-to: #a7bdc1 var(--tw-gradient-to-position);
 }
 .bg-contain {
   background-size: contain;
@@ -1539,6 +1528,10 @@ video {
   padding-left: 60px;
   padding-right: 60px;
 }
+.px-\[8px\] {
+  padding-left: 8px;
+  padding-right: 8px;
+}
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
@@ -1566,6 +1559,10 @@ video {
 .py-\[15px\] {
   padding-top: 15px;
   padding-bottom: 15px;
+}
+.py-\[16px\] {
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 .pb-10 {
   padding-bottom: 2.5rem;
@@ -1628,6 +1625,9 @@ video {
 }
 .text-\[32px\] {
   font-size: 32px;
+}
+.text-\[36px\] {
+  font-size: 36px;
 }
 .text-\[56px\] {
   font-size: 56px;
@@ -1719,8 +1719,8 @@ video {
 .no-underline {
   text-decoration-line: none;
 }
-.decoration-\[\#6898a5\] {
-  text-decoration-color: #6898a5;
+.decoration-\[\#2D759E\] {
+  text-decoration-color: #2D759E;
 }
 .decoration-4 {
   text-decoration-thickness: 4px;
@@ -1955,11 +1955,6 @@ body {
 .hover\:text-red-500:hover {
   --tw-text-opacity: 1;
   color: rgb(239 68 68 / var(--tw-text-opacity));
-}
-
-.hover\:text-\[\#FFFFFF\]:hover {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
 .hover\:opacity-40:hover {
