@@ -43,42 +43,46 @@ const Header: React.FC = () => {
       <div className="w-full px-[5%] justify-center  flex flex-col justify-between items-center  h-[130px] text-[#1e94b4] border border-solid border-[#FFFFFF]">
           <Link 
             href='/' 
-            className="flex items-center no-underline font-bold   mt-4 cursor-pointer animate__animated  animate__backInLeft animate__slow"
+            className="relative flex items-center no-underline font-bold mt-4 cursor-pointer animate__animated  animate__backInLeft animate__slow border border-solid border-[#FFFFFF]"
           >
-              <Image src="/images/LOGO.png" alt="Logo" width={56} height={56} className="mr-4 border border-solid rounded-lg border-[#50bfd9]"/>
-              <div className="flex flex-col hover:text-[#B0DFEB]">
-              <ruby className="text-[24px] text-center">
-                健康探索者 
-                <rt className="text-[12px]">HealthExplorer</rt>
-              </ruby>
+              <Image src="/images/LOGO.png" alt="Logo" width={56} height={56} className="mr-2 relative z-0"/>
+              <div class=" absolute w-full h-full top-0 left-0 bg-white opacity-0 z-10 transition-opacity duration-300 hover:opacity-40 "></div>
+              <div className="flex flex-col hover:text-[#9FC5DF] mr-[5px]">
+                <ruby className="text-[24px] text-center">
+                  健康探索者 
+                  <rt className="text-[14px]">HealthExplorer</rt>
+                </ruby>
               </div>
           </Link>
-          <div className="flex items-center no-underline font-bold cursor-pointer">
-            <button  
-              type="button" 
-              className="font-bold cursor-pointer my-2.5 px-2.5 h-9 flex items-center hover:text-[#acb8b6] mr-30" 
-              onClick={handleFavoriteClick}
-            >
-              我的收藏
-            </button >
-            <hr className="h-[20%] border border-[#e6e6e6] ml-[10px]"/>
+          <div className="flex items-center no-underline font-bold cursor-pointer mb-[5px]">
+          <button 
+            type="button" 
+            className="relative inline-flex items-center justify-start overflow-hidden font-medium transition-all rounded  group py-1.5 px-2.5"
+            onClick={handleFavoriteClick}
+          >
+            <span className="w-52 h-32 rounded bg-[#9FC5DF] absolute bottom-0 left-0 translate-x-full ease-out duration-500 transition-all translate-y-full mb-9 ml-9 group-hover:ml-0 group-hover:mb-32 group-hover:translate-x-0"></span>
+            <span className="relative w-full text-left  transition-colors duration-300 ease-in-out group-hover:text-white">我的收藏</span>
+          </button>
+            <hr className="h-[30%] border border-[#e6e6e6] mx-[5px]"/>
             {!user ? (
                  <>
                   <button 
                     type="button" 
-                    className="rounded-md my-2.5 px-2 h-9 flex items-center hover:bg-[#acb8b6] hover:text-white mr-3 ml-3" 
+                    className="relative inline-flex items-center justify-start overflow-hidden font-medium transition-all rounded  group py-1.5 px-2.5"
                     onClick={() => setIsSignInModalVisible(true)} 
                   >
-                    登入
+                    <span className="w-52 h-32 rounded bg-[#9FC5DF] absolute bottom-0 left-0 translate-x-full ease-out duration-500 transition-all translate-y-full mb-9 ml-9 group-hover:ml-0 group-hover:mb-32 group-hover:translate-x-0"></span>
+                    <span className="relative w-full text-left  transition-colors duration-300 ease-in-out group-hover:text-white">登入</span>
                   </button>
                   {isSignInModalVisible && <SignInModal  onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
-                  <hr className="h-[20%] border border-[#e6e6e6] mr-[10px]"/>
+                  <hr className="h-[30%] border border-[#e6e6e6] mx-[5px]"/>
                   <button 
                     type="button" 
-                    className="rounded-md my-2.5 px-2 h-9 flex items-center hover:text-black"
+                    className="relative inline-flex items-center justify-start overflow-hidden font-medium transition-all rounded  group py-1.5 px-2.5"
                     onClick={() => setIsRegisterModalVisible(true)}
                   >
-                    註冊
+                    <span className="w-52 h-32 rounded bg-[#9FC5DF] absolute bottom-0 left-0 translate-x-full ease-out duration-500 transition-all translate-y-full mb-9 ml-9 group-hover:ml-0 group-hover:mb-32 group-hover:translate-x-0"></span>
+                    <span className="relative w-full text-left  transition-colors duration-300 ease-in-out group-hover:text-white">註冊</span>
                   </button>
                   {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
                  </>
@@ -86,10 +90,11 @@ const Header: React.FC = () => {
                 <>
                   <button 
                     type="button" 
-                    className="text-black bg-[#ffffff] rounded-md my-2.5 px-2.5 h-9 flex items-center hover:bg-[#acb8b6] hover:text-white mr-3 ml-3" 
+                    className="relative inline-flex items-center justify-start overflow-hidden font-medium transition-all rounded  group py-1.5 px-2.5"
                     onClick={handleLogout}
                   >
-                    登出
+                    <span className="w-56 h-48 rounded bg-[#9FC5DF] absolute bottom-0 left-0 translate-x-full ease-out duration-500 transition-all translate-y-full mb-9 ml-9 group-hover:ml-0 group-hover:mb-32 group-hover:translate-x-0"></span>
+                    <span className="relative w-full text-left  transition-colors duration-300 ease-in-out group-hover:text-white">登出</span>
                   </button>
                 </>
               )}
