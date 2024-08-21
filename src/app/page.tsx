@@ -59,7 +59,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
 
   const scrollDown = () => {
     window.scrollTo({
-      top: 630,
+      top: 800,
       behavior: 'smooth'
     });
   };

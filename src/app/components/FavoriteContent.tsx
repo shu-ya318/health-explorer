@@ -12,6 +12,7 @@ import { FirebaseFavoriteData} from '../lib/types';
 import { useAuth } from '../hooks/useAuth'; 
 
 import HomePage  from '../page'; 
+import {ConfirmDeleteModal} from '../components/ConfirmDeleteModal';
 
 
 const FavoriteContent: React.FC = (): React.ReactElement | null  => {
@@ -27,6 +28,8 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
     const [favoriteData, setFavoriteData] = useState<FirebaseFavoriteData[]>([]);
 
     const [hover, setHover] = useState<Record<string, boolean>>({});
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState<string | null>(null);
 
     const router = useRouter();
 
@@ -88,17 +91,6 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
       }, [lastVisible, loading, fetchMoreData, isInitialLoad, allDataLoaded]);
 
 
-    const handleDeleteClick = async (docId: string) => {
-        if (!uid) return;
-
-        try {
-            await removeFavorite(docId);
-            setFavoriteData(favoriteData.filter(item => item.id !== docId));
-        } catch (error) {
-            console.error('刪除失敗:', error);
-        }
-    };
-
     const toggleHover = (id: string) => { 
         setHover(prev => ({
             ...prev,
@@ -107,6 +99,26 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
         console.log(hover);
     };
     
+
+    const handleDeleteClick = async (docId: string) => {
+        setSelectedId(docId);
+        setIsConfirmModalOpen(true);
+      };
+    const handleConfirmDelete = async () => {
+    if (!selectedId || !uid) return;
+
+    try {
+        await removeFavorite(selectedId);
+        setFavoriteData(favoriteData.filter(item => item.id !== selectedId));
+    } catch (error) {
+        console.error('刪除失敗:', error);
+    }
+    setIsConfirmModalOpen(false);
+    };
+    const handleCloseModal = () => {
+    setIsConfirmModalOpen(false);
+    };
+
   
     return (
         <> 
@@ -115,6 +127,13 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
           :( 
             <> 
                 <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow" >
+                    {isConfirmModalOpen && (
+                        <ConfirmDeleteModal 
+                            isOpen={isConfirmModalOpen} 
+                            onConfirm={handleConfirmDelete} 
+                            onCancel={handleCloseModal} 
+                        />
+                    )}   
                     <div className="flex w-full h-auto relative">
                         <div className="relative flex  flex-col w-full h-[340px]"> 
                             <Image  priority={false} src="/images/favoritePage_banner.jpg" alt="icon" width={1720} height={340} className="w-full h-full object-cover"/>
@@ -142,40 +161,45 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                 favoriteData.map((item) => (
                                     <>
                                         <div key={item.id} className="h-auto w-full flex justify-between">
-                                            <div className="relative w-[250px] h-[250px]  aspect-square flex items-center">
+                                            <div className="relative w-[170px] h-[170px]  aspect-square flex items-center">
                                                 {item.imageUrl && <div className="bg-cover bg-center w-full h-full" style={{backgroundImage: `url(${item.imageUrl})`}}></div>}
                                                 {item.id && (
                                                     <button 
                                                         type="button" 
-                                                        className={`absolute top-[15px] left-[200px] z-10 ${hover[item.id] ? ' border-none' : 'bg-transparent border-[#2D759E]'}`}
-                                                        onClick={() => item.id && handleDeleteClick(item.id)}
-                                                        onMouseEnter={() => toggleHover(item.id as string)}
-                                                        onMouseLeave={() => toggleHover(item.id as string)}
+                                                        className="absolute top-[7px] left-[125px] z-10"
                                                     >
                                                         <Image 
-                                                            src={hover[item.id] ? "/images/diamond_white.png" : "/images/diamond_selected.png"}  
+                                                            src="/images/diamond_selected.png" 
                                                             alt="collection" 
-                                                            width={36} 
-                                                            height={36} 
-                                                            className={`rounded-full p-[2px] ${hover[item.id] ? 'border-none shadow-none bg-[#0000004d]  ' : 'bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_5px_#2D759E]'}`} 
+                                                            width={30} 
+                                                            height={30} 
+                                                            className="rounded-full p-[2px]  bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_5px_#2D759E]"
                                                         />
                                                     </button>
                                                 )}
                                             </div>
-                                            <div className="flex flex-col shrink-0 w-[500px] h-full mr-[10px] text-[#2D759E]">
-                                                <div className="flex flex-row justify-start items-center leading-12 mb-4">
-                                                    <span className="font-bold text-lg mr-1.5">機構名稱:</span>
+                                            <div className="flex flex-col w-[560px] h-full text-[#2D759E] leading-12">
+                                                <div className="flex items-center mb-4">
+                                                    <span className="font-bold text-lg mr-1.5 w-[80px]">機構名稱</span>
                                                     <span className="text-lg text-[#1D445D] mr-1.5">{item.hosp_name}</span>
                                                 </div>
-                                                <div className="flex flex-row justify-start items-center leading-12 mb-4">
-                                                    <span className="font-bold text-lg mr-1.5 ">電話:</span>
+                                                <div className="flex items-center  mb-4">
+                                                    <span className="font-bold text-lg mr-1.5 w-[80px]">電話</span>
                                                     <span className="text-lg text-[#1D445D] mr-1.5">{item.tel}</span>
                                                 </div>
-                                                <div className="flex flex-row justify-start leading-12 mb-4">
-                                                    <span className="font-bold text-lg mr-1.5 w-[45px] text-nowrap">地址:</span>
+                                                <div className="flex  items-center mb-4">
+                                                    <span className="font-bold text-lg mr-1.5 w-[80px]">地址</span>
                                                     <span className="text-lg text-[#1D445D] mr-1.5">{item.hosp_addr}</span>
                                                 </div>
                                             </div>
+                                            {item.id && (
+                                                <button 
+                                                    className="flex justify-start" 
+                                                    onClick={() => item.id && handleDeleteClick(item.id)}
+                                                >
+                                                    <Image  src="/images/delete.png" alt="delete" width={30} height={30} />
+                                                </button>  
+                                            )}
                                         </div>
                                         <hr className="w-full  border border-solid border-[#e8e8e8] my-5"/>
                                     </>

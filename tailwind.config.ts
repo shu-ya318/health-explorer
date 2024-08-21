@@ -16,7 +16,7 @@ const config: Config = {
       //自定義 網格間距
       gridTemplateColumns: {
         'fill-two-columns': 'repeat(auto-fill, minmax(48%, 1fr))',
-      },
+      }
     },
   },
   plugins: [],
