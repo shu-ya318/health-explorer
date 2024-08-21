@@ -103,10 +103,10 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
                 >
                   <div className="overflow-hidden w-[165px] h-[165px] p-[4px] bg-[#FFFFFF] border-[4px] border-solid border-[#2D759E] rounded-full">
                     <div className="relative transition-all duration-300 hover:scale-110">
-                      <Image  src={search.image} alt="icon" width={120} height={150} className="w-full h-[150px] rounded-full"/>
+                      <Image  src={search.image} alt="icon" width={150} height={148} className="w-auto h-[148px] rounded-full object-cover"/>
                       <div className="absolute inset-0 bg-gray-900 bg-opacity-20 rounded-full"></div>
                       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                        <Image  src={search.icon} alt="icon" width={85} height={85} className="w-[85px] h-[85px] object-contain"/>
+                        <Image  src={search.icon} alt="icon" width={75} height={85} className="object-contain"/>
                       </div>  
                     </div>  
                   </div>
@@ -135,10 +135,10 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
                 >
                   <div className="overflow-hidden w-[160px] h-[160px] p-[4px]  bg-[#FFFFFF] border-[4px] border-solid border-[#2D759E] rounded-full">
                     <div className="relative transition-all duration-300 hover:scale-110">
-                      <Image  src={cancer.image} alt="icon" width={120} height={155} className="w-full h-[145px] rounded-full object-cover"/>
+                      <Image  src={cancer.image} alt="icon" width={145} height={145} className="rounded-full object-cover"/>
                       <div className="absolute inset-0 bg-gray-900 bg-opacity-45 rounded-full"></div>
                       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                        <Image  src={cancer.icon} alt="icon" width={70} height={75} className="w-[80px] h-[85px] object-cover"/>
+                        <Image  src={cancer.icon} alt="icon" width={80} height={85} className="object-cover"/>
                       </div>  
                     </div>  
                   </div>

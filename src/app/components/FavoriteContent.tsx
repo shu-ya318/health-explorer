@@ -117,7 +117,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                 <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow" >
                     <div className="flex w-full h-auto relative">
                         <div className="relative flex  flex-col w-full h-[340px]"> 
-                            <Image  src="/images/favoritePage_banner.jpg" alt="icon" width={1720} height={340} className="w-full h-full object-cover"/>
+                            <Image  priority={false} src="/images/favoritePage_banner.jpg" alt="icon" width={1720} height={340} className="w-full h-full object-cover"/>
                             <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-20">
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#ffffff] font-bold text-[56px] text-center">收藏清單</div>  
                             </div>

@@ -31,6 +31,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
     const [openLoading, setOpenLoading] = useState<boolean>(true);
     const [loading,setLoading] = useState<boolean>(false);
 
+    const [favoriteHover, setFavoriteHover] = useState<Record<string, boolean>>({});
     const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
     const [isSignInModalVisible, setIsSignInModalVisible] = useState(false);
     const { user } = useAuth();
@@ -84,8 +85,8 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
     useEffect(() => {
         if (institutionDetails) {
             setLoading(true);
-            const filters = `division:"${institutionDetails.division}" AND area:"${institutionDetails.area}"`;
-            console.log(filters);
+            
+            const filters = `area:"${institutionDetails.area}"`;
             index.search<InstitutionInfo>('', { filters })
                 .then(({ hits }) => {
                     const filteredHits = hits.filter(hit => hit.objectID !== institutionDetails.objectID).map(hit => ({
@@ -105,24 +106,28 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                     setComparableInstitutions(filteredHits);
                 }).catch(error => {
                     console.error('Search failed for comparable institutions:', error);
+                }).finally(() => {
+                    setLoading(false);
                 });
-                setLoading(false);
         }
     }, [institutionDetails]);
 
     
+    const setFavoriteHoverState = (objectID: string, state: boolean) => {
+        setFavoriteHover(prev => ({
+            ...prev,
+            [objectID]: state
+        }));
+        console.log(favoriteHover);
+    };
+
+
     const mapCenter = useMemo(() => {
         if (institutionDetails && typeof institutionDetails.lat === 'number' && typeof institutionDetails.lng === 'number') {  //因可選參屬性,嚴格檢查型別
             return { lat: institutionDetails.lat, lng: institutionDetails.lng };
         }
         return { lat: 0, lng: 0 };
     }, [institutionDetails]);
-
-
-    /*const handleIncrement = (hosp_name: string, url: string) => {
-        //incrementView(hosp_name);
-        router.push(url); 
-    };*/
 
 
     const handleNext = () => {
@@ -202,9 +207,9 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                     <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#FCFCFC]" >
                         <div className="flex w-full h-auto relative">
                             <div className="relative flex  flex-col w-full h-[300px]"> 
-                                <Image  src="/images/institutionPage_banner.png" alt="icon" width={1700} height={300} className="w-auto h-[300px] object-cover"/>
-                                <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-3">
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-black text-[#ffffff] font-bold text-[36px] text-center text-shadow-[2px 2px 8px rgba(0,0,0,0.8)] bg-[#FFFFFF] opacity-90 px-[8px] py-[16px] rounded-lg">
+                                <Image  priority={false} src="/images/institutionPage_banner.png" alt="icon" width={1700} height={350} className="object-cover"/>
+                                <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-20">
+                                    <div className="absolute top-[55%] left-1/2 -translate-x-[56%] -translate-y-1/2 min-w-72 text-black text-[#ffffff] font-bold text-[26px] text-center text-shadow-[2px 2px 8px rgba(0,0,0,0.8)] bg-[#FFFFFF] opacity-90 p-[10px] rounded-lg">
                                         {institutionDetails.hosp_name}
                                     </div>  
                                 </div>
@@ -212,11 +217,21 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                         </div>
                         <div className="mt-[100px] bg-[#ffffff] w-[1200px] flex flex-col items-center my-[50px] border-solid border-2 border-[#2D759E] shadow-[0_0_5px_#AABBCC]"> 
                             <div className="w-[1200px] px-[30px]">
-                                <div className="w-full flex  flex-col items-center">
+                                <div className="w-full flex  flex-col items-center justify-between">
                                     {!user ? (
                                         <>
-                                            <button type="button" onClick={() => setIsSignInModalVisible(true)}>
-                                                <Image src="/images/heart_line.svg" alt="collection" width={40} height={40} className="mt-[30px] border-solid border-2 border-[#6898a5] rounded-full" />
+                                            <button type="button" 
+                                                onMouseEnter={() => setFavoriteHoverState(institutionDetails.objectID, true)}
+                                                onMouseLeave={() => setFavoriteHoverState(institutionDetails.objectID, false)}
+                                                onClick={() => setIsSignInModalVisible(true)}
+                                            >
+                                                <Image 
+                                                    src={favoriteHover[institutionDetails.objectID] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
+                                                    alt="favorite" 
+                                                    width={40} 
+                                                    height={40} 
+                                                    className={`rounded-full p-[2px] mt-[20px] ${favoriteHover[institutionDetails.objectID] ? 'bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_3px_#2D759E]':'border-none shadow-none bg-[#0000004d]' }`}
+                                                />
                                             </button>
                                             {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
                                             {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
@@ -227,11 +242,17 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                 const isFavorited = state.favorites.some(item => item.userId === user.uid && item.hosp_name === institutionDetails.objectID);
                                                 const handleHeartClick = isFavorited ? () => handleRemoveClick(institutionDetails.objectID, user.uid) : () => handleAddClick(institutionDetails, user.uid);
                                                 return (
-                                                    <button type="button" onClick={handleHeartClick}>
+                                                    <button type="button" 
+                                                        onMouseEnter={() => setFavoriteHoverState(institutionDetails.objectID, true)}
+                                                        onMouseLeave={() => setFavoriteHoverState(institutionDetails.objectID, false)}  
+                                                        onClick={handleHeartClick}
+                                                    >
                                                         <Image 
-                                                            src="/images/heart_line.svg" 
-                                                            alt="collection" width={40} height={40} 
-                                                            className={`${isFavorited ? 'bg-[#FFFFFF] border-[10px]  shadow-[0_0_10px_#6898a5]' : 'bg-transparent '} mt-[30px] border-solid border-2  border-[#6898a5] rounded-full`}
+                                                            src={isFavorited || favoriteHover[institutionDetails.objectID]? "/images/diamond_selected.png" : "/images/diamond_white.png"}  
+                                                            alt="favorite"
+                                                            width={36} 
+                                                            height={36} 
+                                                            className={`rounded-full p-[2px] mt-[20px] ${isFavorited|| favoriteHover[institutionDetails.objectID] ?'bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_3px_#2D759E]':'border-none shadow-none bg-[#0000004d]'}`} 
                                                         />
                                                     </button>
                                                 );
@@ -242,28 +263,28 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                 {/*簡介*/}
                                     <hr className="w-full border border-[#acb8b6] my-[30px]"/>
                                     <h3 className="text-2xl text-black underline decoration-[#2D759E] decoration-4 font-bold mb-[30px]">資訊簡介</h3>
-                                    <form className="wfull h-full flex flex-col justify-around p-[10px] ml-[10px] text-black ">
-                                        <div className="w-full flex  h-[24px] text-xl mb-[25px]">
-                                            <p className="mr-[120px] font-bold">電話:</p>
-                                            <span className="">{institutionDetails.tel}</span>
+                                    <div className="wfull h-full flex flex-col justify-around p-[10px] ml-[10px] text-black text-xl ">
+                                        <div className="w-full flex  items-center mb-[25px]">
+                                            <p className="w-[150px] font-bold ">電話</p>
+                                            <span>{institutionDetails.tel}</span>
                                         </div>
-                                        <div className="w-full flex  h-[24px] text-xl mb-[25px]">
-                                            <p className="mr-[100px] font-bold">行政區:</p>
-                                            <span className="">{institutionDetails.area}</span>
+                                        <div className="w-full flex  items-center mb-[25px]">
+                                            <p className="w-[150px] font-bold">行政區</p>
+                                            <span>{institutionDetails.area}</span>
                                         </div>
-                                        <div className="w-full flex  h-[24px] text-xl mb-[25px]">
-                                            <p className="mr-[115px] font-bold">地址:</p>
-                                            <span className="">{institutionDetails.hosp_addr}</span>
+                                        <div className="w-full flex  items-center mb-[25px]">
+                                            <p className="w-[150px] font-bold">地址</p>
+                                            <span>{institutionDetails.hosp_addr}</span>
                                         </div>
-                                        <div className="w-full flex  h-[24px] text-xl mb-[25px]">
-                                            <p className="mr-[120px] font-bold">科別:</p>
-                                            <span className="">{institutionDetails.division}</span>
+                                        <div className="w-full flex  items-center mb-[25px]">
+                                            <p className="w-[150px] font-bold">科別</p>
+                                            <span>{institutionDetails.division}</span>
                                         </div>
-                                        <div className="w-full flex  h-[24px] text-xl mb-[25px]">
-                                            <p className="mr-[40px] font-bold">癌症篩檢服務:</p>
-                                            <span className="">{institutionDetails.cancer_screening}</span>
+                                        <div className="w-full flex  items-center mb-[25px]">
+                                            <p className="w-[150px] font-bold">癌症篩檢服務</p>
+                                            <span>{institutionDetails.cancer_screening}</span>
                                         </div>
-                                    </form>
+                                    </div>
                                     {/*地圖*/}
                                     <hr className="w-full border border-[#acb8b6] my-[30px]"/>
                                     <h3 className="text-2xl text-black underline decoration-[#2D759E] decoration-4 font-bold mt-[5px] mb-[30px]">地圖實景</h3>
@@ -309,7 +330,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                                 alt="institution"
                                                                 width={250}
                                                                 height={200}
-                                                                className="w-full h-[200px] object-cover object-center"
+                                                                className="object-cover object-center"
                                                                 unoptimized={true}
                                                             />
                                                         )}
@@ -321,8 +342,20 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                     </button>
                                                     {!user ? (
                                                         <>
-                                                            <button type="button"  className="absolute top-1.5 right-1.5 z-10" onClick={() => setIsSignInModalVisible(true)}>
-                                                                <Image src="/images/heart_line.svg" alt="collection" width={40} height={40} className="border-solid border-2 border-[#6898a5] rounded-full" />
+                                                            <button 
+                                                                type="button"  
+                                                                className="absolute top-1.5 right-1.5 z-10" 
+                                                                onMouseEnter={() => setFavoriteHoverState(institution.objectID, true)}
+                                                                onMouseLeave={() => setFavoriteHoverState(institution.objectID, false)}
+                                                                onClick={() => setIsSignInModalVisible(true)}
+                                                            >
+                                                            <Image 
+                                                                src={favoriteHover[institution.objectID]?  "/images/diamond_selected.png": "/images/diamond_white.png"}  
+                                                                alt="favorite" 
+                                                                width={36} 
+                                                                height={36} 
+                                                                className={`rounded-full p-[2px] ${favoriteHover[institution.objectID] ?  'bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_5px_#2D759E]':'border-none shadow-none bg-[#0000004d]'}`}
+                                                            />
                                                             </button>
                                                             {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
                                                             {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
@@ -333,11 +366,19 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                                 const isFavorited = state.favorites.some(item => item.userId === user.uid && item.hosp_name === institution.objectID);
                                                                 const handleHeartClick = isFavorited ? () => handleRemoveClick(institution.objectID, user.uid) : () => handleAddClick(institution, user.uid);
                                                                 return (
-                                                                    <button type="button" className="absolute top-1.5 right-1.5 z-10" onClick={handleHeartClick}>
+                                                                    <button 
+                                                                        type="button" 
+                                                                        className="absolute top-1.5 right-1.5 z-10"
+                                                                        onMouseEnter={() => setFavoriteHoverState(institution.objectID, true)}
+                                                                        onMouseLeave={() => setFavoriteHoverState(institution.objectID, false)}
+                                                                        onClick={handleHeartClick}
+                                                                    >
                                                                         <Image 
-                                                                            src="/images/heart_line.svg" 
-                                                                            alt="collection" width={40} height={40} 
-                                                                            className={`${isFavorited ? 'bg-[#FFFFFF] border-[10px]  shadow-[0_0_10px_#6898a5]' : 'bg-transparent '} border-solid border-2  border-[#6898a5] rounded-full`}
+                                                                            src={isFavorited || favoriteHover[institution.objectID]?  "/images/diamond_selected.png" :"/images/diamond_white.png"}  
+                                                                            alt="favorite"
+                                                                            width={36} 
+                                                                            height={36} 
+                                                                            className={`rounded-full p-[2px] ${isFavorited|| favoriteHover[institution.objectID] ? 'bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_5px_#2D759E]':'border-none shadow-none bg-[#0000004d]' }`} 
                                                                         />
                                                                     </button>
                                                                 );
