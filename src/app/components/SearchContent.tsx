@@ -261,7 +261,7 @@ const handleIncrement = async (institution: InstitutionInfo) => {
         <main className="w-full h-auto flex flex-col justify-center items-center flex-grow bg-[#FCFCFC]" >
                 <div className="flex w-full h-auto relative">
                     <div className="flex  w-full h-[400px]">
-                        <Image  src="/images/searchPage_banner.jpg" alt="icon" width={1720} height={400} className="w-full h-full object-cover"/>
+                        <Image  priority={false} src="/images/searchPage_banner.jpg" alt="icon" width={1720} height={400} className="w-full h-full object-cover"/>
                     </div>
                     {/*癌篩分類*/}
                     <div style={{ bottom: '-165px' }} className="absolute inset-x-0 max-w-screen-md h-[200px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[20px] rounded-lg border-solid border border-[#2D759E] shadow-[0_0_5px_#AABBCC] bg-[#FCFCFC]"> 

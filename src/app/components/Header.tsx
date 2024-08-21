@@ -39,22 +39,22 @@ const Header: React.FC = () => {
 
 
   return (
-    <header className="bg-[#FFFFFF] flex flex-col items-center">
-      <div className="w-full px-[5%] justify-center  flex flex-col justify-between items-center h-[115px] text-[#1e94b4]">
+    <header className="bg-[#FFFFFF] flex items-center fixed inset-x-0 top-0 z-30 w-full border border-solid border-[#9FC5DF] h-[60px]">
+      <div className="w-full px-[5%] justify-center  flex justify-between items-center text-[#1e94b4]">
           <Link 
             href='/' 
-            className="relative flex items-center no-underline font-bold mt-4 cursor-pointer animate__animated  animate__backInLeft animate__slow border border-solid border-[#FFFFFF]"
+            className="relative flex items-center no-underline font-bold mt-2 cursor-pointer animate__animated  animate__backInLeft animate__slow"
           >
-              <Image src="/images/LOGO.png" alt="Logo" width={56} height={56} className="mr-2 relative z-0"/>
+              <Image src="/images/LOGO.png" alt="Logo" width={46} height={46} className="mr-2 relative z-0"/>
               <div className=" absolute w-full h-full top-0 left-0 bg-white opacity-0 z-10 transition-opacity duration-300 hover:opacity-40 "></div>
               <div className="flex flex-col hover:text-[#9FC5DF] mr-[5px]">
-                <ruby className="text-[24px] text-center">
+                <ruby className="text-[20px] text-center">
                   健康探索者 
                   <rt className="text-[14px]">HealthExplorer</rt>
                 </ruby>
               </div>
           </Link>
-          <div className="flex items-center no-underline font-bold cursor-pointer mb-[5px]">
+          <div className="flex items-center no-underline font-bold cursor-pointer mb-[10px]">
           <button 
             type="button" 
             className="relative inline-flex items-center justify-start overflow-hidden font-medium transition-all rounded  group py-1.5 px-2.5"

@@ -12,15 +12,11 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/cancerScreening/page": [
+    "/favorite/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/cancerScreening/page.js"
-    ],
-    "/cancerScreening/result/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/cancerScreening/result/page.js"
+      "static/css/app/favorite/page.css",
+      "static/chunks/app/favorite/page.js"
     ]
   }
 }

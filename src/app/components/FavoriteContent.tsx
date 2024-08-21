@@ -151,7 +151,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                         <div className="text-2xl text-gray-600 text-center my-auto">目前無收藏機構，推薦前往搜尋頁進行挑選</div>
                                         <button 
                                             type="button" 
-                                            className="w-64 bg-[#5B98BC] rounded-md py-4.5 px-2.5  h-11  mb-[60px] hover:bg-[#9FC5DF] font-bold text-white text-center text-[20px] transition-all duration-300 hover:scale-110"
+                                            className="w-64 bg-[#5B98BC] rounded-md py-4.5 px-2.5  h-11  mb-[60px] hover:bg-[#2D759E] font-bold text-white text-center text-[20px] transition-all duration-300 hover:scale-110"
                                             onClick={()=>router.push('/search')} 
                                         >
                                         開始搜尋

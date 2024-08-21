@@ -1,5 +1,4 @@
 {
   "/page": "app/page.js",
-  "/cancerScreening/page": "app/cancerScreening/page.js",
-  "/cancerScreening/result/page": "app/cancerScreening/result/page.js"
+  "/favorite/page": "app/favorite/page.js"
 }
