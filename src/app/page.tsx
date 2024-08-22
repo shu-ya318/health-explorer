@@ -78,9 +78,10 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
     );
   }
 
-  return (       
+  return ( 
     <AnimatePresence>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        
         <div className="relative w-full h-[750px] bg-[url('/images/homeBanner.png')] bg-cover bg-center bg-no-repeat">
           <div className="absolute top-[77%] left-[55%] -translate-x-[80%] -translate-y-[80%] flex flex-col justify-between">
             <div className="text-center mt-22 cursor-pointer"  data-aos="fade-up" onClick={ scrollDown }>

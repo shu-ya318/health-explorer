@@ -793,6 +793,9 @@ video {
 .ml-\[10px\] {
   margin-left: 10px;
 }
+.ml-\[5px\] {
+  margin-left: 5px;
+}
 .mr-1\.5 {
   margin-right: 0.375rem;
 }
@@ -838,9 +841,6 @@ video {
 .mt-\[30px\] {
   margin-top: 30px;
 }
-.mt-\[3px\] {
-  margin-top: 3px;
-}
 .mt-\[50px\] {
   margin-top: 50px;
 }
@@ -850,8 +850,8 @@ video {
 .mt-\[60px\] {
   margin-top: 60px;
 }
-.ml-\[5px\] {
-  margin-left: 5px;
+.mt-\[58px\] {
+  margin-top: 58px;
 }
 .box-border {
   box-sizing: border-box;
@@ -955,11 +955,11 @@ video {
 .h-\[44px\] {
   height: 44px;
 }
-.h-\[48px\] {
-  height: 48px;
-}
 .h-\[490px\] {
   height: 490px;
+}
+.h-\[5px\] {
+  height: 5px;
 }
 .h-\[60px\] {
   height: 60px;
@@ -982,8 +982,11 @@ video {
 .h-screen {
   height: 100vh;
 }
-.h-\[600px\] {
-  height: 600px;
+.h-\[10px\] {
+  height: 10px;
+}
+.h-\[3px\] {
+  height: 3px;
 }
 .min-h-screen {
   min-height: 100vh;
@@ -1063,6 +1066,9 @@ video {
 .w-\[36px\] {
   width: 36px;
 }
+.w-\[380px\] {
+  width: 380px;
+}
 .w-\[400px\] {
   width: 400px;
 }
@@ -1101,9 +1107,6 @@ video {
 }
 .w-full {
   width: 100%;
-}
-.w-\[380px\] {
-  width: 380px;
 }
 .min-w-72 {
   min-width: 18rem;
@@ -1292,12 +1295,6 @@ video {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.text-ellipsis {
-  text-overflow: ellipsis;
-}
-.whitespace-nowrap {
-  white-space: nowrap;
-}
 .rounded {
   border-radius: 0.25rem;
 }
@@ -1424,6 +1421,10 @@ video {
 .bg-\[\#1A5665\] {
   --tw-bg-opacity: 1;
   background-color: rgb(26 86 101 / var(--tw-bg-opacity));
+}
+.bg-\[\#1e94b4\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(30 148 180 / var(--tw-bg-opacity));
 }
 .bg-\[\#2D759E\] {
   --tw-bg-opacity: 1;
@@ -1596,6 +1597,9 @@ video {
 .p-\[10px\] {
   padding: 10px;
 }
+.p-\[15px\] {
+  padding: 15px;
+}
 .p-\[20px\] {
   padding: 20px;
 }
@@ -1607,9 +1611,6 @@ video {
 }
 .p-\[50px_0\] {
   padding: 50px 0;
-}
-.p-\[15px\] {
-  padding: 15px;
 }
 .px-2\.5 {
   padding-left: 0.625rem;
@@ -1704,9 +1705,6 @@ video {
 }
 .pl-\[10px\] {
   padding-left: 10px;
-}
-.pl-\[12px\] {
-  padding-left: 12px;
 }
 .pl-\[5px\] {
   padding-left: 5px;
