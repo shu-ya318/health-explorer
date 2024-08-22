@@ -135,8 +135,8 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                         />
                     )}   
                     <div className="flex w-full h-auto relative">
-                        <div className="relative flex  flex-col w-full h-[340px]"> 
-                            <Image  priority={false} src="/images/favoritePage_banner.jpg" alt="icon" width={1720} height={340} className="w-full h-full object-cover"/>
+                        <div className="relative flex  flex-col w-full h-[360px]"> 
+                            <Image  priority={false} src="/images/favoritePage_banner.jpg" alt="icon" width={1720} height={360} className="w-full h-full object-cover"/>
                             <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-20">
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#ffffff] font-bold text-[56px] text-center">收藏清單</div>  
                             </div>
@@ -207,8 +207,8 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                 )}
                                 <div ref={lastElementRef}></div>
                             </div>
-                            <div className="w-2/5 flex flex-col justify-start items-center bg-gradient-to-b  from-[#F0F0F0] via-[#C3D8EA] to-[#77ACCC] backdrop-blur-md rounded-tr-lg rounded-br-lg py-10 px-8 text-lg shadow-md">
-                                <div className="text-[28px] mb-7.5 text-[#2D759E] font-bold mb-[30px]">匯出格式</div>
+                            <div className="w-2/5 flex flex-col justify-start items-center bg-gradient-to-t    from-[#F0F0F0] via-[#C3D8EA] to-[#77ACCC] backdrop-blur-md rounded-tr-lg rounded-br-lg py-10 px-8 text-lg shadow-md">
+                                <div className="text-[28px] mb-7.5 text-[#FFFFFF] font-bold mb-[30px]">匯出格式</div>
                                 <div className="flex flex-col justify-between items-center w-[200px] h-auto text-[#1D445D] ">
                                     <button 
                                             className={`flex justify-center items-center w-full rounded-md py-4.5  h-11  mt-5 mb-5 bg-[#FFEEDD] hover:bg-[#FFC78E] hover:text-[#ffffff] border-2 border-solid border-[#eb980a]  text-center text-[20px] transition-all duration-300 hover:scale-110
@@ -247,7 +247,6 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                         <Image src="/images/file-word-solid.svg" alt="PDF" width={25} height={25} className="ml-[10px]"/>
                                     </button >
                                 </div>
-                                    
                             </div>
                         </div>
                     </div>

@@ -206,8 +206,8 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                     <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#FCFCFC]" >
                         <div className="flex w-full h-auto relative">
-                            <div className="relative flex  flex-col w-full h-[300px]"> 
-                                <Image  priority={false} src="/images/institutionPage_banner.png" alt="icon" width={1700} height={300} className="object-cover"/>
+                            <div className="relative flex  flex-col w-full h-[400px]"> 
+                                <Image  priority={false} src="/images/institutionPage_banner.png" alt="icon" width={1700} height={400} className="w-full h-full object-cover"/>
                                 <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-5">
                                     <div className="absolute top-[55%] left-1/2 -translate-x-[56%] -translate-y-1/2 min-w-72 text-black text-[#ffffff] font-bold text-[26px] text-center text-shadow-[2px 2px 8px rgba(0,0,0,0.8)] bg-[#FFFFFF] opacity-90 p-[10px] rounded-lg">
                                         {institutionDetails.hosp_name}

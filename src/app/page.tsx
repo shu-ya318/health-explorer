@@ -117,7 +117,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
             </div>
             <button 
               type="button" 
-              className="mt-[30px] w-52 bg-[#5B98BC] rounded-md py-4.5 px-2.5  h-11  mb-5 hover:bg-[#2D759E]  font-bold text-white text-center text-[20px] transition-all duration-300 hover:scale-105"
+              className="mt-[30px] w-52 bg-[#5B98BC] rounded-lg py-4.5 px-2.5  h-11  mb-5 hover:bg-[#2D759E]  font-bold text-white text-center text-[20px] transition-all duration-300 hover:scale-105"
               onClick={()=>router.push('/search')} 
             >
               立即搜尋更多
@@ -149,7 +149,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
             </div>
             <button 
                 type="button"  
-                className="mt-[30px] w-52rounded-md py-4.5 px-2.5  h-11  mt-5 mb-5  bg-[#5B98BC] hover:bg-[#2D759E]  font-bold text-white text-center text-[20px] transition-all duration-300 hover:scale-110" 
+                className="mt-[30px] w-52 rounded-md py-4.5 px-2.5  h-11  mt-5 mb-5  bg-[#5B98BC] rounded-lg hover:bg-[#2D759E]  font-bold text-white text-center text-[20px] transition-all duration-300 hover:scale-110" 
                 onClick={()=>router.push('/cancerScreening')} 
             >
               立即查詢資格
