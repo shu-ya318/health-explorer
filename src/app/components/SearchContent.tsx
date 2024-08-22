@@ -258,23 +258,23 @@ const handleIncrement = async (institution: InstitutionInfo) => {
 
 
     return (
-        <main className="w-full h-auto flex flex-col justify-center items-center flex-grow bg-[#FCFCFC]" >
+        <main className="w-full h-auto common-col-flex justify-center bg-[#FCFCFC]" >
                 <div className="flex w-full h-auto relative">
-                    <div className="flex  w-full h-[400px]">
+                    <div className="flex w-full h-[400px]">
                         <Image  priority={false} src="/images/searchPage_banner.jpg" alt="icon" width={1720} height={400} className="w-full h-full object-cover"/>
                     </div>
                     {/*癌篩分類*/}
-                    <div style={{ bottom: '-165px' }} className="absolute inset-x-0 max-w-screen-md h-[200px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[20px] rounded-lg border-solid border border-[#2D759E] shadow-[0_0_5px_#AABBCC] bg-[#FCFCFC]"> 
-                        <div className="text-[#2D759E] text-center font-bold text-[24px] mt-[10px]">依癌篩資格搜尋</div>
-                        <div  className="flex w-full justify-between mb-[25px]">
+                    <div style={{ bottom: '-165px' }} className="absolute inset-x-0 max-w-screen-md h-[200px] common-page-layout justify-between mb-[60px] mx-auto px-[20px] common-border border"> 
+                        <div className="common-title text-[24px] mt-[10px]">依癌篩資格搜尋</div>
+                        <div  className="flex justify-between w-full mb-[25px]">
                             {cancers.map((cancer, index) => (
                                 <button 
                                     key={index} 
-                                    className="w-2/12 flex flex-col justify-between transition-transform duration-300 hover:scale-110 hover:rounded-lg  hover:shadow-lg hover:shadow-gray-400 hover:bg-gradient-to-b  from-[#FFFFFF] via-[#C3D8EA] to-[#77ACCC]"
+                                    className="w-2/12 ommon-col-flex justify-between transition-transform duration-300 hover:scale-110 hover:rounded-lg  hover:shadow-lg hover:shadow-gray-400 hover:bg-gradient-to-b  from-[#FFFFFF] via-[#C3D8EA] to-[#77ACCC]"
                                     onClick={() => handleCancerFilter(cancer.filter)}
                                 >
-                                    <div className="w-full h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
-                                    <div className="w-full text-center text-[20px] text-[#252525] font-bold mb-[10px]">{cancer.filter}</div>
+                                    <div className="w-full h-[100px] common-bg-image" style={{ backgroundImage: `url(${cancer.image})` }}></div>
+                                    <div className="w-full mb-[10px] text-[20px] text-[#252525] text-center font-bold">{cancer.filter}</div>
                                 </button>
                             ))}
                         </div>
@@ -282,48 +282,48 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                 </div>
                 <div className="w-[1200px] pt-[80px]">
                     {/*搜*/}
-                    <div className="w-full h-10 mt-[60px]  mb-[30px]"> 
+                    <div className="w-full h-10 mt-[60px] mb-[30px]"> 
                         <div className="flex max-w-screen-md h-full mx-auto"> 
-                            <div className="flex relative w-full h-full ">
+                            <div className="flex relative w-full h-full">
                                 <input
-                                    className="flex-grow h-full px-4 text-[18px] font-bold text-gray-500 border-solid border border-[#2D759E] shadow-[0_0_3px_#AABBCC] rounded-l-md"
+                                    className="flex-grow h-full px-4 text-[18px] font-bold text-gray-500 common-border border shadow-[0_0_3px_#AABBCC] rounded-l-md"
                                     type="text"
                                     placeholder="請輸入關鍵字搜尋"
                                     ref={searchInputRef}
                                 />
-                                <button className="hover:scale-110 absolute top-2 right-10 z-10" onClick={deleteSearch}>
+                                <button className="absolute top-2 right-10 z-10 hover:scale-110" onClick={deleteSearch}>
                                     <Image src="/images/xmark-solid.svg" alt="close" width={15} height={15} className="w-auto"/>
                                 </button>                               
                             </div>
                             <button 
-                                className="w-32 h-full bg-[#2D759E] hover:bg-[#5B98BC] text-white rounded-r-md flex items-center justify-center font-bold"
+                                className="w-32 h-full bg-[#2D759E] hover:bg-[#5B98BC] rounded-r-md common-row-flex justify-center text-white font-bold"
                                 onClick={handleSearch}
                             >
-                                <Image className="w-auto h-auto mr-[7px]" src="/images/search.png" alt="Search" width={30} height={30}/>
+                                <Image className="w-auto h-auto mr-[7px]" src="/images/search.png" alt="search" width={30} height={30}/>
                                 搜尋
                             </button>
                         </div>
                     </div>
                     {/*渲資*/}
-                    <div className="h-auto w-full flex flex-col items-start">
+                    <div className="flex flex-col items-start h-auto w-full">
                         <p className="text-[#595959] text-left">共查詢到<strong className="mx-[6px]">{currentData.length}</strong>個新北市醫療機構</p>
-                        <hr className="w-full border-solid border border-[#E0E0E0] my-[20px]"/>
+                        <hr className="w-full my-[20px]  border border-solid border-[#E0E0E0]"/>
                         {/*選標籤*/}
-                        <div className="mx-w-screen-md h-9 flex justify-center mb-[20px]">
-                            <div className="w-[150px] bg-2 bg-[#E0E0E0]  rounded-l-md text-black text-center text-[16px] py-1">排序:</div>
+                        <div className="flex justify-center mx-w-screen-md h-9 mb-[20px]">
+                            <div className="w-[150px] py-1 bg-2 bg-[#E0E0E0] rounded-l-md text-black text-center text-[16px]">排序:</div>
                             <div className="relative w-36">
                                 <button
-                                    className={`text-center pl-[5px] w-full h-full flex justify-around items-center text-[16px]  border border-[#E0E0E0] ${isOpenInstitutions ? 'bg-[#2D759E] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#2D759E] hover:text-[#ffffff] text-[#707070]'}`}
+                                    className={`searchPage-label ${isOpenInstitutions ? 'bg-[#2D759E] text-[#ffffff]' : 'searchPage-label-notOpened'}`}
                                     onClick={() => toggleDropdowns('institutions')}
                                 >
                                     依機構
                                     <Image src="/images/down_small_line.svg" alt="institution" width={18} height={18} />
                                 </button>
                                 {isOpenInstitutions && (
-                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#2D759E] rounded-md w-[500px] py-[15px] px-[10px] shadow-[0_0_5px_#AABBCC]">
+                                    <ul className="searchPage-label-optionsGrid">
                                         {institutions.map((institution) => (
                                             <li key={institution} 
-                                                className="z-20 hover:bg-[#2D759E] hover:text-[#ffffff] text-center text-[#707070] py-2 border-solid border border-[#e6e6e6] rounded-md  cursor-pointer"
+                                                className="searchPage-label-option py-2"
                                                 onClick={() => handleSelectFilter('institution', institution)} 
                                             >
                                                 {institution}
@@ -334,18 +334,18 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             </div>
                             <div className="relative w-36">
                                 <button
-                                    className={`flex justify-around items-center text-[16px] border border-[#E0E0E0] ${isOpenDivisions ? 'bg-[#2D759E] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#2D759E] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
+                                    className={`searchPage-label ${isOpenDivisions ? 'bg-[#2D759E] text-[#ffffff]' : 'searchPage-label-notOpened'}`}
                                     onClick={() => toggleDropdowns('divisions')}
                                 >
                                     依科別
                                     <Image src="/images/down_small_line.svg" alt="division" width={18} height={18} />
                                 </button>
                                 {isOpenDivisions && (
-                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#2D759E] rounded-md w-[500px] p-[10px] shadow-[0_0_5px_#AABBCC]">
+                                    <ul className="searchPage-label-optionsGrid">
                                         {divisions.map((division) => (
                                             <li 
                                                 key={division} 
-                                                className="z-20 hover:bg-[#2D759E] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]  rounded-md  cursor-pointer " 
+                                                className="searchPage-label-option py-1" 
                                                 onClick={() => handleSelectFilter('division', division)}
                                             >
                                                 {division}
@@ -356,20 +356,20 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             </div>
                             <div className="relative w-36">
                                 <button
-                                    className={`rounded-r-md flex justify-around items-center text-[16px] border border-[#E0E0E0] ${isOpenDistricts ? 'bg-[#2D759E] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#2D759E] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`} 
+                                    className={`rounded-r-md searchPage-label ${isOpenDistricts ? 'bg-[#2D759E] text-[#ffffff]' : 'searchPage-label-notOpened'}`} 
                                     onClick={() => toggleDropdowns('districts')}
                                 >
                                     依地區
                                     <Image src="/images/down_small_line.svg" alt="district" width={18} height={18} />
                                 </button>
                                 {isOpenDistricts && (
-                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#2D759E] rounded-md w-[500px] p-[10px] shadow-[0_0_5px_#AABBCC]">
+                                    <ul className="searchPage-label-optionsGrid">
                                         {districts.map((district) => (
                                             <li 
                                                 key={district} 
-                                                className="z-20 hover:bg-[#2D759E] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]  rounded-md  cursor-pointer " 
+                                                className="searchPage-label-option py-1" 
                                                 onClick={() => handleSelectFilter('district', district)}
-                                                >
+                                            >
                                                 {district}
                                             </li>
                                         ))}
@@ -378,7 +378,7 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             </div>
                         </div>
                         {/*卡片盒 */} 
-                        <div className="w-full h-auto m-auto grid grid-cols-2 justify-center items-start box-border my-[10px] gap-[2%]">
+                        <div className="justify-center items-start grid grid-cols-2 gap-[2%] w-full h-auto m-auto box-border my-[10px]">
                         {loading ? (
                             Array.from({ length: postsPerPage-10 }, (_, index) => (
                                 <Skeleton key={index} height={170} width={600} className="m-[5px]" />
@@ -387,9 +387,9 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             currentPosts.map((institution) => (
                                     <div  
                                         key={institution.hosp_name} 
-                                        className="relative border border-gray-300 overflow-hidden bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC] h-auto fill-two-columns rounded-sm mb-[15px]"
+                                        className="relative  fill-two-columns mb-[15px] h-auto border border-gray-300 rounded-sm overflow-hidden bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]"
                                     >
-                                         <button onClick={() => handleIncrement(institution)} className="h-full w-full flex">
+                                         <button onClick={() => handleIncrement(institution)} className="flex h-full w-full">
                                             {institution.imageUrl && (
                                                 <Image
                                                     src={institution.imageUrl}
@@ -401,15 +401,14 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                                 />
                                             )}
                                             <div className="flex flex-col justify-between p-[15px]">
-                                                <div className="w-[380px]  text-left text-[#3E3A39] font-bold  pr-[15px] text-[16px] truncate">{institution.hosp_name}</div>
-                                                <div className="w-[380px] text-left text-[14px] text-[#595959] overflow-hidden truncate">{institution.division}</div>
-                                                <div className="w-[380px] text-left text-[14px] text-[#595959] overflow-hidden truncate">{institution.cancer_screening}</div>
-                                                <div className="w-[380px] h-[30px] flex items-center">
+                                                <div className="w-[380px] common-card text-[16px] text-[#3E3A39] font-bold pr-[15px]">{institution.hosp_name}</div>
+                                                <div className="w-[380px] common-card text-[14px] text-[#595959]">{institution.division}</div>
+                                                <div className="w-[380px] common-card text-[14px] text-[#595959]">{institution.cancer_screening}</div>
+                                                <div className="w-[380px] common-row-flex w-[380px] h-[30px] ">
                                                     <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
                                                     <span className="ml-[5px]  text-[14px] text-[#707070]">{institution.view}</span>
                                                 </div>
                                             </div>
-                                            
                                         </button>
                                         {!user ? (
                                             <>
@@ -424,7 +423,7 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                                         alt="favorite" 
                                                         width={30} 
                                                         height={30} 
-                                                        className={`rounded-full p-[2px] ${favoriteHover[institution.objectID] ? 'bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_3px_#2D759E]':'border-none shadow-none bg-[#0000004d]' }`}
+                                                        className={`rounded-full p-[2px] ${favoriteHover[institution.objectID] ? 'favorite-button-add':'favorite-button-remove' }`}
                                                     />
                                                 </button>
                                                 {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
@@ -447,7 +446,7 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                                                 alt="favorite" 
                                                                 width={30} 
                                                                 height={30} 
-                                                                className={`rounded-full p-[2px] ${isFavorited || favoriteHover[institution.objectID] ? 'bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_5px_#2D759E]':'border-none shadow-none bg-[#0000004d]' }`} 
+                                                                className={`rounded-full p-[2px] ${isFavorited || favoriteHover[institution.objectID] ? 'favorite-button-add':'favorite-button-remove' }`} 
                                                             />
                                                         </button>
                                                     );
