@@ -59,7 +59,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
 
   const scrollDown = () => {
     window.scrollTo({
-      top: 800,
+      top: 700,
       behavior: 'smooth'
     });
   };
@@ -84,7 +84,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
         <div className="relative w-full h-[750px] bg-[url('/images/homeBanner.png')] bg-cover bg-center bg-no-repeat">
           <div className="absolute top-[77%] left-[55%] -translate-x-[80%] -translate-y-[80%] flex flex-col justify-between">
             <div className="text-center mt-22 cursor-pointer"  data-aos="fade-up" onClick={ scrollDown }>
-              <span className="font-bold text-[40px] text-[#FFFFFF]  text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]">立即探索</span>
+              <span className="font-bold text-[50px] text-[#FFFFFF]  text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]">立即探索</span>
               <br/>
               <Image src="/images/angles-down-solid.svg" alt="scroll-down" width={36} height={66} className="mx-auto w-[36px] h-[66px] mt-4 animate-bounce" />
             </div>

@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      //文字垂直
+      writingMode: {
+        vertical: 'vertical-lr',
+      },
       //自定義 網格間距
       gridTemplateColumns: {
         'fill-two-columns': 'repeat(auto-fill, minmax(48%, 1fr))',
@@ -16,7 +20,7 @@ const config: Config = {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
-      // 癌篩問卷用動畫
+      // 動畫:波浪
       keyframes: {
         drift: {
           '0%': { transform: 'rotate(0deg)' },

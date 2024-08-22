@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-
+import Image from 'next/image';
 
 interface CancersContextProps {
     id: string;
@@ -9,10 +9,11 @@ interface CancersContextProps {
     handleNextClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     setAnswer: (value: string | number) => void;
     itemOptions: string;
+    progress: number; 
 }
 
 
-const CancersContext: React.FC<CancersContextProps> = ({ id, title, isLast, handleNextClick, setAnswer, itemOptions}): React.ReactElement | null => {
+const CancersContext: React.FC<CancersContextProps> = ({ id, title, isLast, handleNextClick, setAnswer, itemOptions, progress}): React.ReactElement | null => {
     const [inputYear, setInputYear] = useState('');
     const [showClick, setShowClick] = useState(false);
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -24,11 +25,6 @@ const CancersContext: React.FC<CancersContextProps> = ({ id, title, isLast, hand
         setShowClick(true);
         setAnswer(index);
     };
-    /*
-    const handleOptionChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        setShowClick(true); 
-        setAnswer(e.target.value);
-    };*/
 
 
     const handleYearInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,11 +43,16 @@ const CancersContext: React.FC<CancersContextProps> = ({ id, title, isLast, hand
 
     return (
         <>
-            <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow bg-[#FCFCFC]">
-                <div className="w-[70%] h-[900px] my-[150px]  flex flex-col items-center my-[40px] bg-[#FFFFFF] border-solid border-2 border-[#2D759E] rounded-lg shadow-[0_0_5px_#AABBCC] text-black "> 
+            <main className="w-full h-auto flex flex-col  justify-center items-center bg-[#FCFCFC]">
+                <div className="w-[70%] h-[870px] my-[150px]  flex flex-col items-center mb-[40px] mt-[100px] bg-[#FFFFFF] border-solid border-2 border-[#2D759E] rounded-lg shadow-[0_0_5px_#AABBCC] text-black "> 
                     <div className="w-full h-[400px]" style={{ backgroundImage: `url('images/cancerScreeningForm_banner.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
-                    <div   className="w-full flex  items-center h-[100px] bg-[#B0DFEB] mb-[20px]">
-                        <p className="text-white">1</p>
+                    <div   className="w-[80%] flex  items-center h-[40px] my-[20px] justify-between">
+                        <div  className="w-full bg-[#e9ecef] rounded-lg flex">
+                            <div className="relative h-[30px] bg-gradient-to-r from-cyan-500 to-blue-500 rounded-l-lg"   style={{ width: `${progress}%`}}>
+                                <div className="text-[18px] text-center font-bold text-white">{Math.round(progress)}%</div>
+                                <Image  className="absolute bottom-0 top-[-15px] right-[-35px]" src="/images/pen.png" alt="progess" width={65} height={65} />
+                            </div>
+                        </div>
                     </div>  
                     <div className="w-full flex flex-col justify-center items-center mx-auto mb-[20px] text-[#1D445D] px-[60px] ">
                         <h2 className="font-bold mb-[20px] mt-[10px] text-2xl">{title}</h2>

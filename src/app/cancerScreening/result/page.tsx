@@ -87,118 +87,35 @@ const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
 
     return (
         <>
-            <main className="relative w-full h-auto flex flex-col items-center flex-grow">
-                <Image src="/images/cancerScreeningResult_banner.jpg" alt="cancerScreeningResult_banner" width={1920} height={1024} className="opacity-90"/>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[800px] h-auto flex flex-col py-7 px-10 border-solid border-2 border-[#6898a5] shadow-[0_0_5px_#AABBCC] rounded-lg bg-[#ffffff] opacity-95">
-                    <div className="text-[#1D445D] font-bold text-[28px] text-center">您的檢測結果如下:</div>
-                    {noQualification && (
-                        <div className="flex h-[250px] w-full justify-between items-center">
-                            <div className="flex text-lg  w-[70%] h-full justify-start items-center text-[#1D445D] font-bold ">
-                                <Image src="/images/rectangle-xmark-solid.svg" alt="" width={25} height={25} className="mr-[10px]"/>
-                                <p className="text-center">您目前無符合的免費癌症篩檢資格</p>
-                            </div>
-                            <button 
-                                type="button"  
-                                className="flex items-center justify-center w-[200px] px-[5px] bg-[#24657d] rounded-md h-11 hover:bg-[#7199a1]  font-bold text-white text-center text-[18px] transition-all duration-300 hover:scale-110 hover:text-black" 
-                                onClick={() => handleSearchClick("醫院")} 
-                            >
-                                <Image className="w-auto h-auto mr-[5px]" src="/images/search.png" alt="Search" width={40} height={40}/>
-                                自費篩檢醫院
-                            </button>
-                            <button 
-                                type="button"  
-                                className="w-[200px] bg-[#24657d] rounded-md py-4.5 px-4  h-11 ml-[15px] bg-[#acb8b6]  font-bold text-white text-center text-[18px] transition-all duration-300 hover:scale-110 hover:text-black" 
-                                onClick={()=>router.push('/cancerScreening')} 
-                            >
-                                改替親友查詢
-                            </button>
-                        </div>
-                    )}
-                    {/*符合資格*/}
-                    {oralCancerQualification && (
-                        <div className="flex h-[130px] w-full justify-between items-center">
-                            <div className="flex text-lg  w-[70%] h-full justify-start items-center text-[#1D445D] font-bold">
-                                <Image src="/images/square-check-regular.svg" alt="" width={25} height={25} className="mr-[10px]"/>
-                                <p className="text-center">每<strong className="mx-[6px]">2</strong>年可進行一次免費口腔癌篩檢。</p>
-                            </div>
-                            <button 
-                                type="button"  
-                                className="flex items-center justify-center w-[200px] bg-[#24657d] rounded-md h-11 hover:bg-[#7199a1]  font-bold text-white text-center text-[18px] transition-all duration-300 hover:scale-110 hover:text-black" 
-                                onClick={()=>handleSearchClick(cancers[3].filter)} 
-                            >
-                                <Image className="w-auto h-auto mr-[5px]" src="/images/search.png" alt="Search" width={40} height={40}/>
-                                口腔癌篩檢機構
-                            </button>
-                        </div>
-                    )}
-                    {lungCancerQualification && (
-                        <div className="flex h-[130px] w-full justify-between items-center">
-                            <div className="flex text-lg  w-[70%] h-full justify-start items-center text-[#1D445D] font-bold ">
-                                <Image src="/images/square-check-regular.svg" alt="" width={25} height={25} className="mr-[10px]"/>
-                                <p className="text-center">每<strong className="mx-[6px]">2</strong>年可進行一次免費肺癌篩檢。</p>
-                            </div>
-                            <button 
-                                type="button"  
-                                className="flex items-center justify-center w-[200px] bg-[#24657d] rounded-md h-11 hover:bg-[#7199a1]  font-bold text-white text-center text-[18px] transition-all duration-300 hover:scale-110 hover:text-black" 
-                                onClick={()=>handleSearchClick(cancers[4].filter)} 
-                            >
-                                <Image className="w-auto h-auto mr-[8px]" src="/images/search.png" alt="Search" width={40} height={40}/>
-                                肺癌篩檢機構
-                            </button>
-                        </div>
-                    )}
-                    { cervicalCancerQualification && (
-                        <div className="flex h-[130px] w-full justify-between items-center">
-                            <div className="flex text-lg  w-[70%] h-full justify-start items-center text-[#1D445D] font-bold ">
-                                <Image src="/images/square-check-regular.svg" alt="" width={25} height={25} className="mr-[10px]"/>
-                                <p className="text-center">每<strong className="mx-[6px]">1</strong>年可進行一次免費子宮頸癌篩檢。</p>
-                            </div>
-                            <button 
-                                type="button"  
-                                className="flex items-center justify-center w-[200px] bg-[#24657d] rounded-md h-11 hover:bg-[#7199a1]  font-bold text-white text-center text-[18px] transition-all duration-300 hover:scale-110 hover:text-black" 
-                                onClick={()=>handleSearchClick(cancers[0].filter)} 
-                            >
-                                <Image className="w-auto h-auto mr-[1px]" src="/images/search.png" alt="Search" width={40} height={40}/>
-                                子宮頸癌篩檢機構
-                            </button>
-                        </div>
-                    )}
-                    { colorectalCancerQualification && (
-                        <div className="flex h-[130px] w-full justify-between items-center">
-                            <div className="flex text-lg  w-[70%] h-full justify-start items-center text-[#1D445D] font-bold ">
-                                <Image src="/images/square-check-regular.svg" alt="" width={25} height={25} className="mr-[10px]"/>
-                                <p className="text-center">每<strong className="mx-[6px]">2</strong>年可進行一次免費大腸癌篩檢。</p>
-                            </div>
-                            <button 
-                                type="button"  
-                                className="flex items-center justify-center w-[200px] bg-[#24657d] rounded-md h-11 hover:bg-[#7199a1]  font-bold text-white text-center text-[18px] transition-all duration-300 hover:scale-110 hover:text-black" 
-                                onClick={()=>handleSearchClick(cancers[2].filter)} 
-                            >
-                                <Image className="w-auto h-auto mr-[5px]" src="/images/search.png" alt="Search" width={40} height={40}/>
-                                大腸癌篩檢機構
-                            </button>
-                        </div>
-                    )}
-                    { breastCancerQualification && (
-                        <div className="flex h-[130px] w-full justify-between items-center">
-                            <div className="flex text-lg  w-[70%] h-full justify-start items-center text-[#1D445D] font-bold ">
-                                <Image src="/images/square-check-regular.svg" alt="" width={25} height={25} className="mr-[10px]"/>
-                                <p className="text-center">每<strong className="mx-[6px]">2</strong>年可進行一次免費乳癌篩檢。</p>
-                            </div>
-                            <button 
-                                type="button"  
-                                className="flex items-center justify-center w-[200px] bg-[#24657d] rounded-md h-11 hover:bg-[#7199a1]  font-bold text-white text-center text-[18px] transition-all duration-300 hover:scale-110 hover:text-black" 
-                                onClick={()=>handleSearchClick(cancers[1].filter)} 
-                            >
-                                <Image className="w-auto h-auto mr-[5px]" src="/images/search.png" alt="Search" width={40} height={40}/>
-                                乳癌篩檢機構
-                            </button>
-                        </div>
-                    )}
+            <main className="w-full h-auto flex flex-col  justify-center items-center bg-[#FCFCFC]">
+                <div className="w-[1280px] h-auto my-[150px]  flex flex-col items-center mb-[40px] mt-[100px] bg-[#FFFFFF] border-solid border-2 border-[#2D759E] rounded-lg shadow-[0_0_5px_#AABBCC] text-black "> 
+                    <div className="flex  w-full h-[440px]">
+                        <Image  priority={false} src="/images/cancerScreeningResult_banner.jpg" alt="icon" width={1720} height={440} className="w-full h-full object-cover"/>
+                    </div>
+                    <div className="w-full flex flex-col justify-between items-center mx-auto px-[40px] mb-[40px]">
+                    <div className="text-[#1D445D] font-bold text-[28px] text-center my-[20px]">您的檢測結果如下:</div>
+                        {noQualification && (
+                            <div className="flex flex-col w-[200px] h-[330px] py-[10px] justify-around   rounded-lg bg-gradient-to-b   from-[#50A7C2]  to-[#B7F8DB] ">
+                                 <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
+                                    <div className="text-[24px]  ">很抱歉...</div>
+                                    <div className="text-[18px]  ">您尚無免費資格</div>
+                                </div>  
+                                
+                                <div className="mx-auto w-[140px] h-[140px] rounded-lg bg-[#f0ffff] bg-no-repeat" style={{ backgroundImage: `url('../images/notFound.png')`, backgroundSize: 'contain', backgroundPosition: 'center' }}>
+                                   
+                                </div>  
+                                <button  
+                                    className="mx-auto w-[80%] mt-[30px] py-1.5 px-3 font-bold bg-black text-white rounded-full shadow-xs transition-all duration-300 hover:scale-110 hover:bg-[#4F4F4F]"
+                                    onClick={() => handleSearchClick("醫院")} 
+                                >
+                                    查詢自費醫院
+                                </button>
+                            </div>  
+                        )}
+                    </div>
                 </div>
             </main>
         </>
     );
 }
-
 export default CancerScreeningResultPage;  
