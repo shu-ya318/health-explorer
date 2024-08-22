@@ -207,8 +207,8 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                     <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#FCFCFC]" >
                         <div className="flex w-full h-auto relative">
                             <div className="relative flex  flex-col w-full h-[300px]"> 
-                                <Image  priority={false} src="/images/institutionPage_banner.png" alt="icon" width={1700} height={350} className="object-cover"/>
-                                <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-20">
+                                <Image  priority={false} src="/images/institutionPage_banner.png" alt="icon" width={1700} height={300} className="object-cover"/>
+                                <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-5">
                                     <div className="absolute top-[55%] left-1/2 -translate-x-[56%] -translate-y-1/2 min-w-72 text-black text-[#ffffff] font-bold text-[26px] text-center text-shadow-[2px 2px 8px rgba(0,0,0,0.8)] bg-[#FFFFFF] opacity-90 p-[10px] rounded-lg">
                                         {institutionDetails.hosp_name}
                                     </div>  
@@ -264,7 +264,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                 {/*簡介*/}
                                     <hr className="w-full border border-[#acb8b6] my-[30px]"/>
                                     <h3 className="text-2xl text-black underline decoration-[#2D759E] decoration-4 font-bold mb-[30px]">資訊簡介</h3>
-                                    <div className="w-full h-full flex flex-col justify-around p-[10px] ml-[10px] text-black text-xl ">
+                                    <div className="w-full h-full flex flex-col justify-around text-black text-xl ">
                                         <div className="w-full flex  items-center mb-[25px]">
                                             <span className="w-[150px] font-bold ">電話</span>
                                             <span>{institutionDetails.tel}</span>
@@ -309,11 +309,11 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                     {/*輪播薦*/}
                                     <hr className="w-full border-solid border border-[#acb8b6] my-[30px]"/>
                                     {loading ? (
-                                        <Skeleton height={320} width={1140} className="my-[40px] mx-auto" />
+                                        <Skeleton height={360} width={1140} className="my-[40px] mx-auto" />
                                     ) : (
                                     <div className="w-full">
                                         <h3 className="text-black font-bold text-2xl  underline decoration-[#2D759E] decoration-4 my-[10px]">您可能也想比較...</h3>
-                                        <div className="w-full flex justify-between mt-[50px] relative px-[60px]">
+                                        <div className="w-full flex justify-between mt-[50px] relative">
                                             <button
                                                 id="left-arrow"
                                                 onClick={handlePrev}
@@ -323,7 +323,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                 <Image src="/images/left_arrow.png" alt="left-arrow-icon" width={46} height={46} />
                                             </button>  
                                             {displayedInstitutions.map(institution => (   
-                                                <div  key={institution.hosp_name} className="relative h-[320px] border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
+                                                <div  key={institution.hosp_name} className="relative h-[360px] border border-gray-300 rounded-lg overflow-hidden w-[250px] bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
                                                      <button onClick={() => handleIncrement(institution)} className="h-full w-full flex flex-col">
                                                         {institution.imageUrl && (
                                                             <Image
@@ -335,14 +335,14 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                                 unoptimized={true}
                                                             />
                                                         )}
-                                                        <div className="flex flex-col justify-between py-[10px] pl-[12px] ">
-                                                            <div className="w-full text-left text-[#3E3A39] font-bold  pr-[15px] text-[16px]">{institution.hosp_name}</div>
-                                                            <div className=" text-left text-[14px] text-[#595959]">{institution.division}</div>
-                                                            <div className=" text-left text-[14px] text-[#595959]">{institution.cancer_screening}</div>
-                                                            <div className="w-full h-[30px] flex items-center">
+                                                        <div className="flex flex-col justify-between p-[10px]">
+                                                            <div className="w-full text-left text-[#3E3A39] font-bold text-[16px]">{institution.hosp_name}</div>
+                                                            <div className=" h-[44px] text-left text-[14px] text-[#595959]">{institution.division}</div>
+                                                            <div className=" h-[22px] text-left text-[14px] text-[#595959]">{institution.cancer_screening}</div>
+                                                        </div>
+                                                        <div className="w-full h-[30px] flex justify-end items-center mb-[10px]">
                                                                 <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
-                                                                <span className="ml-2  text-[14px] text-[#707070] mt-[3px]">觀看數:{institution.view}</span>
-                                                            </div>
+                                                                <span className="ml-[5px]  text-[14px] text-[#707070] pr-[10px]">{institution.view}</span>
                                                         </div>
                                                     </button>
                                                     {!user ? (
@@ -406,7 +406,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                 {/*返鈕*/}
                                 <div className="flex items-center">
                                     <button 
-                                        className="mx-auto my-16  w-64 bg-[#5B98BC] rounded-md py-4.5 px-2.5  h-11  hover:bg-[#9FC5DF]  font-bold text-white text-center text-[20px]"
+                                        className="mx-auto my-16  w-64 rounded-lg py-4.5 px-2.5  h-11 font-bold text-white text-center text-[20px] transition-all duration-300 hover:scale-110  bg-[#5B98BC] hover:bg-[#2D759E]"
                                         onClick={()=>router.push('/search')}
                                     >
                                         搜尋更多機構

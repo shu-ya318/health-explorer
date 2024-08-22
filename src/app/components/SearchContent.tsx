@@ -380,7 +380,7 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                         {/*卡片盒 */} 
                         <div className="w-full h-auto m-auto grid grid-cols-2 justify-center items-start box-border my-[10px] gap-[2%]">
                         {loading ? (
-                            Array.from({ length: postsPerPage-14 }, (_, index) => (
+                            Array.from({ length: postsPerPage-10 }, (_, index) => (
                                 <Skeleton key={index} height={170} width={600} className="m-[5px]" />
                             ))
                         ) : (
@@ -400,15 +400,16 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                                     unoptimized={true}
                                                 />
                                             )}
-                                            <div className="flex flex-col justify-between py-[10px] pl-[12px] ">
-                                                <div className="w-full  text-left text-[#3E3A39] font-bold  pr-[15px] text-[16px]">{institution.hosp_name}</div>
-                                                <div className=" text-left text-[14px] text-[#595959]">{institution.division}</div>
-                                                <div className=" text-left text-[14px] text-[#595959]">{institution.cancer_screening}</div>
-                                                <div className="w-full h-[30px] flex items-center">
+                                            <div className="flex flex-col justify-between p-[15px]">
+                                                <div className="w-[380px]  text-left text-[#3E3A39] font-bold  pr-[15px] text-[16px] truncate">{institution.hosp_name}</div>
+                                                <div className="w-[380px] text-left text-[14px] text-[#595959] overflow-hidden truncate">{institution.division}</div>
+                                                <div className="w-[380px] text-left text-[14px] text-[#595959] overflow-hidden truncate">{institution.cancer_screening}</div>
+                                                <div className="w-[380px] h-[30px] flex items-center">
                                                     <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
-                                                    <span className="ml-2  text-[14px] text-[#707070] mt-[3px]">觀看數:{institution.view}</span>
+                                                    <span className="ml-[5px]  text-[14px] text-[#707070]">{institution.view}</span>
                                                 </div>
                                             </div>
+                                            
                                         </button>
                                         {!user ? (
                                             <>

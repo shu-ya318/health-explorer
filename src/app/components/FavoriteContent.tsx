@@ -179,15 +179,15 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                                 )}
                                             </div>
                                             <div className="flex flex-col w-[560px] h-full text-[#2D759E] leading-12">
-                                                <div className="flex items-center mb-4">
+                                                <div className="flex mb-4">
                                                     <span className="font-bold text-lg mr-1.5 w-[80px]">機構名稱</span>
                                                     <span className="text-lg text-[#1D445D] mr-1.5">{item.hosp_name}</span>
                                                 </div>
-                                                <div className="flex items-center  mb-4">
+                                                <div className="flex mb-4">
                                                     <span className="font-bold text-lg mr-1.5 w-[80px]">電話</span>
                                                     <span className="text-lg text-[#1D445D] mr-1.5">{item.tel}</span>
                                                 </div>
-                                                <div className="flex  items-center mb-4">
+                                                <div className="flex mb-4">
                                                     <span className="font-bold text-lg mr-1.5 w-[80px]">地址</span>
                                                     <span className="text-lg text-[#1D445D] mr-1.5">{item.hosp_addr}</span>
                                                 </div>

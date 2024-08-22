@@ -850,6 +850,9 @@ video {
 .mt-\[60px\] {
   margin-top: 60px;
 }
+.ml-\[5px\] {
+  margin-left: 5px;
+}
 .box-border {
   box-sizing: border-box;
 }
@@ -892,6 +895,9 @@ video {
 .h-\[100px\] {
   height: 100px;
 }
+.h-\[130px\] {
+  height: 130px;
+}
 .h-\[140px\] {
   height: 140px;
 }
@@ -909,6 +915,9 @@ video {
 }
 .h-\[200px\] {
   height: 200px;
+}
+.h-\[22px\] {
+  height: 22px;
 }
 .h-\[30\%\] {
   height: 30%;
@@ -931,6 +940,9 @@ video {
 .h-\[35px\] {
   height: 35px;
 }
+.h-\[360px\] {
+  height: 360px;
+}
 .h-\[400px\] {
   height: 400px;
 }
@@ -939,6 +951,12 @@ video {
 }
 .h-\[440px\] {
   height: 440px;
+}
+.h-\[44px\] {
+  height: 44px;
+}
+.h-\[48px\] {
+  height: 48px;
 }
 .h-\[490px\] {
   height: 490px;
@@ -964,8 +982,8 @@ video {
 .h-screen {
   height: 100vh;
 }
-.h-\[130px\] {
-  height: 130px;
+.h-\[600px\] {
+  height: 600px;
 }
 .min-h-screen {
   min-height: 100vh;
@@ -1008,6 +1026,9 @@ video {
 }
 .w-\[1280px\] {
   width: 1280px;
+}
+.w-\[130px\] {
+  width: 130px;
 }
 .w-\[140px\] {
   width: 140px;
@@ -1081,8 +1102,8 @@ video {
 .w-full {
   width: 100%;
 }
-.w-\[130px\] {
-  width: 130px;
+.w-\[380px\] {
+  width: 380px;
 }
 .min-w-72 {
   min-width: 18rem;
@@ -1265,6 +1286,17 @@ video {
 }
 .overflow-y-auto {
   overflow-y: auto;
+}
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.text-ellipsis {
+  text-overflow: ellipsis;
+}
+.whitespace-nowrap {
+  white-space: nowrap;
 }
 .rounded {
   border-radius: 0.25rem;
@@ -1486,6 +1518,9 @@ video {
 .bg-opacity-45 {
   --tw-bg-opacity: 0.45;
 }
+.bg-opacity-5 {
+  --tw-bg-opacity: 0.05;
+}
 .bg-opacity-70 {
   --tw-bg-opacity: 0.7;
 }
@@ -1572,6 +1607,9 @@ video {
 }
 .p-\[50px_0\] {
   padding: 50px 0;
+}
+.p-\[15px\] {
+  padding: 15px;
 }
 .px-2\.5 {
   padding-left: 0.625rem;
@@ -1676,6 +1714,9 @@ video {
 .pr-2\.5 {
   padding-right: 0.625rem;
 }
+.pr-\[10px\] {
+  padding-right: 10px;
+}
 .pr-\[15px\] {
   padding-right: 15px;
 }
@@ -1685,20 +1726,14 @@ video {
 .pt-5 {
   padding-top: 1.25rem;
 }
+.pt-\[13px\] {
+  padding-top: 13px;
+}
 .pt-\[30px\] {
   padding-top: 30px;
 }
 .pt-\[80px\] {
   padding-top: 80px;
-}
-.pt-\[20px\] {
-  padding-top: 20px;
-}
-.pt-\[15px\] {
-  padding-top: 15px;
-}
-.pt-\[13px\] {
-  padding-top: 13px;
 }
 .text-left {
   text-align: left;
