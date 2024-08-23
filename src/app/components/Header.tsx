@@ -41,11 +41,11 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="common-row-flex fixed inset-x-0 top-0 z-30 w-full h-[60px] border bg-[#FFFFFF] border-solid border-[#9FC5DF]">
-        <div className="common-row-flex w-full px-[5%] justify-between text-[#1e94b4]">
+      <header className="common-row-flex justify-between fixed inset-x-0 top-0 z-30 w-screen h-[60px] border bg-[#FFFFFF] border-solid border-[#9FC5DF]">
+        <div className="common-row-flex justify-between  max-w-[1200px] w-screen px-[10px] mx-auto text-[#1e94b4]">
             <Link 
               href='/' 
-              className="common-row-flex relative no-underline font-bold  cursor-pointer mt-2 animate__animated  animate__backInLeft animate__slow"
+              className="common-row-flex relative mt-2 no-underline font-bold cursor-pointer animate__animated animate__backInLeft animate__slow"
             >
                 <Image src="/images/LOGO.png" alt="Logo" width={46} height={46} className="relative z-0 mr-2"/>
                 <div className="absolute w-full h-full top-0 left-0  opacity-0 z-10 bg-white transition-opacity duration-300 hover:opacity-40"></div>
@@ -66,7 +66,6 @@ const Header: React.FC = () => {
                 <span className="w-52 h-32 header-button-anime group-hover:ml-0 group-hover:mb-32 group-hover:translate-x-0"></span>
                 <span className="header-button-text group-hover:text-white">我的收藏</span>
               </button>
-                <hr className="h-[30%] border border-[#e6e6e6] mx-[5px]"/>
                 {!user ? (
                     <>
                       <button 
@@ -78,7 +77,6 @@ const Header: React.FC = () => {
                         <span className="header-button-text group-hover:text-white">登入</span>
                       </button>
                       {isSignInModalVisible && <SignInModal  onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
-                      <hr className="h-[30%] border border-[#e6e6e6] mx-[5px]"/>
                       <button 
                         type="button" 
                         className="header-button group"
@@ -109,5 +107,5 @@ const Header: React.FC = () => {
     </>
     );
   }
-  
+  //<ProgressBar />   換算 rwd似乎會讓寬度爆版
   export default Header;

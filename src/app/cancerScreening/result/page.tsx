@@ -87,20 +87,20 @@ const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
 
     return (
         <>
-            <main className="w-full h-auto flex flex-col  justify-center items-center bg-[#FCFCFC]">
-                <div className="w-[1280px] h-auto my-[150px]  flex flex-col items-center mb-[40px] mt-[100px] bg-[#FFFFFF] border-solid border-2 border-[#2D759E] rounded-lg shadow-[0_0_5px_#AABBCC] text-black "> 
-                    <div className=" w-full flex h-[440px] bg-no-repeat bg-cover bg-center rounded-t-lg" style={{ backgroundImage: `url('../images/cancerScreeningResult_banner.jpg')` }}></div>
+            <main className="common-col-flex justify-center w-full h-auto bg-[#FCFCFC]">
+                <div className="common-col-flex w-[1280px] h-auto my-[150px]  mb-[40px] bg-[#FFFFFF] common-border border-2 rounded-lg shadow-[0_0_5px_#AABBCC] text-black "> 
+                    <div className=" w-full flex h-[440px] common-bg-image rounded-t-lg" style={{ backgroundImage: `url('../images/cancerScreeningResult_banner.jpg')` }}></div>
                     <div className="w-full text-[#1D445D] font-bold text-[28px] text-center my-[20px]">您的檢測結果如下:</div>
                     {noQualification && (
-                        <div className="w-full flex flex-col justify-between items-center mx-auto px-[40px] mb-[40px]">  
-                            <div className="animate-flip flex flex-col w-[200px] h-[330px] py-[10px] justify-around   rounded-lg bg-gradient-to-b   from-[#50A7C2]  to-[#B7F8DB]">
+                        <div className="common-col-flex justify-between w-full mx-auto px-[40px] mb-[40px]">  
+                            <div className="animate-flip flex flex-col w-[200px] h-[330px] py-[10px] justify-around rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB]">
                                     <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
-                                    <div className="text-[18px]  ">很抱歉...</div>
-                                    <div className="text-[24px]  ">您尚無免費資格</div>
+                                    <div className="text-[18px]">很抱歉...</div>
+                                    <div className="text-[24px]">您尚無免費資格</div>
                                 </div>  
-                                <div className="mx-auto w-[140px] h-[140px] rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" style={{ backgroundImage: `url('../images/notFound.png')` }}></div>  
+                                <div className="w-[140px] h-[140px] mx-auto rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" style={{ backgroundImage: `url('../images/notFound.png')` }}></div>  
                                 <button  
-                                    className="mx-auto w-[140px] mt-[30px] py-1.5 px-3 font-bold bg-black text-white rounded-full shadow-xs transition-all duration-300 hover:scale-110 hover:bg-[#4F4F4F]"
+                                    className="cancerResult-button shadow-xs"
                                     onClick={() => handleSearchClick("醫院")} 
                                 >
                                     查詢自費醫院
@@ -109,16 +109,16 @@ const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
                         </div>
                     )}
                     {/*符合資格*/}
-                    <div className="w-full flex justify-between items-center mx-auto px-[40px] mb-[40px]">  
+                    <div className="common-row-flex justify-between w-full mx-auto px-[40px] mb-[40px]">  
                         { oralCancerQualification && (
-                            <div className="animate-flipUp flex flex-col w-[200px] h-[330px] py-[10px] justify-around   rounded-lg bg-gradient-to-b   from-[#50A7C2]  to-[#B7F8DB] ">
+                            <div className="animate-flipUp flex flex-col justify-around w-[200px] h-[330px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB] ">
                                  <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
-                                 <div className="text-[18px]  ">每<strong className="text-[24px] mx-[5px]">2</strong>年可篩檢:</div>
+                                 <div className="text-[18px]">每<strong className="text-[24px] mx-[5px]">2</strong>年可篩檢:</div>
                                  <div className="text-[24px] text-center">口腔癌</div>
                                 </div>  
-                                <div className="mx-auto w-[130px] h-[130px] rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" style={{ backgroundImage: `url('../images/oralCancer.png')` }}></div>  
+                                <div className="w-[130px] h-[130px] mx-auto rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" style={{ backgroundImage: `url('../images/oralCancer.png')` }}></div>  
                                 <button  
-                                    className="mx-auto w-[140px] mt-[30px] py-1.5 px-3 font-bold bg-black text-white rounded-full shadow-xs transition-all duration-300 hover:scale-110 hover:bg-[#4F4F4F]"
+                                    className="cancerResult-button shadow-xs"
                                     onClick={()=>handleSearchClick(cancers[3].filter)} 
                                 >
                                     挑選機構
@@ -126,14 +126,14 @@ const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
                             </div>  
                         )}
                         { lungCancerQualification && (
-                            <div className="animate-flipUp flex flex-col w-[200px] h-[330px] py-[10px] justify-around   rounded-lg bg-gradient-to-b   from-[#50A7C2]  to-[#B7F8DB] ">
+                            <div className="animate-flipUp flex flex-col justify-around w-[200px] h-[330px] py-[10px] rounded-lg bg-gradient-to-b   from-[#50A7C2]  to-[#B7F8DB] ">
                                  <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
                                     <div className="text-[18px]  ">每<strong className="text-[24px] mx-[5px]">2</strong>年可篩檢:</div>
                                     <div className="text-[24px] text-center">肺癌</div>
                                 </div>  
                                 <div className="mx-auto w-[130px] h-[130px] rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" style={{ backgroundImage: `url('../images/lungCancer.png')` }}></div>  
                                 <button  
-                                    className="mx-auto w-[140px] mt-[30px] py-1.5 px-3 font-bold bg-black text-white rounded-full shadow-xs transition-all duration-300 hover:scale-110 hover:bg-[#4F4F4F]"
+                                    className="cancerResult-button shadow-xs"
                                     onClick={()=>handleSearchClick(cancers[4].filter)} 
                                 >
                                     挑選機構
@@ -148,7 +148,7 @@ const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
                                 </div>  
                                 <div className="mx-auto w-[130px] h-[130px] rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" style={{ backgroundImage: `url('../images/cervicalCancer.png')` }}></div>  
                                 <button  
-                                    className="mx-auto w-[140px] mt-[30px] py-1.5 px-3 font-bold bg-black text-white rounded-full shadow-s transition-all duration-300 hover:scale-110 hover:bg-[#4F4F4F]"
+                                    className="cancerResult-button shadow-xs"
                                     onClick={()=>handleSearchClick(cancers[0].filter)} 
                                 >
                                     挑選機構
@@ -163,7 +163,7 @@ const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
                                 </div>  
                                 <div className="mx-auto w-[130px] h-[130px] rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" style={{ backgroundImage: `url('../images/breastCancer.png')` }}></div>  
                                 <button  
-                                    className="mx-auto w-[140px] mt-[30px] py-1.5 px-3 font-bold bg-black text-white rounded-full shadow-xs transition-all duration-300 hover:scale-110 hover:bg-[#4F4F4F]"
+                                    className="cancerResult-button shadow-xs"
                                     onClick={()=>handleSearchClick(cancers[1].filter)} 
                                 >
                                     挑選機構
@@ -178,7 +178,7 @@ const CancerScreeningResultPage: React.FC = (): React.ReactElement | null  => {
                                 </div>  
                                 <div className="mx-auto w-[130px] h-[130px] rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" style={{ backgroundImage: `url('../images/colorectalCancer.png')` }}></div>  
                                 <button  
-                                    className="mx-auto w-[140px] mt-[30px] py-1.5 px-3 font-bold bg-black text-white rounded-full shadow-xs transition-all duration-300 hover:scale-110 hover:bg-[#4F4F4F]"
+                                    className="cancerResult-button shadow-xs"
                                     onClick={()=>handleSearchClick(cancers[2].filter)} 
                                 >
                                     挑選機構

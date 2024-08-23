@@ -64,6 +64,9 @@ body {
   .pagination-button{
     @apply border-solid border border-[#5B98BC] rounded-md w-[40px];
   }
+  .cancerResult-button {
+    @apply w-[140px] mt-[30px] mx-auto py-1.5 px-3 font-bold bg-black text-white rounded-full transition-all duration-300 hover:scale-110 hover:bg-[#4F4F4F];
+  }
           /*圖:不含來源、寬高*/
   .common-bg-image {
     @apply bg-cover bg-center bg-no-repeat;
@@ -95,5 +98,7 @@ body {
   .common-card{
     @apply text-left overflow-hidden truncate;
   }
-
+  .institutionPage-title{
+    @apply text-2xl text-black underline decoration-[#2D759E] decoration-4 font-bold;
+  }
 }

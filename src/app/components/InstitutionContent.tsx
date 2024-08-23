@@ -113,10 +113,10 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
     }, [institutionDetails]);
 
     
-    const setFavoriteHoverState = (objectID: string, state: boolean) => {
+    const setFavoriteHoverState = (hosp_name: string, state: boolean) => {
         setFavoriteHover(prev => ({
             ...prev,
-            [objectID]: state
+            [hosp_name]: state
         }));
         console.log(favoriteHover);
     };
@@ -204,9 +204,9 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
             {isLoaded && institutionDetails ? (
             <AnimatePresence>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                    <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#FCFCFC]" >
-                        <div className="flex w-full h-auto relative">
-                            <div className="relative flex  flex-col w-full h-[400px]"> 
+                    <main className="common-col-flex  justify-center w-full h-auto flex-grow  bg-[#FCFCFC]" >
+                        <div className="relative flex w-full h-auto ">
+                            <div className="relative flex flex-col w-full h-[400px]"> 
                                 <Image  priority={false} src="/images/institutionPage_banner.png" alt="icon" width={1700} height={400} className="w-full h-full object-cover"/>
                                 <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-5">
                                     <div className="absolute top-[55%] left-1/2 -translate-x-[56%] -translate-y-1/2 min-w-72 text-black text-[#ffffff] font-bold text-[26px] text-center text-shadow-[2px 2px 8px rgba(0,0,0,0.8)] bg-[#FFFFFF] opacity-90 p-[10px] rounded-lg">
@@ -215,23 +215,23 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                 </div>
                             </div>  
                         </div>
-                        <div className="mt-[100px] bg-[#ffffff] w-[1200px] flex flex-col items-center my-[50px] border-solid border-2 border-[#2D759E] shadow-[0_0_5px_#AABBCC]"> 
+                        <div className="common-col-flex w-[1200px] mt-[100px] my-[50px] bg-[#ffffff] common-border border-2 shadow-[0_0_5px_#AABBCC]"> 
                             <div className="w-[1200px] px-[30px]">
-                                <div className="w-full flex  flex-col items-center justify-between">
+                                <div className="w-full common-col-flex justify-between">
                                     {!user ? (
                                         <>
                                             <button 
                                                 type="button" 
-                                                onMouseEnter={() => setFavoriteHoverState(institutionDetails.objectID, true)}
-                                                onMouseLeave={() => setFavoriteHoverState(institutionDetails.objectID, false)}
+                                                onMouseEnter={() => setFavoriteHoverState(institutionDetails.hosp_name, true)}
+                                                onMouseLeave={() => setFavoriteHoverState(institutionDetails.hosp_name, false)}
                                                 onClick={() => setIsSignInModalVisible(true)}
                                             >
                                                 <Image 
-                                                    src={favoriteHover[institutionDetails.objectID] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
+                                                    src={favoriteHover[institutionDetails.hosp_name] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
                                                     alt="favorite" 
                                                     width={40} 
                                                     height={40} 
-                                                    className={`rounded-full p-[2px] mt-[20px] ${favoriteHover[institutionDetails.objectID] ? 'bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_3px_#2D759E]':'border-none shadow-none bg-[#0000004d]' }`}
+                                                    className={`rounded-full p-[2px] mt-[20px] ${favoriteHover[institutionDetails.hosp_name] ? 'bg-[#FFFFFF]  common-border border  shadow-[0_0_3px_#2D759E]':'border-none shadow-none bg-[#0000004d]' }`}
                                                 />
                                             </button>
                                             {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
@@ -244,16 +244,16 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                 const handleHeartClick = isFavorited ? () => handleRemoveClick(institutionDetails.objectID, user.uid) : () => handleAddClick(institutionDetails, user.uid);
                                                 return (
                                                     <button type="button" 
-                                                        onMouseEnter={() => setFavoriteHoverState(institutionDetails.objectID, true)}
-                                                        onMouseLeave={() => setFavoriteHoverState(institutionDetails.objectID, false)}  
+                                                        onMouseEnter={() => setFavoriteHoverState(institutionDetails.hosp_name, true)}
+                                                        onMouseLeave={() => setFavoriteHoverState(institutionDetails.hosp_name, false)}  
                                                         onClick={handleHeartClick}
                                                     >
                                                         <Image 
-                                                            src={isFavorited || favoriteHover[institutionDetails.objectID]? "/images/diamond_selected.png" : "/images/diamond_white.png"}  
+                                                            src={isFavorited || favoriteHover[institutionDetails.hosp_name]? "/images/diamond_selected.png" : "/images/diamond_white.png"}  
                                                             alt="favorite"
                                                             width={36} 
                                                             height={36} 
-                                                            className={`rounded-full p-[2px] mt-[20px] ${isFavorited || favoriteHover[institutionDetails.objectID] ?'bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_3px_#2D759E]':'border-none shadow-none bg-[#0000004d]'}`} 
+                                                            className={`rounded-full p-[2px] mt-[20px] ${isFavorited || favoriteHover[institutionDetails.hosp_name] ?'bg-[#FFFFFF]  common-border border shadow-[0_0_3px_#2D759E]':'border-none shadow-none bg-[#0000004d]'}`} 
                                                         />
                                                     </button>
                                                 );
@@ -263,7 +263,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                 </div>
                                 {/*簡介*/}
                                     <hr className="w-full border border-[#acb8b6] my-[30px]"/>
-                                    <h3 className="text-2xl text-black underline decoration-[#2D759E] decoration-4 font-bold mb-[30px]">資訊簡介</h3>
+                                    <h3 className="institutionPage-title mb-[30px]">資訊簡介</h3>
                                     <div className="w-full h-full flex flex-col justify-around text-black text-xl ">
                                         <div className="w-full flex  items-center mb-[25px]">
                                             <span className="w-[150px] font-bold ">電話</span>
@@ -288,7 +288,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                     </div>
                                     {/*地圖*/}
                                     <hr className="w-full border border-[#acb8b6] my-[30px]"/>
-                                    <h3 className="text-2xl text-black underline decoration-[#2D759E] decoration-4 font-bold mt-[5px] mb-[30px]">地圖實景</h3>
+                                    <h3 className="institutionPage-title mb-[30px] mt-[5px]">地圖實景</h3>
                                     {loading ? (
                                         <Skeleton height={450} width={1140} className="my-[40px] mx-auto" />
                                     ) : (
@@ -312,13 +312,13 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                         <Skeleton height={360} width={1140} className="my-[40px] mx-auto" />
                                     ) : (
                                     <div className="w-full">
-                                        <h3 className="text-black font-bold text-2xl  underline decoration-[#2D759E] decoration-4 my-[10px]">您可能也想比較...</h3>
-                                        <div className="w-full flex justify-between mt-[50px] relative">
+                                        <h3 className="institutionPage-title my-[10px]">您可能也想比較...</h3>
+                                        <div className="relative w-full flex justify-between mt-[50px] ">
                                             <button
                                                 id="left-arrow"
                                                 onClick={handlePrev}
                                                 disabled={isAtStart}
-                                                className={`flex justify-center items-center w-9 h-full ${isAtStart ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                className={`common-row-flex justify-center w-9 h-full ${isAtStart ? 'opacity-50 cursor-not-allowed' : ''}`}
                                             >
                                                 <Image src="/images/left_arrow.png" alt="left-arrow-icon" width={46} height={46} />
                                             </button>  
@@ -331,7 +331,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                                 alt="institution"
                                                                 width={250}
                                                                 height={200}
-                                                                className="object-cover object-center"
+                                                                className="object-cover"
                                                                 unoptimized={true}
                                                             />
                                                         )}
@@ -340,7 +340,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                             <div className=" h-[44px] text-left text-[14px] text-[#595959]">{institution.division}</div>
                                                             <div className=" h-[22px] text-left text-[14px] text-[#595959]">{institution.cancer_screening}</div>
                                                         </div>
-                                                        <div className="w-full h-[30px] flex justify-end items-center mb-[10px]">
+                                                        <div className="common-row-flex justify-end w-full h-[30px] mb-[10px]">
                                                                 <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
                                                                 <span className="ml-[5px]  text-[14px] text-[#707070] pr-[10px]">{institution.view}</span>
                                                         </div>
@@ -350,16 +350,16 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                             <button 
                                                                 type="button"  
                                                                 className="absolute top-[5px] right-1.5 z-10" 
-                                                                onMouseEnter={() => setFavoriteHoverState(institution.objectID, true)}
-                                                                onMouseLeave={() => setFavoriteHoverState(institution.objectID, false)}
+                                                                onMouseEnter={() => setFavoriteHoverState(institution.hosp_name, true)}
+                                                                onMouseLeave={() => setFavoriteHoverState(institution.hosp_name, false)}
                                                                 onClick={() => setIsSignInModalVisible(true)}
                                                             >
                                                             <Image 
-                                                                src={favoriteHover[institution.objectID]?  "/images/diamond_selected.png": "/images/diamond_white.png"}  
+                                                                src={favoriteHover[institution.hosp_name]?  "/images/diamond_selected.png": "/images/diamond_white.png"}  
                                                                 alt="favorite" 
                                                                 width={30} 
                                                                 height={30} 
-                                                                className={`rounded-full p-[2px] ${favoriteHover[institution.objectID] ?  'bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_5px_#2D759E]':'border-none shadow-none bg-[#0000004d]'}`}
+                                                                className={`rounded-full p-[2px] ${favoriteHover[institution.hosp_name] ?  'favorite-button-add':'favorite-button-remove'}`}
                                                             />
                                                             </button>
                                                             {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
@@ -374,16 +374,16 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                                     <button 
                                                                         type="button" 
                                                                         className="absolute top-[5px] right-1.5 z-10"
-                                                                        onMouseEnter={() => setFavoriteHoverState(institution.objectID, true)}
-                                                                        onMouseLeave={() => setFavoriteHoverState(institution.objectID, false)}
+                                                                        onMouseEnter={() => setFavoriteHoverState(institution.hosp_name, true)}
+                                                                        onMouseLeave={() => setFavoriteHoverState(institution.hosp_name, false)}
                                                                         onClick={handleHeartClick}
                                                                     >
                                                                         <Image 
-                                                                            src={isFavorited || favoriteHover[institution.objectID]?  "/images/diamond_selected.png" :"/images/diamond_white.png"}  
+                                                                            src={isFavorited || favoriteHover[institution.hosp_name]?  "/images/diamond_selected.png" :"/images/diamond_white.png"}  
                                                                             alt="favorite"
                                                                             width={30} 
                                                                             height={30} 
-                                                                            className={`rounded-full p-[2px] ${isFavorited|| favoriteHover[institution.objectID] ? 'bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_5px_#2D759E]':'border-none shadow-none bg-[#0000004d]' }`} 
+                                                                            className={`rounded-full p-[2px] ${isFavorited|| favoriteHover[institution.hosp_name] ? 'favorite-button-add':'favorite-button-remove' }`} 
                                                                         />
                                                                     </button>
                                                                 );
@@ -396,7 +396,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                 id="right-arrow"
                                                 onClick={handleNext}
                                                 disabled={isAtEnd}
-                                                className={`flex justify-center items-center w-9 h-full ${isAtEnd ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                className={`common-row-flex justify-center w-9 h-full ${isAtEnd ? 'opacity-50 cursor-not-allowed' : ''}`}
                                             >
                                                 <Image src="/images/right_arrow.png" alt="right-arrow-icon" width={46} height={46} />
                                             </button>
@@ -406,7 +406,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                 {/*返鈕*/}
                                 <div className="flex items-center">
                                     <button 
-                                        className="mx-auto my-16  w-64 rounded-lg py-4.5 px-2.5  h-11 font-bold text-white text-center text-[20px] transition-all duration-300 hover:scale-110  bg-[#5B98BC] hover:bg-[#2D759E]"
+                                        className="common-button w-64 h-11 mx-auto my-16 py-4.5 px-2.5 "
                                         onClick={()=>router.push('/search')}
                                     >
                                         搜尋更多機構
@@ -418,7 +418,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                 </motion.div>
             </AnimatePresence>
         ) : (
-            <div className="flex justify-center items-center h-screen" style={{ backgroundColor: '#24657d' }}>
+            <div className="common-row-flex justify-center h-screen" style={{ backgroundColor: '#24657d' }}>
                 <BounceLoader size="300px" color="#FFFFFF"/>
             </div>
         )}

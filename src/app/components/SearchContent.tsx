@@ -191,10 +191,10 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     };
 
 
-    const setFavoriteHoverState = (objectID: string, state: boolean) => {
+    const setFavoriteHoverState = (hosp_name: string, state: boolean) => {
         setFavoriteHover(prev => ({
             ...prev,
-            [objectID]: state
+            [hosp_name]: state
         }));
         console.log(favoriteHover);
     };
@@ -415,15 +415,15 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                                 <button 
                                                     type="button"  
                                                     className="absolute top-[5px] left-[130px] z-10" 
-                                                    onMouseEnter={() => setFavoriteHoverState(institution.objectID, true)}
-                                                    onMouseLeave={() => setFavoriteHoverState(institution.objectID, false)}
+                                                    onMouseEnter={() => setFavoriteHoverState(institution.hosp_name, true)}
+                                                    onMouseLeave={() => setFavoriteHoverState(institution.hosp_name, false)}
                                                     onClick={() => setIsSignInModalVisible(true)}>
                                                     <Image 
-                                                        src={favoriteHover[institution.objectID] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
+                                                        src={favoriteHover[institution.hosp_name] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
                                                         alt="favorite" 
                                                         width={30} 
                                                         height={30} 
-                                                        className={`rounded-full p-[2px] ${favoriteHover[institution.objectID] ? 'favorite-button-add':'favorite-button-remove' }`}
+                                                        className={`rounded-full p-[2px] ${favoriteHover[institution.hosp_name] ? 'favorite-button-add':'favorite-button-remove' }`}
                                                     />
                                                 </button>
                                                 {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
@@ -438,15 +438,15 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                                         <button 
                                                             type="button" 
                                                             className="absolute top-[5px] left-[130px] z-10" 
-                                                            onMouseEnter={() => setFavoriteHoverState(institution.objectID, true)}
-                                                            onMouseLeave={() => setFavoriteHoverState(institution.objectID, false)}
+                                                            onMouseEnter={() => setFavoriteHoverState(institution.hosp_name, true)}
+                                                            onMouseLeave={() => setFavoriteHoverState(institution.hosp_name, false)}
                                                             onClick={handleHeartClick}>
                                                             <Image 
-                                                                src={isFavorited || favoriteHover[institution.objectID] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
+                                                                src={isFavorited || favoriteHover[institution.hosp_name] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
                                                                 alt="favorite" 
                                                                 width={30} 
                                                                 height={30} 
-                                                                className={`rounded-full p-[2px] ${isFavorited || favoriteHover[institution.objectID] ? 'favorite-button-add':'favorite-button-remove' }`} 
+                                                                className={`rounded-full p-[2px] ${isFavorited || favoriteHover[institution.hosp_name] ? 'favorite-button-add':'favorite-button-remove' }`} 
                                                             />
                                                         </button>
                                                     );

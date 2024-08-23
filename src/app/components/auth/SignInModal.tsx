@@ -44,14 +44,13 @@ const SignInModal: React.FC<SignInModalProps> = ({ onClose, onShowRegister }) =>
 
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50" onClick={onClose}>
-            <div className="max-w-[926px] w-[92%] rounded-lg shadow-lg h-[490px] flex" onClick={e => e.stopPropagation()}>
-                <div className="bg-[#4b96af] backdrop-blur-sm p-7 rounded-l-lg flex flex-col justify-center items-center w-1/2">
-                    <div style={{ backgroundImage: "url('/images/LOGO.png')"}}
-                         className="w-[300px] h-[300px] bg-cover bg-center mb-2.5"></div>
+        <div className="fixed common-row-flex justify-center inset-0 bg-black bg-opacity-30 z-50" onClick={onClose}>
+            <div className="flex max-w-[926px] w-[92%] h-[490px] rounded-lg shadow-lg" onClick={e => e.stopPropagation()}>
+                <div className="common-col-flex justify-center w-1/2 bg-[#4b96af] backdrop-blur-sm p-7 rounded-l-lg">
+                    <div className="w-[300px] h-[300px] mb-2.5 common-bg-image bg-[url('/images/LOGO.png')]"></div>
                     <div className="text-white text-3xl font-bold mt-4">健康探索者</div>
                 </div>
-                <div className="p-7 rounded-r-lg bg-white bg-opacity-70 backdrop-blur-sm flex flex-col items-center w-1/2 relative">
+                <div className="relative common-col-flex w-1/2 p-7 backdrop-blur-sm rounded-r-lg bg-white bg-opacity-70">
                     <Image 
                         src="/images/xmark-solid.svg"
                         alt="close" width={20} height={20}
@@ -59,38 +58,38 @@ const SignInModal: React.FC<SignInModalProps> = ({ onClose, onShowRegister }) =>
                         onClick={onClose} 
                     />
                     <div className="text-3xl font-bold text-[#1A5665] mb-[35px]">登入會員</div>
-                    <div className="w-full flex items-center mb-[35px]">
-                        <label htmlFor="email" className="flex-shrink-0 flex items-center pr-2.5 text-black">Email:</label>
+                    <div className="common-row-flex w-full mb-[35px]">
+                        <label htmlFor="email" className="common-row-flex flex-shrink-0 w-[60px] pr-2.5 text-black">Email:</label>
                         <input 
                             type="email" 
                             placeholder="請輸入Email" 
                             id="email-signin"
                             value={email}
-                            className="w-full h-9 bg-[#FFFFFF] border-none px-3.5 text-base font-medium leading-5 text-gray-600 focus:outline-none focus:border-[#36B2D7]"
+                            className="w-full h-9 px-3.5 border-none bg-[#FFFFFF] leading-5 text-base text-gray-600 font-medium focus:outline-none focus:border-[#36B2D7]"
                             onChange={(e) => setEmail(e.target.value)} 
                         />
                     </div>
-                    <div className="w-full flex items-center mb-[65px]">
-                        <label htmlFor="password" className="flex-shrink-0 flex items-center pr-2.5 text-black">密碼:</label>
+                    <div className="common-row-flex w-full mb-[65px]">
+                        <label htmlFor="password" className="common-row-flex flex-shrink-0 w-[60px] pr-2.5 text-black">密碼:</label>
                         <input 
                             type="password" 
                             placeholder="請輸入密碼" 
                             id="password-signin"
                             value={password}
-                            className="w-full h-9 bbg-[#FFFFFF] border-none px-3.5 text-base font-medium leading-5 text-gray-600 focus:outline-none focus:border-[#36B2D7]"
+                            className="w-full h-9 px-3.5 border-none bg-[#FFFFFF] leading-5 text-base text-gray-600 font-medium focus:outline-none focus:border-[#36B2D7]"
                             onChange={(e) => setPassword(e.target.value)} 
                         />
                     </div>
                     <button 
                         type="submit" 
-                        className="bg-[#1A5665] text-white w-full h-12 rounded-md text-xl mb-5  border-none hover:bg-[#acb8b6] active:bg-[#3686A5]"
+                        className="w-full h-[44px] mb-[20px] rounded-lg bg-[#5B98BC]  hover:bg-[#2D759E] font-bold text-white text-center text-[20px]"
                         onClick={handleSignIn}
                     >
                         登入
                     </button>
-                    <div className="text-base w-full flex flex-col justify-center mt-[15px]">
+                    <div className="common-col-flex justify-center w-full mt-[15px] text-base">
                         <span 
-                            className="cursor-pointer text-[#1A5665] hover:text-[#29879e] text-center text-[18px]"
+                            className="cursor-pointer text-[#5B98BC] hover:text-[#2D759E] text-center text-[18px]"
                             onClick={() => {
                                 onClose();
                                 onShowRegister(true);
@@ -99,7 +98,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ onClose, onShowRegister }) =>
                         尚無會員?點此註冊
                         </span>
                     </div>
-                    {signInMessage && <div className="text-base w-full flex justify-center mt-[30px]  text-[#EA0000]">{signInMessage}</div>}
+                    {signInMessage && <div className="common-col-flex justify-center w-full text-lg mt-[30px] text-red-500 font-bold">{signInMessage}</div>}
                 </div>
             </div>
         </div>

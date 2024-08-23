@@ -91,9 +91,13 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col bg-gradient-to-b  from-[#FFFFFF] via-[#C3D8EA] to-[#77ACCC]">
-          <div className="common-row-flex justify-center">
-          <div  data-aos="fade-right" className="w-[92%] common-page-layout  backdrop-blur-[5px]  justify-between p-[20px] my-20">
+        {/*拆子元件*/}
+        <div className="flex flex-col w-full h-auto bg-gradient-to-b from-[#FFFFFF] via-[#C3D8EA] to-[#77ACCC]">
+          <div className="common-row-flex justify-center w-full">
+          <div  
+            data-aos="fade-right" 
+            className="common-page-layout xl:w-full xl:max-w-[1180px] w-[95%] backdrop-blur-[5px] justify-between p-[20px] my-20"
+          >
             <div className="mb-[30px] common-title text-[32px]">醫療機構搜尋分類</div>
             <div className="grid grid-cols-4 gap-40">
               {searches.map((search, index) => (
@@ -124,8 +128,8 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
             </button>
           </div>
           </div>
-          <div className="common-col-flex justify-center">
-          <div data-aos="fade-left" className="w-[92%]  common-page-layout backdrop-blur-[5px]  justify-between  p-[20px] my-20">
+          <div className="common-col-flex justify-center w-full">
+          <div data-aos="fade-left" className="common-page-layout xl:w-full xl:max-w-[1180px] w-[95%] backdrop-blur-[5px] justify-between p-[20px] my-20">
             <div  className="mb-[30px] common-title text-[32px]">癌症篩檢搜尋分類</div>
             <div className="grid grid-cols-5 gap-20">
               {cancers.map((cancer, index) => (

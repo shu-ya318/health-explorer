@@ -7,6 +7,15 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    //RWD
+    screens: {
+      'xl': '1280px',
+      'lg':'1024',
+      'md':'768',
+      'sm':'640',
+      'xs':'480',
+      'xss':'360',
+    },
     extend: {
     //版面
       gridTemplateColumns: {

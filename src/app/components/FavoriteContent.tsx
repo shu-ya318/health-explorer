@@ -126,7 +126,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
          <HomePage/>
           :( 
             <> 
-                <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow" >
+                <main className="common-col-flex justify-center flex-grow w-full h-auto " >
                     {isConfirmModalOpen && (
                         <ConfirmDeleteModal 
                             isOpen={isConfirmModalOpen} 
@@ -134,8 +134,8 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                             onCancel={handleCloseModal} 
                         />
                     )}   
-                    <div className="flex w-full h-auto relative">
-                        <div className="relative flex  flex-col w-full h-[360px]"> 
+                    <div className="relative flex w-full h-auto ">
+                        <div className="relative flex flex-col w-full h-[360px]"> 
                             <Image  priority={false} src="/images/favoritePage_banner.jpg" alt="icon" width={1720} height={360} className="w-full h-full object-cover"/>
                             <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-20">
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#ffffff] font-bold text-[56px] text-center">收藏清單</div>  
@@ -143,15 +143,15 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                         </div>  
                     </div>
                     {/*收藏項目*/}
-                    <div className="w-full flex flex-col min-h-screen bg-[#F0F0F0] backdrop-blur-sm my-auto pt-5 pb-10 flex justify-center items-center pt-[30px]">
+                    <div className="common-col-flex justify-center w-full min-h-screen bg-[#F0F0F0] backdrop-blur-sm my-auto pt-5 pb-10">
                         <div className="w-[1200px] flex min-h-screen  shadow-[0_0_10px_#AABBCC] rounded-lg">
-                            <div className="w-full flex flex-col justify-start items-center bg-[#FFFFFF] backdrop-blur-md py-7 px-8 rounded-l-lg">
+                            <div className="w-full common-col-flex justify-start bg-[#FFFFFF] backdrop-blur-md py-7 px-8 rounded-l-lg">
                                 {favoriteData.length === 0 ? (
                                     <>
                                         <div className="text-2xl text-gray-600 text-center my-auto">目前無收藏機構，推薦前往搜尋頁進行挑選</div>
                                         <button 
                                             type="button" 
-                                            className="w-64 bg-[#5B98BC] rounded-md py-4.5 px-2.5  h-11  mb-[60px] hover:bg-[#2D759E] font-bold text-white text-center text-[20px] transition-all duration-300 hover:scale-110"
+                                            className="w-64 h-11 py-4.5 px-2.5 mb-[60px] common-button"
                                             onClick={()=>router.push('/search')} 
                                         >
                                         開始搜尋
@@ -160,9 +160,9 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                 ) : (
                                 favoriteData.map((item) => (
                                     <>
-                                        <div key={item.id} className="h-auto w-full flex justify-between">
-                                            <div className="relative w-[170px] h-[170px]  aspect-square flex items-center">
-                                                {item.imageUrl && <div className="bg-cover bg-center w-full h-full" style={{backgroundImage: `url(${item.imageUrl})`}}></div>}
+                                        <div key={item.id} className="flex justify-between h-auto w-full ">
+                                            <div className="relative w-[170px] h-[170px] aspect-square common-row-flex">
+                                                {item.imageUrl && <div className=" w-full h-full bg-cover" style={{backgroundImage: `url(${item.imageUrl})`}}></div>}
                                                 {item.id && (
                                                     <button 
                                                         type="button" 
@@ -173,7 +173,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                                             alt="collection" 
                                                             width={30} 
                                                             height={30} 
-                                                            className="rounded-full p-[2px]  bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_5px_#2D759E]"
+                                                            className="rounded-full p-[2px]  bg-[#FFFFFF] border common-border shadow-[0_0_5px_#2D759E]"
                                                         />
                                                     </button>
                                                 )}
@@ -207,11 +207,11 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                 )}
                                 <div ref={lastElementRef}></div>
                             </div>
-                            <div className="w-2/5 flex flex-col justify-start items-center bg-gradient-to-t    from-[#F0F0F0] via-[#C3D8EA] to-[#77ACCC] backdrop-blur-md rounded-tr-lg rounded-br-lg py-10 px-8 text-lg shadow-md">
+                            <div className="w-2/5 common-col-flex justify-start bg-gradient-to-t from-[#F0F0F0] via-[#C3D8EA] to-[#77ACCC] backdrop-blur-md rounded-tr-lg rounded-br-lg py-10 px-8 text-lg shadow-md">
                                 <div className="text-[28px] mb-7.5 text-[#FFFFFF] font-bold mb-[30px]">匯出格式</div>
-                                <div className="flex flex-col justify-between items-center w-[200px] h-auto text-[#1D445D] ">
+                                <div className="common-col-flex justify-between w-[200px] h-auto text-[#1D445D] ">
                                     <button 
-                                            className={`flex justify-center items-center w-full rounded-md py-4.5  h-11  mt-5 mb-5 bg-[#FFEEDD] hover:bg-[#FFC78E] hover:text-[#ffffff] border-2 border-solid border-[#eb980a]  text-center text-[20px] transition-all duration-300 hover:scale-110
+                                            className={`common-row-flex justify-center w-full h-11 rounded-lg py-4.5 mt-5 mb-5 bg-[#FFEEDD] hover:bg-[#FFC78E] hover:text-[#ffffff] border-2 border-solid border-[#eb980a]  text-center text-[20px] transition-all duration-300 hover:scale-110
                                                         ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none  text-white' : ''}`} 
                                             onClick={() => {
                                                 if (favoriteData.length > 0) {
@@ -223,7 +223,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                         <Image src="/images/file-pdf-solid.svg" alt="PDF" width={25} height={25} className="ml-[10px]"/>
                                     </button >
                                     <button 
-                                            className={`flex justify-center items-center w-full rounded-md py-4.5  h-11  mt-5 mb-5 bg-[#D1E9E9] hover:bg-[#B3D9D9] hover:text-[#ffffff] border-2 border-solid border-[#1f5127]  text-center text-[20px] transition-all duration-300 hover:scale-110
+                                            className={`common-row-flex justify-center  w-full  h-11 rounded-lg py-4.5  mt-5 mb-5 bg-[#D1E9E9] hover:bg-[#B3D9D9] hover:text-[#ffffff] border-2 border-solid border-[#1f5127]  text-center text-[20px] transition-all duration-300 hover:scale-110
                                                         ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
                                             onClick={() => {
                                                 if (favoriteData.length > 0) {
@@ -235,7 +235,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                         <Image src="/images/file-csv-solid.svg" alt="CSV" width={25} height={25} className="ml-[10px]"/>
                                     </button >
                                     <button 
-                                            className={`flex justify-center items-center w-full rounded-md py-4.5  h-11  mt-5 mb-5 bg-[#D2E9FF] hover:bg-[#C4E1FF] hover:text-[#ffffff] border-2 border-solid border-[#19a8e6]  text-center text-[20px] transition-all duration-300 hover:scale-110
+                                            className={`common-row-flex justify-center w-full h-11 rounded-lg py-4.5 mt-5 mb-5 bg-[#D2E9FF] hover:bg-[#C4E1FF] hover:text-[#ffffff] border-2 border-solid border-[#19a8e6]  text-center text-[20px] transition-all duration-300 hover:scale-110
                                                         ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
                                             onClick={() => {
                                                 if (favoriteData.length > 0) {
