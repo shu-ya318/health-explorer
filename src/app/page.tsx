@@ -83,9 +83,9 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
     <AnimatePresence>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
         <div className="relative w-full h-[750px] common-bg-image bg-[url('/images/homeBanner.png')]">
-          <div className="absolute top-[77%] left-[55%] -translate-x-[80%] -translate-y-[80%] common-col-flex justify-between">
+          <div className="absolute top-[77%] lg:left-[55%] md:left-[57%] sm:left-[61%] xss:left-[60%] left-[65%] -translate-x-[80%] -translate-y-[80%] common-col-flex justify-between">
             <div data-aos="fade-up" className="mt-22 cursor-pointer" onClick={ scrollDown }>
-              <span className="text-[50px] text-[#FFFFFF] text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]">立即探索</span>
+              <span className="sm:text-[50px] text-[30px] text-[#FFFFFF] text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]">立即探索</span>
               <br/>
               <Image src="/images/angles-down-solid.svg" alt="scroll-down" width={36} height={66} className="w-[36px] h-[66px] mx-auto mt-4 animate-bounce" />
             </div>
@@ -96,10 +96,10 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
           <div className="common-row-flex justify-center w-full">
           <div  
             data-aos="fade-right" 
-            className="common-page-layout xl:w-full xl:max-w-[1180px] w-[95%] backdrop-blur-[5px] justify-between p-[20px] my-20"
+            className="common-page-layout justify-between xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] xl:p-[20px] py-[20px] lg:my-20 mb-0 mt-20 backdrop-blur-[5px]"
           >
-            <div className="mb-[30px] common-title text-[32px]">醫療機構搜尋分類</div>
-            <div className="grid grid-cols-4 gap-40">
+            <div className="mb-[30px] common-title xs:text-[32px] text-[28px]">醫療機構搜尋分類</div>
+            <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 xl:gap-40 lg:gap-20 md:gap-x-52 sm:gap-y-8 sm:gap-x-32 gap-y-10 gap-x-0">
               {searches.map((search, index) => (
                 <button  
                   key={index}
@@ -121,7 +121,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
             </div>
             <button 
               type="button" 
-              className="common-button mt-[30px] w-52 h-11 py-4.5 px-2.5  mb-5"
+              className="common-button mt-[30px] w-52 h-11 py-4.5 px-2.5 mb-5"
               onClick={()=>router.push('/search')} 
             >
               立即搜尋更多
@@ -129,9 +129,9 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
           </div>
           </div>
           <div className="common-col-flex justify-center w-full">
-          <div data-aos="fade-left" className="common-page-layout xl:w-full xl:max-w-[1180px] w-[95%] backdrop-blur-[5px] justify-between p-[20px] my-20">
-            <div  className="mb-[30px] common-title text-[32px]">癌症篩檢搜尋分類</div>
-            <div className="grid grid-cols-5 gap-20">
+          <div data-aos="fade-left" className="common-page-layout justify-between xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] xl:p-[20px] py-[20px] my-20 backdrop-blur-[5px] ">
+            <div  className="mb-[30px] common-title xs:text-[32px] text-[28px]">癌症篩檢搜尋分類</div>
+            <div className="grid lg:grid-cols-5 sm:grid-cols-3 xl:gap-20 lg:gap-[29px] md:gap-x-14 sm:gap-y-8 sm:gap-x-3 gap-y-10 gap-x-0">
               {cancers.map((cancer, index) => (
                 <button  
                     key={index}

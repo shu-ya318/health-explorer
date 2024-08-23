@@ -42,7 +42,7 @@ const Header: React.FC = () => {
   return (
     <>
       <header className="common-row-flex justify-between fixed inset-x-0 top-0 z-30 w-screen h-[60px] border bg-[#FFFFFF] border-solid border-[#9FC5DF]">
-        <div className="common-row-flex justify-between  max-w-[1200px] w-screen px-[10px] mx-auto text-[#1e94b4]">
+        <div className="common-row-flex justify-between  max-w-[1200px] w-screen lg:w-[90%] md:w-[80%] px-[10px] mx-auto text-[#1e94b4]">
             <Link 
               href='/' 
               className="common-row-flex relative mt-2 no-underline font-bold cursor-pointer animate__animated animate__backInLeft animate__slow"

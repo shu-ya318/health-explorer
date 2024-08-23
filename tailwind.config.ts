@@ -10,16 +10,17 @@ const config: Config = {
     //RWD
     screens: {
       'xl': '1280px',
-      'lg':'1024',
-      'md':'768',
-      'sm':'640',
-      'xs':'480',
-      'xss':'360',
+      'lg':'1024px',
+      'md':'768px',
+      'sm':'640px',
+      'xs':'480px',
+      'xss':'360px',
     },
     extend: {
     //版面
       gridTemplateColumns: {
         'fill-two-columns': 'repeat(auto-fill, minmax(48%, 1fr))',
+        'fill-column': 'repeat(auto-fill, minmax(100%, 1fr))',
       },
     //動畫
       keyframes: {

@@ -26,8 +26,8 @@ const Footer: React.FC = () => {
 
     return (
       <footer className="common-row-flex justify-center w-full bg-[#4D8EB4] text-white text-lg">
-        <div className="flex justify-between items-start max-w-[1200px] w-full p-[10px]">
-          <div className="common-row-flex flex-row justify-center my-auto mr-10 text-xl transition-all duration-300 hover:scale-110">
+        <div className="flex justify-between items-start max-w-[1200px] w-full lg:w-[90%] md:w-[80%] p-[15px] mx-auto">
+          <div className="common-row-flex justify-center my-auto mr-10 text-xl transition-all duration-300 hover:scale-110">
             <Link 
                 href='/' 
                 className="common-row-flex relative  mt-2 no-underline font-bold cursor-pointer hover:text-[#acb8b6] "
