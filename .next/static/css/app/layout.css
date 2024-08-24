@@ -610,6 +610,9 @@ video {
 .left-\[130px\] {
   left: 130px;
 }
+.left-\[65\%\] {
+  left: 65%;
+}
 .right-1\.5 {
   right: 0.375rem;
 }
@@ -652,8 +655,8 @@ video {
 .top-\[7px\] {
   top: 7px;
 }
-.left-\[65\%\] {
-  left: 65%;
+.left-\[100px\] {
+  left: 100px;
 }
 .z-0 {
   z-index: 0;
@@ -857,6 +860,21 @@ video {
 .mt-\[60px\] {
   margin-top: 60px;
 }
+.mr-0 {
+  margin-right: 0px;
+}
+.mr-7 {
+  margin-right: 1.75rem;
+}
+.mr-4 {
+  margin-right: 1rem;
+}
+.ml-\[20px\] {
+  margin-left: 20px;
+}
+.ml-\[50px\] {
+  margin-left: 50px;
+}
 .box-border {
   box-sizing: border-box;
 }
@@ -973,6 +991,9 @@ video {
 }
 .h-screen {
   height: 100vh;
+}
+.h-\[30\] {
+  height: 30;
 }
 .min-h-screen {
   min-height: 100vh;
@@ -1094,6 +1115,30 @@ video {
 .w-screen {
   width: 100vw;
 }
+.w-\[40\%\] {
+  width: 40%;
+}
+.w-\[60\%\] {
+  width: 60%;
+}
+.w-\[30\%\] {
+  width: 30%;
+}
+.w-\[20\%\] {
+  width: 20%;
+}
+.w-\[25\%\] {
+  width: 25%;
+}
+.w-\[75\%\] {
+  width: 75%;
+}
+.w-\[30\] {
+  width: 30;
+}
+.w-\[30px\] {
+  width: 30px;
+}
 .min-w-72 {
   min-width: 18rem;
 }
@@ -1114,6 +1159,9 @@ video {
 }
 .max-w-screen-md {
   max-width: 768px;
+}
+.max-w-\[560px\] {
+  max-width: 560px;
 }
 .flex-shrink-0 {
   flex-shrink: 0;
@@ -1244,13 +1292,6 @@ video {
 }
 .gap-\[2\%\] {
   gap: 2%;
-}
-.gap-x-px {
-  -moz-column-gap: 1px;
-       column-gap: 1px;
-}
-.gap-y-4 {
-  row-gap: 1rem;
 }
 .gap-x-0 {
   -moz-column-gap: 0px;
@@ -1703,11 +1744,8 @@ video {
 .text-\[28px\] {
   font-size: 28px;
 }
-.text-\[32px\] {
-  font-size: 32px;
-}
-.text-\[50px\] {
-  font-size: 50px;
+.text-\[30px\] {
+  font-size: 30px;
 }
 .text-\[56px\] {
   font-size: 56px;
@@ -1728,8 +1766,14 @@ video {
   font-size: 0.75rem;
   line-height: 1rem;
 }
-.text-\[30px\] {
-  font-size: 30px;
+.text-\[48px\] {
+  font-size: 48px;
+}
+.text-\[32px\] {
+  font-size: 32px;
+}
+.text-\[37px\] {
+  font-size: 37px;
 }
 .font-bold {
   font-weight: 700;
@@ -2261,22 +2305,34 @@ video {
 }
 @media (min-width: 480px) {
 
-  .xs\:left-\[65\%\] {
-    left: 65%;
-  }
-
   .xs\:text-\[32px\] {
     font-size: 32px;
   }
-  .xs\:common-row-flex {
-    display: flex;
-    align-items: center;
+
+  .xs\:text-\[48px\] {
+    font-size: 48px;
   }
 }
 @media (min-width: 640px) {
 
   .sm\:left-\[61\%\] {
     left: 61%;
+  }
+
+  .sm\:mr-10 {
+    margin-right: 2.5rem;
+  }
+
+  .sm\:mr-7 {
+    margin-right: 1.75rem;
+  }
+
+  .sm\:mr-2 {
+    margin-right: 0.5rem;
+  }
+
+  .sm\:ml-0 {
+    margin-left: 0px;
   }
 
   .sm\:grid-cols-2 {
@@ -2287,23 +2343,16 @@ video {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .sm\:gap-y-8 {
-    row-gap: 2rem;
+  .sm\:flex-row {
+    flex-direction: row;
   }
 
-  .sm\:gap-x-52 {
-    -moz-column-gap: 13rem;
-         column-gap: 13rem;
+  .sm\:flex-col {
+    flex-direction: column;
   }
 
-  .sm\:gap-x-10 {
-    -moz-column-gap: 2.5rem;
-         column-gap: 2.5rem;
-  }
-
-  .sm\:gap-x-32 {
-    -moz-column-gap: 8rem;
-         column-gap: 8rem;
+  .sm\:items-start {
+    align-items: flex-start;
   }
 
   .sm\:gap-x-3 {
@@ -2311,8 +2360,21 @@ video {
          column-gap: 0.75rem;
   }
 
+  .sm\:gap-x-32 {
+    -moz-column-gap: 8rem;
+         column-gap: 8rem;
+  }
+
+  .sm\:gap-y-8 {
+    row-gap: 2rem;
+  }
+
   .sm\:text-\[50px\] {
     font-size: 50px;
+  }
+
+  .sm\:text-\[56px\] {
+    font-size: 56px;
   }
 }
 @media (min-width: 768px) {
@@ -2325,14 +2387,6 @@ video {
     width: 80%;
   }
 
-  .md\:grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .md\:grid-cols-3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   .md\:gap-x-14 {
     -moz-column-gap: 3.5rem;
          column-gap: 3.5rem;
@@ -2341,15 +2395,6 @@ video {
   .md\:gap-x-52 {
     -moz-column-gap: 13rem;
          column-gap: 13rem;
-  }
-
-  .md\:gap-y-8 {
-    row-gap: 2rem;
-  }
-  .md\:common-col-flex {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
   }
 }
 @media (min-width: 1024px) {
@@ -2385,8 +2430,20 @@ video {
 }
 @media (min-width: 1280px) {
 
+  .xl\:left-\[125px\] {
+    left: 125px;
+  }
+
+  .xl\:ml-0 {
+    margin-left: 0px;
+  }
+
   .xl\:w-full {
     width: 100%;
+  }
+
+  .xl\:flex-row {
+    flex-direction: row;
   }
 
   .xl\:gap-20 {
