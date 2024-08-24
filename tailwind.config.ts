@@ -19,6 +19,7 @@ const config: Config = {
     extend: {
     //版面
       gridTemplateColumns: {
+        'custom': '180px minmax(0, 1fr)',
         'fill-two-columns': 'repeat(auto-fill, minmax(48%, 1fr))',
         'fill-column': 'repeat(auto-fill, minmax(100%, 1fr))',
       },

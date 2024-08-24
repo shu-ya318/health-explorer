@@ -144,8 +144,8 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                     </div>
                     {/*收藏項目*/}
                     <div className="common-col-flex justify-center w-full min-h-screen bg-[#F0F0F0] backdrop-blur-sm my-auto pt-5 pb-10">
-                        <div className="xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] flex min-h-screen  shadow-[0_0_10px_#AABBCC] rounded-lg">
-                            <div className="w-[75%] common-col-flex justify-start bg-[#FFFFFF] backdrop-blur-md py-7 px-8 rounded-l-lg">
+                        <div className="xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] flex md:flex-row flex-col min-h-screen  shadow-[0_0_10px_#AABBCC] rounded-lg">
+                            <div className="lg:w-[75%] md:w-[65%] w-full common-col-flex justify-start bg-[#FFFFFF] backdrop-blur-md py-7 px-8 rounded-l-lg">
                                 {favoriteData.length === 0 ? (
                                     <>
                                         <div className="text-2xl text-gray-600 text-center my-auto">目前無收藏機構</div>
@@ -159,47 +159,51 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                     </>
                                 ) : (
                                 favoriteData.map((item) => (
-                                    <>
-                                        <div key={item.id} className="flex xl:flex-row  justify-between h-auto w-full ">
-                                            <div className="relative w-[170px] h-[170px] aspect-square common-row-flex">
-                                                {item.imageUrl && <div className=" w-full h-full bg-cover" style={{backgroundImage: `url(${item.imageUrl})`}}></div>}
+                                    <>  
+                                        <div key={item.id} className="grid lg:grid-cols-custom fill-column w-[98%]">
+                                            <div className="relative lg:w-[180px] w-[85%] lg:h-[180px] h-[300px] aspect-square common-row-flex">
+                                                {item.imageUrl && (
+                                                    <div className="w-full h-full common-bg-image" style={{backgroundImage: `url(${item.imageUrl})`}}></div> 
+                                                )}
                                                 {item.id && (
                                                     <button 
                                                         type="button" 
-                                                        className="absolute top-[7px] xl:left-[125px] left-[100px] z-10 w-[30px] h-[30px]"
+                                                        className="absolute top-[7px] right-[10px] lg:left-[145px]  z-10 w-[30px] h-[30px]"
                                                     >
                                                         <Image 
                                                             src="/images/diamond_selected.png" 
                                                             alt="collection" 
                                                             width={30} 
                                                             height={30} 
-                                                            className="w-full h-full rounded-full p-[2px]  bg-[#FFFFFF] border common-border shadow-[0_0_5px_#2D759E]"
+                                                            className="w-full h-full  p-[2px] favorite-button-add rounded-full"
                                                         />
                                                     </button>
                                                 )}
                                             </div>
-                                            <div className="flex flex-col w-[560px] h-full text-[#2D759E] leading-12 xl:ml-0 ml-[5px]">
-                                                <div className="flex mb-4">
-                                                    <span className="font-bold text-lg mr-1.5 w-[80px]">機構名稱</span>
-                                                    <span className="text-lg text-[#1D445D] mr-1.5">{item.hosp_name}</span>
+                                            <div className="relative flex w-full lg:ml-[10px] lg:mr-0 ">
+                                                <div className="flex flex-col w-[90%] h-auto text-[#2D759E] xl:text-base lg:text-sm text-lg leading-12 lg:mt-0 mt-[35px]">
+                                                    <div className="flex mb-4">
+                                                        <span className="font-bold lg:w-[43px] text-nowrap mr-[2px]">名稱</span>
+                                                        <span className="text-[#1D445D]">{item.hosp_name}</span>
+                                                    </div>
+                                                    <div className="flex mb-4">
+                                                        <span className="font-bold lg:w-[43px] text-nowrap mr-[2px]">電話</span>
+                                                        <span className="text-[#1D445D]">{item.tel}</span>
+                                                    </div>
+                                                    <div className="flex mb-4">
+                                                        <span className="font-bold lg:w-[43px] text-nowrap mr-[5px]">地址</span>
+                                                        <span className="text-[#1D445D] ml-px">{item.hosp_addr}</span>
+                                                    </div>
                                                 </div>
-                                                <div className="flex mb-4">
-                                                    <span className="font-bold text-lg mr-1.5 w-[80px]">電話</span>
-                                                    <span className="text-lg text-[#1D445D] mr-1.5">{item.tel}</span>
-                                                </div>
-                                                <div className="flex mb-4">
-                                                    <span className="font-bold text-lg mr-1.5 w-[80px]">地址</span>
-                                                    <span className="text-lg text-[#1D445D] mr-1.5">{item.hosp_addr}</span>
-                                                </div>
-                                            </div>
-                                            {item.id && (
+                                                {item.id && (
                                                 <button 
-                                                    className="flex justify-start" 
+                                                    className="absolute lg:top-0 lg:right-0 bottom-[-100px] right-0 flex min-h-[150px] z-10" 
                                                     onClick={() => item.id && handleDeleteClick(item.id)}
                                                 >
                                                     <Image  src="/images/delete.png" alt="delete" width={30} height={30} />
                                                 </button>  
-                                            )}
+                                                 )}
+                                            </div>
                                         </div>
                                         <hr className="w-full  border border-solid border-[#e8e8e8] my-5"/>
                                     </>
@@ -207,9 +211,9 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                 )}
                                 <div ref={lastElementRef}></div>
                             </div>
-                            <div className="w-[25%] common-col-flex justify-start bg-gradient-to-t from-[#F0F0F0] via-[#C3D8EA] to-[#77ACCC] backdrop-blur-md rounded-tr-lg rounded-br-lg py-10 px-8 text-lg shadow-md">
-                                <div className="text-[28px] mb-7.5 text-[#FFFFFF] font-bold mb-[30px]">匯出格式</div>
-                                <div className="common-col-flex justify-between w-[200px] h-auto text-[#1D445D] ">
+                            <div className="lg:w-[25%] md:w-[35%] w-full common-col-flex justify-start bg-gradient-to-t from-[#F0F0F0] via-[#C3D8EA] to-[#77ACCC] backdrop-blur-md rounded-tr-lg rounded-br-lg py-10 px-8 text-lg shadow-md">
+                                <div className="mb-[30px] text-[#FFFFFF] lg:text-[28px] text-[30px] font-bold">匯出格式</div>
+                                <div className="common-col-flex justify-between lg:w-[200px] md:w-[180px] h-auto text-[#1D445D]">
                                     <button 
                                             className={`common-row-flex justify-center w-full h-11 rounded-lg py-4.5 mt-5 mb-5 bg-[#FFEEDD] hover:bg-[#FFC78E] hover:text-[#ffffff] border-2 border-solid border-[#eb980a]  text-center text-[20px] transition-all duration-300 hover:scale-110
                                                         ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none  text-white' : ''}`} 
