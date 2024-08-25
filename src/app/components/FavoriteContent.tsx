@@ -144,8 +144,8 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                     </div>
                     {/*收藏項目*/}
                     <div className="common-col-flex justify-center w-full min-h-screen bg-[#F0F0F0] backdrop-blur-sm my-auto pt-5 pb-10">
-                        <div className="xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] flex md:flex-row flex-col min-h-screen  shadow-[0_0_10px_#AABBCC] rounded-lg">
-                            <div className="lg:w-[75%] md:w-[65%] w-full common-col-flex justify-start bg-[#FFFFFF] backdrop-blur-md py-7 px-8 rounded-l-lg">
+                        <div className="xl:w-full max-w-[1180px] lg:w-[90%] xs:w-[80%] xss:w-[95%] w-[95%] flex md:flex-row flex-col min-h-screen  shadow-[0_0_10px_#AABBCC] rounded-lg">
+                            <div className="common-col-flex justify-start lg:w-[75%] md:w-[65%] w-full  py-7 xss:px-8 bg-[#FFFFFF] backdrop-blur-md md:rounded-l-lg rounded-t-lg">
                                 {favoriteData.length === 0 ? (
                                     <>
                                         <div className="text-2xl text-gray-600 text-center my-auto">目前無收藏機構</div>
@@ -160,8 +160,8 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                 ) : (
                                 favoriteData.map((item) => (
                                     <>  
-                                        <div key={item.id} className="grid lg:grid-cols-custom fill-column w-[98%]">
-                                            <div className="relative lg:w-[180px] w-[85%] lg:h-[180px] h-[300px] aspect-square common-row-flex">
+                                        <div key={item.id} className="grid lg:grid-cols-custom fill-column w-[98%] mx-auto">
+                                            <div className="relative lg:w-[180px] xss:w-[85%] w-[90%] lg:h-[180px] h-[300px] xss:pl-0 pl-[10px] common-row-flex aspect-square">
                                                 {item.imageUrl && (
                                                     <div className="w-full h-full common-bg-image" style={{backgroundImage: `url(${item.imageUrl})`}}></div> 
                                                 )}
@@ -197,7 +197,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                                 </div>
                                                 {item.id && (
                                                 <button 
-                                                    className="absolute lg:top-0 lg:right-0 bottom-[-100px] right-0 flex min-h-[150px] z-10" 
+                                                    className="absolute lg:top-0 lg:right-0 xss:bottom-[-135px] bottom-[-130px] flex min-h-[150px] z-10" 
                                                     onClick={() => item.id && handleDeleteClick(item.id)}
                                                 >
                                                     <Image  src="/images/delete.png" alt="delete" width={30} height={30} />
@@ -211,9 +211,9 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                 )}
                                 <div ref={lastElementRef}></div>
                             </div>
-                            <div className="lg:w-[25%] md:w-[35%] w-full common-col-flex justify-start bg-gradient-to-t from-[#F0F0F0] via-[#C3D8EA] to-[#77ACCC] backdrop-blur-md rounded-tr-lg rounded-br-lg py-10 px-8 text-lg shadow-md">
+                            <div className="common-col-flex justify-start lg:w-[25%] md:w-[35%] w-full py-10 px-8 bg-gradient-to-t from-[#F0F0F0] via-[#C3D8EA] to-[#77ACCC] backdrop-blur-md md:rounded-r-lg rounded-b-lg  text-lg shadow-md">
                                 <div className="mb-[30px] text-[#FFFFFF] lg:text-[28px] text-[30px] font-bold">匯出格式</div>
-                                <div className="common-col-flex justify-between lg:w-[200px] md:w-[180px] h-auto text-[#1D445D]">
+                                <div className="common-col-flex justify-between lg:w-[200px] md:w-[180px] w-[55%] h-auto text-[#1D445D]">
                                     <button 
                                             className={`common-row-flex justify-center w-full h-11 rounded-lg py-4.5 mt-5 mb-5 bg-[#FFEEDD] hover:bg-[#FFC78E] hover:text-[#ffffff] border-2 border-solid border-[#eb980a]  text-center text-[20px] transition-all duration-300 hover:scale-110
                                                         ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none  text-white' : ''}`} 
@@ -223,7 +223,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                                 }
                                             }}
                                     >
-                                    PDF檔
+                                    PDF
                                         <Image src="/images/file-pdf-solid.svg" alt="PDF" width={25} height={25} className="ml-[10px]"/>
                                     </button >
                                     <button 
@@ -235,7 +235,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                                 }
                                             }}
                                     >
-                                    CSV檔
+                                    CSV
                                         <Image src="/images/file-csv-solid.svg" alt="CSV" width={25} height={25} className="ml-[10px]"/>
                                     </button >
                                     <button 
@@ -247,7 +247,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                                 }
                                             }}
                                     >
-                                    WORD檔
+                                    WORD
                                         <Image src="/images/file-word-solid.svg" alt="PDF" width={25} height={25} className="ml-[10px]"/>
                                     </button >
                                 </div>

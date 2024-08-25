@@ -85,7 +85,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
         <div className="relative w-full h-[750px] common-bg-image bg-[url('/images/homeBanner.png')]">
           <div className="absolute top-[77%] lg:left-[55%] md:left-[57%] sm:left-[61%] xss:left-[60%] left-[65%] -translate-x-[80%] -translate-y-[80%] common-col-flex justify-between">
             <div data-aos="fade-up" className="mt-22 cursor-pointer" onClick={ scrollDown }>
-              <span className="sm:text-[50px] text-[30px] text-[#FFFFFF] text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]">立即探索</span>
+              <span className="sm:text-[50px] xss:text-[30px] text-[26px] text-[#FFFFFF] text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]">立即探索</span>
               <br/>
               <Image src="/images/angles-down-solid.svg" alt="scroll-down" width={36} height={66} className="w-[36px] h-[66px] mx-auto mt-4 animate-bounce" />
             </div>
