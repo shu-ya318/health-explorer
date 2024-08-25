@@ -134,7 +134,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                             onCancel={handleCloseModal} 
                         />
                     )}   
-                    <div className="relative flex w-full h-auto">
+                    <div className="relative w-full h-auto flex">
                         <div className="relative flex flex-col w-full h-[360px]"> 
                             <Image  priority={false} src="/images/favoritePage_banner.jpg" alt="icon" width={1920} height={360} className="w-full h-full object-cover"/>
                             <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-20">
@@ -144,7 +144,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                     </div>
                     {/*收藏項目*/}
                     <div className="common-col-flex justify-center w-full min-h-screen bg-[#F0F0F0] backdrop-blur-sm my-auto pt-5 pb-10">
-                        <div className="xl:w-full max-w-[1180px] lg:w-[90%] xs:w-[80%] xss:w-[95%] w-[95%] flex md:flex-row flex-col min-h-screen  shadow-[0_0_10px_#AABBCC] rounded-lg">
+                        <div className="xl:w-full max-w-[1180px] lg:w-[90%] xs:w-[80%] [95%] flex md:flex-row flex-col min-h-screen  shadow-[0_0_10px_#AABBCC] rounded-lg">
                             <div className="common-col-flex justify-start lg:w-[75%] md:w-[65%] w-full  py-7 xss:px-8 bg-[#FFFFFF] backdrop-blur-md md:rounded-l-lg rounded-t-lg">
                                 {favoriteData.length === 0 ? (
                                     <>

@@ -925,9 +925,6 @@ video {
 .h-\[200px\] {
   height: 200px;
 }
-.h-\[22px\] {
-  height: 22px;
-}
 .h-\[300px\] {
   height: 300px;
 }
@@ -985,6 +982,9 @@ video {
 .h-screen {
   height: 100vh;
 }
+.h-\[150px\] {
+  height: 150px;
+}
 .min-h-\[150px\] {
   min-height: 150px;
 }
@@ -1021,8 +1021,8 @@ video {
 .w-\[100px\] {
   width: 100px;
 }
-.w-\[1200px\] {
-  width: 1200px;
+.w-\[120px\] {
+  width: 120px;
 }
 .w-\[1280px\] {
   width: 1280px;
@@ -1090,6 +1090,9 @@ video {
 .w-\[90\%\] {
   width: 90%;
 }
+.w-\[90px\] {
+  width: 90px;
+}
 .w-\[92\%\] {
   width: 92%;
 }
@@ -1108,8 +1111,11 @@ video {
 .w-screen {
   width: 100vw;
 }
-.w-\[120px\] {
-  width: 120px;
+.w-\[400px\] {
+  width: 400px;
+}
+.w-\[286px\] {
+  width: 286px;
 }
 .min-w-72 {
   min-width: 18rem;
@@ -1137,6 +1143,12 @@ video {
 }
 .max-w-screen-md {
   max-width: 768px;
+}
+.max-w-\[700px\] {
+  max-width: 700px;
+}
+.max-w-\[286px\] {
+  max-width: 286px;
 }
 .flex-shrink-0 {
   flex-shrink: 0;
@@ -1621,10 +1633,6 @@ video {
   padding-left: 20px;
   padding-right: 20px;
 }
-.px-\[30px\] {
-  padding-left: 30px;
-  padding-right: 30px;
-}
 .px-\[40px\] {
   padding-left: 40px;
   padding-right: 40px;
@@ -1673,9 +1681,6 @@ video {
 }
 .pr-2\.5 {
   padding-right: 0.625rem;
-}
-.pr-\[10px\] {
-  padding-right: 10px;
 }
 .pr-\[15px\] {
   padding-right: 15px;
@@ -2156,9 +2161,8 @@ video {
   white-space: nowrap;
   text-align: left;
 }
-.institutionPage-title {
-  font-size: 1.5rem;
-  line-height: 2rem;
+.institutionPage-title-mobile {
+  font-size: 20px;
   font-weight: 700;
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity));
@@ -2283,16 +2287,12 @@ video {
     margin: auto;
   }
 
-  .xss\:w-\[85\%\] {
-    width: 85%;
-  }
-
-  .xss\:w-\[95\%\] {
-    width: 95%;
-  }
-
   .xss\:w-\[168px\] {
     width: 168px;
+  }
+
+  .xss\:w-\[85\%\] {
+    width: 85%;
   }
 
   .xss\:flex-row {
@@ -2316,19 +2316,23 @@ video {
   .xss\:text-\[30px\] {
     font-size: 30px;
   }
-  .xss\:common-row-flex {
-    display: flex;
-    align-items: center;
-  }
 }
 @media (min-width: 480px) {
 
-  .xs\:w-\[400px\] {
-    width: 400px;
+  .xs\:h-\[136px\] {
+    height: 136px;
   }
 
-  .xs\:w-\[80\%\] {
-    width: 80%;
+  .xs\:h-\[350px\] {
+    height: 350px;
+  }
+
+  .xs\:h-\[170px\] {
+    height: 170px;
+  }
+
+  .xs\:w-\[180px\] {
+    width: 180px;
   }
 
   .xs\:w-\[250px\] {
@@ -2339,9 +2343,38 @@ video {
     width: 300px;
   }
 
+  .xs\:w-\[400px\] {
+    width: 400px;
+  }
+
+  .xs\:w-\[80\%\] {
+    width: 80%;
+  }
+
+  .xs\:w-full {
+    width: 100%;
+  }
+
+  .xs\:w-\[95\%\] {
+    width: 95%;
+  }
+
+  .xs\:w-\[170px\] {
+    width: 170px;
+  }
+
+  .xs\:flex-row {
+    flex-direction: row;
+  }
+
   .xs\:gap-x-20 {
     -moz-column-gap: 5rem;
          column-gap: 5rem;
+  }
+
+  .xs\:px-\[30px\] {
+    padding-left: 30px;
+    padding-right: 30px;
   }
 
   .xs\:text-\[18px\] {
@@ -2380,6 +2413,16 @@ video {
     --tw-shadow-colored: 0 0 5px var(--tw-shadow-color);
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
   }
+  .xs\:institutionPage-title-xs {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 700;
+    --tw-text-opacity: 1;
+    color: rgb(0 0 0 / var(--tw-text-opacity));
+    text-decoration-line: underline;
+    text-decoration-color: #2D759E;
+    text-decoration-thickness: 4px;
+  }
 }
 @media (min-width: 640px) {
 
@@ -2403,12 +2446,20 @@ video {
     margin-right: 1.75rem;
   }
 
+  .sm\:h-\[400px\] {
+    height: 400px;
+  }
+
   .sm\:w-36 {
     width: 9rem;
   }
 
   .sm\:w-\[150px\] {
     width: 150px;
+  }
+
+  .sm\:w-\[300px\] {
+    width: 300px;
   }
 
   .sm\:w-\[500px\] {
@@ -2429,6 +2480,10 @@ video {
 
   .sm\:items-start {
     align-items: flex-start;
+  }
+
+  .sm\:justify-around {
+    justify-content: space-around;
   }
 
   .sm\:gap-x-3 {
@@ -2452,6 +2507,11 @@ video {
   .sm\:text-\[56px\] {
     font-size: 56px;
   }
+
+  .sm\:text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
 }
 @media (min-width: 768px) {
 
@@ -2465,6 +2525,10 @@ video {
 
   .md\:mb-\[60px\] {
     margin-bottom: 60px;
+  }
+
+  .md\:h-\[450px\] {
+    height: 450px;
   }
 
   .md\:min-h-\[200px\] {
@@ -2485,6 +2549,10 @@ video {
 
   .md\:w-\[80\%\] {
     width: 80%;
+  }
+
+  .md\:w-\[85\%\] {
+    width: 85%;
   }
 
   .md\:grid-cols-5 {

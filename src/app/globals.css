@@ -110,7 +110,11 @@ body {
   .common-card{
     @apply text-left overflow-hidden truncate;
   }
-  .institutionPage-title{
+  .institutionPage-title-xs{
     @apply text-2xl text-black underline decoration-[#2D759E] decoration-4 font-bold;
   }
+  .institutionPage-title-mobile{
+    @apply text-[20px] text-black underline decoration-[#2D759E] decoration-4 font-bold;
+  }
+
 }
