@@ -130,7 +130,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
           </div>
           <div className="common-col-flex justify-center w-full">
           <div data-aos="fade-left" className="common-page-layout justify-between xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] xl:p-[20px] py-[20px] my-20 backdrop-blur-[5px] ">
-            <div  className="mb-[30px] common-title xs:text-[32px] text-[28px]">癌症篩檢搜尋分類</div>
+            <div  className="mb-[30px] common-title xs:text-[32px] text-[28px]">癌篩機構搜尋分類</div>
             <div className="grid lg:grid-cols-5 sm:grid-cols-3 xl:gap-20 lg:gap-[29px] md:gap-x-14 sm:gap-y-8 sm:gap-x-3 gap-y-10 gap-x-0">
               {cancers.map((cancer, index) => (
                 <button  
@@ -138,7 +138,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
                     className="common-col-flex justify-between" 
                     onClick={() => handleSearchClick(cancer.filter)}
                 >
-                  <div className="overflow-hidden w-[160px] h-[160px] p-[4px] bg-[#FFFFFF] border-[4px] rounded-full common-border">
+                  <div className=" w-[160px] h-[160px] p-[4px] overflow-hidden bg-[#FFFFFF] border-[4px] rounded-full common-border">
                     <div className="relative transition-all duration-300 hover:scale-110">
                       <Image  src={cancer.image} alt="icon" width={145} height={145} className="rounded-full object-cover"/>
                       <div className="absolute inset-0 bg-gray-900 bg-opacity-45 rounded-full"></div>
