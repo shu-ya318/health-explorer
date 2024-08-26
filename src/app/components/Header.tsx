@@ -21,7 +21,6 @@ const Header: React.FC = () => {
 
 useEffect(() => {
   function handler(e: Event): void {
-    console.log("Event triggered", e);
     if (typeof window !== 'undefined' && typeof MouseEvent !== 'undefined') {
       if (e instanceof MouseEvent) {
         const target = e.target as HTMLElement;
@@ -29,7 +28,6 @@ useEffect(() => {
         if (menuDivRef.current && !menuDivRef.current.contains(target)) {
           if (ismenuBarVisible) {
             setIsMenuBarVisible(false);
-            console.log("Menu closed due to click outside.");
           }
         }
       }
@@ -42,7 +40,6 @@ useEffect(() => {
       window.removeEventListener('click', handler);
     };
   }
-  console.log("ismenuBarVisible:", ismenuBarVisible);
 }, [ismenuBarVisible, setIsMenuBarVisible]);
 
 const toggleMenuBar = (e: React.MouseEvent) => {

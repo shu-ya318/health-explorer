@@ -11,6 +11,10 @@ import { useFavorite} from '../hooks/useFavorite';
 import { FirebaseFavoriteData} from '../lib/types';
 import { useAuth } from '../hooks/useAuth'; 
 
+import { Font,pdf, Document as PDFDocument, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { saveAs } from 'file-saver';
+import { Document , Packer, Paragraph, TextRun } from "docx";
+
 import HomePage  from '../page'; 
 import {ConfirmDeleteModal} from '../components/ConfirmDeleteModal';
 
@@ -119,7 +123,147 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
     setIsConfirmModalOpen(false);
     };
 
-  
+
+    const fetchAllData = async (): Promise<FirebaseFavoriteData[]> => {
+        if (!uid) return [];
+    
+        setLoading(true);
+        const fullQuery = query(
+            collection(db, 'favorites'),
+            where('userId', '==', uid)
+        );
+    
+        try {
+            const querySnapshot = await getDocs(fullQuery);
+            const allData = querySnapshot.docs.map(doc => ({
+                ...doc.data() as FirebaseFavoriteData,
+                id: doc.id
+            }));
+            setFavoriteData(allData); 
+            return allData;
+        } catch (error) {
+            console.error('Error fetching all data:', error);
+            return []; 
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    Font.register({
+        family: 'NotoSansTC',
+        fonts: [
+            { src: '/fonts/NotoSansTC-Regular.ttf', fontWeight: 'normal' },
+            { src: '/fonts/NotoSansTC-Bold.ttf', fontWeight: 'bold' },
+        ]
+    });
+    
+    const styles = StyleSheet.create({
+        header: {
+            fontFamily: 'NotoSansTC',
+            fontWeight: 'bold'
+        },
+        content: {
+            fontFamily: 'NotoSansTC',
+            fontWeight: 'normal'
+        }
+    });
+    
+    const exportToPDF = (data: FirebaseFavoriteData[]) => {
+        const doc = (
+            <PDFDocument>
+                <Page size="A4">
+                    {data.map(item => (
+                        <View key={item.id} style={{ marginBottom: 10 }}>
+                            <Text style={styles.header}>名稱:</Text><Text style={styles.content}>{item.hosp_name}</Text>
+                            <Text style={styles.header}>電話:</Text><Text style={styles.content}>{item.tel}</Text>
+                            <Text style={styles.header}>地址:</Text><Text style={styles.content}>{item.hosp_addr}</Text>
+                            {item.division && (
+                                <>
+                                    <Text style={styles.header}>科別:</Text><Text style={styles.content}>{item.division}</Text>
+                                </>
+                            )}
+                            {item.cancer_screening && (
+                                <>
+                                    <Text style={styles.header}>癌篩項目:</Text><Text style={styles.content}>{item.cancer_screening}</Text>
+                                </>
+                            )}
+                        </View>
+                    ))}
+                </Page>
+            </PDFDocument>
+        );
+        return doc;
+    };
+    
+    const prepareAndExportToPDF = async () => {
+        const allData = await fetchAllData(); 
+        const doc = exportToPDF(allData); 
+    
+        const pdfInstance = pdf();
+        pdfInstance.updateContainer(doc); 
+    
+        const blob = await pdfInstance.toBlob(); 
+        const url = URL.createObjectURL(blob); 
+    
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'FavoriteData.pdf';
+        link.click();
+        URL.revokeObjectURL(url); 
+    };
+
+
+    const exportToCSV = (data: FirebaseFavoriteData[]) => {
+        const headers = "名稱,電話,地址,科別,癌症篩檢項目\n";
+        const rows = data.map(item =>
+            `"${item.hosp_name}","${item.tel}","${item.hosp_addr}","${item.division || ''}","${item.cancer_screening || ''}"\n`
+        ).join('');
+        const csvContent = `data:text/csv;charset=utf-8,\uFEFF${headers}${rows}`;
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "FavoriteData.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const prepareAndExportToCSV = async () => {
+        const allData = await fetchAllData();
+        exportToCSV(allData);
+    };
+
+
+    const exportToDocx = (data: FirebaseFavoriteData[]) => {
+        const paragraphs = data.map(item => {
+            return new Paragraph({
+                children: [
+                    new TextRun(`名稱: ${item.hosp_name}\n`),
+                    new TextRun(`電話: ${item.tel}\n`),
+                    new TextRun(`地址: ${item.hosp_addr}\n`),
+                    ...(item.division ? [new TextRun(`科別: ${item.division}\n`)] : []),
+                    ...(item.cancer_screening ? [new TextRun(`癌篩項目: ${item.cancer_screening}\n`)] : [])
+                ]
+            });
+        });
+    
+        const doc = new Document({
+            sections: [{
+                children: paragraphs
+            }]
+        });
+    
+        return Packer.toBlob(doc);
+    };
+    
+    const prepareAndExportToDocx = async () => {
+        const allData = await fetchAllData();
+        const blob = await exportToDocx(allData);
+        saveAs(blob, 'FavoriteData.docx');
+    };
+
+
     return (
         <> 
         {!uid  ? 
@@ -215,40 +359,31 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                 <div className="mb-[30px] text-[#FFFFFF] lg:text-[28px] text-[30px] font-bold">匯出格式</div>
                                 <div className="common-col-flex justify-between lg:w-[200px] md:w-[180px] w-[55%] h-auto text-[#1D445D]">
                                     <button 
-                                            className={`common-row-flex justify-center w-full h-11 rounded-lg py-4.5 mt-5 mb-5 bg-[#FFEEDD] hover:bg-[#FFC78E] hover:text-[#ffffff] border-2 border-solid border-[#eb980a]  text-center text-[20px] transition-all duration-300 hover:scale-110
-                                                        ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none  text-white' : ''}`} 
-                                            onClick={() => {
-                                                if (favoriteData.length > 0) {
-                                                window.print();
-                                                }
-                                            }}
+                                        className={`common-row-flex justify-center w-full h-11 rounded-lg py-4.5 mt-5 mb-5 bg-[#FFEEDD] hover:bg-[#FFC78E] hover:text-[#ffffff] border-2 border-solid border-[#eb980a] text-center text-[20px] cursor-pointer transition-all duration-300 hover:scale-110
+                                                    ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
+                                        onClick={prepareAndExportToPDF}
+                                        disabled={favoriteData.length === 0}
                                     >
-                                    PDF
-                                        <Image src="/images/file-pdf-solid.svg" alt="PDF" width={25} height={25} className="ml-[10px]"/>
-                                    </button >
+                                        PDF
+                                        <Image src="/images/file-pdf-solid.svg" alt="PDF" width={25} height={25} className="ml-[10px]" />
+                                    </button>
                                     <button 
                                             className={`common-row-flex justify-center  w-full  h-11 rounded-lg py-4.5  mt-5 mb-5 bg-[#D1E9E9] hover:bg-[#B3D9D9] hover:text-[#ffffff] border-2 border-solid border-[#1f5127]  text-center text-[20px] transition-all duration-300 hover:scale-110
                                                         ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
-                                            onClick={() => {
-                                                if (favoriteData.length > 0) {
-                                                window.print();
-                                                }
-                                            }}
+                                            onClick={prepareAndExportToCSV}
+                                            disabled={favoriteData.length === 0}
                                     >
-                                    CSV
+                                        CSV
                                         <Image src="/images/file-csv-solid.svg" alt="CSV" width={25} height={25} className="ml-[10px]"/>
                                     </button >
                                     <button 
                                             className={`common-row-flex justify-center w-full h-11 rounded-lg py-4.5 mt-5 mb-5 bg-[#D2E9FF] hover:bg-[#C4E1FF] hover:text-[#ffffff] border-2 border-solid border-[#19a8e6]  text-center text-[20px] transition-all duration-300 hover:scale-110
                                                         ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
-                                            onClick={() => {
-                                                if (favoriteData.length > 0) {
-                                                window.print();
-                                                }
-                                            }}
+                                            onClick={prepareAndExportToDocx}
+                                            disabled={favoriteData.length === 0}
                                     >
-                                    WORD
-                                        <Image src="/images/file-word-solid.svg" alt="PDF" width={25} height={25} className="ml-[10px]"/>
+                                        DOCX
+                                        <Image src="/images/file-word-solid.svg" alt="DOC" width={25} height={25} className="ml-[10px]"/>
                                     </button >
                                 </div>
                             </div>
