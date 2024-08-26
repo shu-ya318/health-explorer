@@ -81,7 +81,7 @@ const Pagination: React.FC<PaginationProps> = ({ postsPerPage, totalPosts, pagin
                             <button 
                                 key={number} 
                                 onClick={() => paginate(number)} 
-                                className={`flex w-[40px] h-[40px] mx-[10px] md:mb-0 mb-[10px] rounded-md ${currentPage === number ? 'bg-[#9FC5DF] text-white' : 'bg-[#e6e6e6] hover:bg-[#9FC5DF]'} `}
+                                className={`w-[40px] h-[40px] flex mx-[10px] md:mb-0 mb-[10px] rounded-md ${currentPage === number ? 'bg-[#9FC5DF] text-white' : 'bg-[#e6e6e6] hover:bg-[#9FC5DF]'} `}
                             >
                                 <div className="text-center m-auto">{number}</div>
                             </button>

@@ -44,9 +44,9 @@ const CancersContext: React.FC<CancersContextProps> = ({ id, title, isLast, hand
     return (
         <>
             <main className="w-full h-auto common-col-flex justify-center bg-[#FCFCFC]">
-                <div className="  common-col-flex w-[70%] h-[870px] my-[150px] mb-[40px] mt-[100px] bg-[#FFFFFF] common-border border-2 rounded-lg shadow-[0_0_5px_#AABBCC] text-black"> 
-                    <div className="w-full h-[400px]" style={{ backgroundImage: `url('images/cancerScreeningForm_banner.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
-                    <div   className=" common-row-flex justify-between w-[80%] h-[40px] my-[20px]">
+                <div className="xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] common-col-flex h-[870px] my-[150px] mb-[40px] mt-[100px] bg-[#FFFFFF] common-border border-2 rounded-lg shadow-[0_0_5px_#AABBCC] text-black"> 
+                    <div className="w-full h-[400px] aspect-square" style={{ backgroundImage: `url('images/cancerScreeningForm_banner.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+                    <div   className=" common-row-flex justify-between md:w-[90%] xs:w-[85%] w-[78%] h-[40px] my-[20px]">
                         <div  className="flex w-full bg-[#e9ecef] rounded-lg">
                             <div className="relative h-[30px] bg-gradient-to-r from-cyan-500 to-blue-500 rounded-l-lg"   style={{ width: `${progress}%`}}>
                                 <div className="text-[18px] text-center text-white font-bold">{Math.round(progress)}%</div>
@@ -54,11 +54,11 @@ const CancersContext: React.FC<CancersContextProps> = ({ id, title, isLast, hand
                             </div>
                         </div>
                     </div>  
-                    <div className=" common-col-flex justify-center w-full mx-auto mb-[20px] text-[#1D445D] px-[60px]">
-                        <h2 className="font-bold mb-[20px] mt-[10px] text-2xl">{title}</h2>
+                    <div className=" w-full common-col-flex justify-center rmx-auto mb-[20px] md:px-[60px] px-0 text-[#1D445D] ">
+                        <h2 className="md:w-full w-[80%] mb-[25px] mt-[10px] lg:text-2xl sm:text-[22px] text-[18px] text-center font-bold">{title}</h2>
                         {id === "1" && (
                             <input 
-                                className="w-[230px] h-[35px] mt-[50px] mb-[70px] border-2 common-border rounded-lg"
+                                className="lg:w-[20%] md:w-[38%] xs:w-[45%] w-[55%] min-w-[157px] h-[35px] mt-[50px] mb-[75px] border-2 common-border rounded-lg"
                                 type="text"
                                 value={inputYear}
                                 onChange={handleYearInput}
@@ -66,7 +66,7 @@ const CancersContext: React.FC<CancersContextProps> = ({ id, title, isLast, hand
                             />
                         )}
                         {itemOptions && (
-                            <div className="flex flex-col justify-between w-[450px] mx-auto  mb-[20px] text-[20px]">
+                            <div className="md:w-[60%] w-[80%] flex flex-col justify-between mx-auto  mb-[20px] text-[20px]">
                                 {itemOptions.split(";").map((element: string, index: number) => (
                                     <div 
                                         key={`${element}-${index}`} 

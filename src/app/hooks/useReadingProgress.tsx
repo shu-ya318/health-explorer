@@ -30,9 +30,9 @@ export default function ProgressBar() {
 
 
     return (
-      <div className="w-screen">
+      <div className="w-screen z-30">
         <div
-          className="fixed inset-x-0 top-0 z-50 max-w-[100vw] h-[3px] mt-[58px] bg-[#1e94b4] rounded-r-lg"
+          className="fixed inset-x-0 top-0 z-30 max-w-[100vw] h-[3px] mt-[58px] bg-[#1e94b4] rounded-r-lg"
           style={{ width: `${progress}%` }}
         >
         </div>

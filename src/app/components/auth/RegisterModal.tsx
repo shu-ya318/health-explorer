@@ -45,13 +45,13 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onShowSignIn}) =
 
 
     return (
-        <div className="fixed common-row-flex justify-center inset-0 bg-black bg-opacity-30 z-50" onClick={onClose}>
-            <div className="flex max-w-[926px] w-[92%] h-[490px] rounded-lg shadow-lg" onClick={e => e.stopPropagation()}>
-                <div className="common-col-flex justify-center w-1/2 bg-[#4b96af] backdrop-blur-sm p-7 rounded-l-lg">
-                    <div className="w-[300px] h-[300px] mb-2.5 common-bg-image bg-[url('/images/LOGO.png')]"></div>
+        <div className="fixed  inset-0 common-row-flex justify-center bg-black bg-opacity-30 z-50" onClick={onClose}>
+            <div className="flex max-w-[900px] md:w-[92%] w-[85%] h-[490px] rounded-lg shadow-lg" onClick={e => e.stopPropagation()}>
+                <div className="w-1/2 sm:common-col-flex hidden justify-center p-7 rounded-l-lg bg-[#4b96af] backdrop-blur-sm">
+                    <div className="md:w-[300px] md:h-[300px] sm:w-[250px] sm:h-[250px] mb-2.5 common-bg-image bg-[url('/images/LOGO.png')]"></div>
                     <div className="text-white text-3xl font-bold mt-4">健康探索者</div>
                 </div>
-                <div className="relative common-col-flex w-1/2 p-7 backdrop-blur-sm rounded-r-lg bg-white bg-opacity-70">
+                <div className="relative sm:w-1/2 xs:w-[90%] w-[85%] common-col-flex p-7 backdrop-blur-sm sm:rounded-r-lg rounded-lg bg-white bg-opacity-70">
                     <Image 
                         src="/images/xmark-solid.svg"
                         alt="close" width={20} height={20}
@@ -65,7 +65,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onShowSignIn}) =
                             type="email" 
                             placeholder="請輸入Email" 
                             id="email-register"
-                            className="w-full h-9 px-3.5 border-none bg-[#FFFFFF] leading-5 text-base text-gray-600 font-medium focus:outline-none focus:border-[#36B2D7]"
+                            className="w-full h-9 md:px-3.5 px-[5px] bg-[#FFFFFF] leading-5 md:text-base text-[14px] text-gray-600 font-medium border-none focus:outline-none focus:border-[#36B2D7]"
                         />
                     </div>
                     <div className="common-row-flex w-full mb-[65px]">
@@ -74,7 +74,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onShowSignIn}) =
                             type="password" 
                             placeholder="請輸入6個字元以上密碼" 
                             id="password-register"
-                            className="w-full h-9 px-3.5 border-none bg-[#FFFFFF] leading-5 text-base text-gray-600 font-medium focus:outline-none focus:border-[#36B2D7]"
+                            className="w-full h-9 md:px-3.5 px-[5px] bg-[#FFFFFF] leading-5 md:text-base text-[14px] text-gray-600 font-medium border-none focus:outline-none focus:border-[#36B2D7]"
                         />
                     </div>
                     <button 

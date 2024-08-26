@@ -85,7 +85,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
         <div className="relative w-full h-[750px] common-bg-image bg-[url('/images/homeBanner.png')]">
           <div className="absolute top-[77%] lg:left-[55%] md:left-[57%] sm:left-[61%] xss:left-[60%] left-[65%] -translate-x-[80%] -translate-y-[80%] common-col-flex justify-between">
             <div data-aos="fade-up" className="mt-22 cursor-pointer" onClick={ scrollDown }>
-              <span className="sm:text-[50px] xss:text-[30px] text-[26px] text-[#FFFFFF] text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]">立即探索</span>
+              <span className="sm:text-[50px] xss:text-[30px] text-[26px] text-[#FFFFFF] text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]">開始探索</span>
               <br/>
               <Image src="/images/angles-down-solid.svg" alt="scroll-down" width={36} height={66} className="w-[36px] h-[66px] mx-auto mt-4 animate-bounce" />
             </div>
@@ -93,13 +93,48 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
         </div>
         {/*拆子元件*/}
         <div className="flex flex-col w-full h-auto bg-gradient-to-b from-[#FFFFFF] via-[#C3D8EA] to-[#77ACCC]">
+          <div className="common-col-flex justify-center w-full">
+            <div 
+              data-aos="fade-left" 
+              className="common-page-layout justify-between xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] xl:p-[20px] py-[20px] mb-0 mt-20 backdrop-blur-[5px]"
+            >
+              <div  className="mb-[30px] common-title xs:text-[32px] text-[28px]">癌篩機構搜尋分類</div>
+              <div className="grid lg:grid-cols-5 sm:grid-cols-3 xl:gap-20 lg:gap-[29px] md:gap-x-14 sm:gap-y-8 sm:gap-x-3 gap-y-10 gap-x-0">
+                {cancers.map((cancer, index) => (
+                  <button  
+                      key={index}
+                      className="common-col-flex justify-between" 
+                      onClick={() => handleSearchClick(cancer.filter)}
+                  >
+                    <div className=" w-[160px] h-[160px] p-[4px] overflow-hidden bg-[#FFFFFF] border-[4px] rounded-full common-border">
+                      <div className="relative transition-all duration-300 hover:scale-110">
+                        <Image  src={cancer.image} alt="icon" width={145} height={145} className="rounded-full object-cover"/>
+                        <div className="absolute inset-0 bg-gray-900 bg-opacity-45 rounded-full"></div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                          <Image  src={cancer.icon} alt="icon" width={80} height={85} className="object-cover"/>
+                        </div>  
+                      </div>  
+                    </div>
+                    <div className="homePage-subtitle">{cancer.filter}</div>
+                  </button>
+                ))}
+              </div>
+              <button 
+                  type="button"  
+                  className="common-button mt-[30px] w-52 h-11 py-4.5 px-2.5  mb-5" 
+                  onClick={()=>router.push('/cancerScreening')} 
+              >
+                立即查詢資格
+              </button>
+            </div>
+          </div>
           <div className="common-row-flex justify-center w-full">
-          <div  
-            data-aos="fade-right" 
-            className="common-page-layout justify-between xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] xl:p-[20px] py-[20px] lg:my-20 mb-0 mt-20 backdrop-blur-[5px]"
-          >
-            <div className="mb-[30px] common-title xs:text-[32px] text-[28px]">醫療機構搜尋分類</div>
-            <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 xl:gap-40 lg:gap-20 md:gap-x-52 sm:gap-y-8 sm:gap-x-32 gap-y-10 gap-x-0">
+            <div  
+              data-aos="fade-right" 
+              className="common-page-layout justify-between xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] xl:p-[20px] py-[20px] lg:my-20 my-20 backdrop-blur-[5px]"
+            >
+              <div className="mb-[30px] common-title xs:text-[32px] text-[28px]">醫療機構搜尋分類</div>
+              <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 xl:gap-40 lg:gap-20 md:gap-x-52 sm:gap-y-8 sm:gap-x-32 gap-y-10 gap-x-0">
               {searches.map((search, index) => (
                 <button  
                   key={index}
@@ -128,40 +163,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
             </button>
           </div>
           </div>
-          <div className="common-col-flex justify-center w-full">
-          <div data-aos="fade-left" className="common-page-layout justify-between xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] xl:p-[20px] py-[20px] my-20 backdrop-blur-[5px] ">
-            <div  className="mb-[30px] common-title xs:text-[32px] text-[28px]">癌篩機構搜尋分類</div>
-            <div className="grid lg:grid-cols-5 sm:grid-cols-3 xl:gap-20 lg:gap-[29px] md:gap-x-14 sm:gap-y-8 sm:gap-x-3 gap-y-10 gap-x-0">
-              {cancers.map((cancer, index) => (
-                <button  
-                    key={index}
-                    className="common-col-flex justify-between" 
-                    onClick={() => handleSearchClick(cancer.filter)}
-                >
-                  <div className=" w-[160px] h-[160px] p-[4px] overflow-hidden bg-[#FFFFFF] border-[4px] rounded-full common-border">
-                    <div className="relative transition-all duration-300 hover:scale-110">
-                      <Image  src={cancer.image} alt="icon" width={145} height={145} className="rounded-full object-cover"/>
-                      <div className="absolute inset-0 bg-gray-900 bg-opacity-45 rounded-full"></div>
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                        <Image  src={cancer.icon} alt="icon" width={80} height={85} className="object-cover"/>
-                      </div>  
-                    </div>  
-                  </div>
-                  <div className="homePage-subtitle">{cancer.filter}</div>
-                </button>
-              ))}
-            </div>
-            <button 
-                type="button"  
-                className="common-button mt-[30px] w-52 h-11 py-4.5 px-2.5  mb-5" 
-                onClick={()=>router.push('/cancerScreening')} 
-            >
-              立即查詢資格
-            </button>
-          </div>
-          </div>
         </div>
-        
       </motion.div>
     </AnimatePresence>
   )
