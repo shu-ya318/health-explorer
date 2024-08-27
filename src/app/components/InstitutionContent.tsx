@@ -119,14 +119,15 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
 
     
     const setFavoriteHoverState = (hosp_name: string, state: boolean) => {
-        console.log(`Setting favorite hover for ${hosp_name} to ${state}`);
         setFavoriteHover(prev => {
+            if (prev[hosp_name] === state) {
+                return prev; 
+            }
             const updated = { ...prev, [hosp_name]: state };
-            console.log('Updated favoriteHover:', updated);
+            console.log(`Setting favorite hover for ${hosp_name} to ${state}`);
             return updated;
         });
     };
-
 
     const mapCenter = useMemo(() => {
         if (institutionDetails && typeof institutionDetails.lat === 'number' && typeof institutionDetails.lng === 'number') {  //因可選參屬性,嚴格檢查型別
@@ -223,6 +224,8 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                         </div>
                         <div className="common-col-flex xl:w-full max-w-[1180px] w-[95%] mt-[100px] my-[50px] bg-[#ffffff] common-border border-2 shadow-[0_0_5px_#AABBCC]"> 
                             <div className="w-full xs:px-[30px] px-[10px]">
+                            {!user && isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
+                            {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
                                 <div className="w-full common-col-flex justify-between">
                                     {!user ? (
                                         <>
@@ -240,8 +243,6 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                     className={`rounded-full p-[2px] mt-[20px] ${favoriteHover[institutionDetails.hosp_name] ? 'bg-[#FFFFFF]  common-border border  shadow-[0_0_3px_#2D759E]':'border-none shadow-none bg-[#0000004d]' }`}
                                                 />
                                             </button>
-                                            {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
-                                            {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
                                         </>
                                     ) : (
                                         <>
@@ -268,59 +269,59 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                     )}
                                 </div>
                                 {/*簡介*/}
-                                    <hr className="w-full border border-[#acb8b6] my-[30px]"/>
-                                    <h3 className="xs:institutionPage-title-xs institutionPage-title-mobile mb-[30px] ">資訊簡介</h3>
-                                    <div className="w-full h-full flex flex-col sm:justify-around justify-center text-black sm:text-xl ">
-                                        <div className="w-full flex mb-[25px]">
-                                            <span className="w-[90px] font-bold ">電話</span>
-                                            <span>{institutionDetails.tel}</span>
-                                        </div>
-                                        <div className="w-full flex mb-[25px]">
-                                            <span className="w-[90px] font-bold">行政區</span>
-                                            <span>{institutionDetails.area}</span>
-                                        </div>
-                                        <div className="w-full flex mb-[25px]">
-                                            <span className="w-[90px] font-bold">地址</span>
-                                            <span>{institutionDetails.hosp_addr}</span>
-                                        </div>
-                                        <div className="w-full flex mb-[25px]">
-                                            <span className="w-[90px] font-bold">科別</span>
-                                            <span>{institutionDetails.division}</span>
-                                        </div>
-                                        <div className="w-full flex mb-[25px]">
-                                            <span className="w-[90px] font-bold">癌症篩檢</span>
-                                            <span>{institutionDetails.cancer_screening}</span>
-                                        </div>
+                                <hr className="w-full border border-[#acb8b6] my-[30px]"/>
+                                <h3 className="xs:institutionPage-title-xs institutionPage-title-mobile mb-[30px] ">資訊簡介</h3>
+                                <div className="w-full h-full flex flex-col sm:justify-around justify-center text-black sm:text-xl ">
+                                    <div className="w-full flex mb-[25px]">
+                                        <span className="w-[90px] font-bold ">電話</span>
+                                        <span>{institutionDetails.tel}</span>
                                     </div>
-                                    {/*地圖*/}
-                                    <hr className="w-full border border-[#acb8b6] my-[30px]"/>
-                                    <h3 className="xs:institutionPage-title-xs institutionPage-title-mobile  mb-[30px] mt-[5px]">地圖實景</h3>
-                                    {loading ? (
-                                        <Skeleton height={450} width={300} className="my-[40px]" />
-                                    ) : (
-                                        <>
-                                            <div  className="flex flex-col w-full  md:h-[450px] sm:h-[400px] xs:h-[350px] h-[300px]"> 
-                                                <GoogleMap
-                                                    zoom={15}
-                                                    center={mapCenter}
-                                                    mapTypeId={google.maps.MapTypeId.ROADMAP}
-                                                    mapContainerStyle={{ width: "100%", height: "100%" }}
-                                                    onLoad={(map) => console.log("Map Loaded")}
-                                                >
-                                                <Marker
-                                                    position={mapCenter}
-                                                    icon="/images/hospital_fill.svg"
-                                                    onLoad={() => console.log("Marker Loaded")}
-                                                />
-                                        </GoogleMap>
-                                            </div>
-                                        </>
-                                    )}
-                                    {/*輪播薦*/}
-                                    <hr className="w-full border-solid border border-[#acb8b6] my-[30px]"/>
-                                    {loading ? (
-                                        <Skeleton height={360} width={300} className="my-[40px]" />
-                                    ) : (
+                                    <div className="w-full flex mb-[25px]">
+                                        <span className="w-[90px] font-bold">行政區</span>
+                                        <span>{institutionDetails.area}</span>
+                                    </div>
+                                    <div className="w-full flex mb-[25px]">
+                                        <span className="w-[90px] font-bold">地址</span>
+                                        <span>{institutionDetails.hosp_addr}</span>
+                                    </div>
+                                    <div className="w-full flex mb-[25px]">
+                                        <span className="w-[90px] font-bold">科別</span>
+                                        <span>{institutionDetails.division}</span>
+                                    </div>
+                                    <div className="w-full flex mb-[25px]">
+                                        <span className="w-[90px] font-bold">癌症篩檢</span>
+                                        <span>{institutionDetails.cancer_screening}</span>
+                                    </div>
+                                </div>
+                                {/*地圖*/}
+                                <hr className="w-full border border-[#acb8b6] my-[30px]"/>
+                                <h3 className="xs:institutionPage-title-xs institutionPage-title-mobile  mb-[30px] mt-[5px]">地圖實景</h3>
+                                {loading ? (
+                                    <Skeleton height={450} width={300} className="my-[40px]" />
+                                ) : (
+                                    <>
+                                        <div  className="flex flex-col w-full  md:h-[450px] sm:h-[400px] xs:h-[350px] h-[300px]"> 
+                                            <GoogleMap
+                                                zoom={15}
+                                                center={mapCenter}
+                                                mapTypeId={google.maps.MapTypeId.ROADMAP}
+                                                mapContainerStyle={{ width: "100%", height: "100%" }}
+                                                onLoad={(map) => console.log("Map Loaded")}
+                                            >
+                                            <Marker
+                                                position={mapCenter}
+                                                icon="/images/hospital_fill.svg"
+                                                onLoad={() => console.log("Marker Loaded")}
+                                            />
+                                    </GoogleMap>
+                                        </div>
+                                    </>
+                                )}
+                                {/*輪播薦*/}
+                                <hr className="w-full border-solid border border-[#acb8b6] my-[30px]"/>
+                                {loading ? (
+                                    <Skeleton height={360} width={300} className="my-[40px]" />
+                                ) : (
                                     <div className="w-full">
                                         <h3 className="xs:institutionPage-title-xs institutionPage-title-mobile  my-[10px]">您可能也想比較...</h3>
                                         <div className="relative w-full common-row-flex justify-between mt-[50px]">
@@ -347,7 +348,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                                 <div className="xl:w-[380px] sm:w-[300px] xs:w-[180px] w-[400px] common-card text-[14px] text-[#595959]">{institution.division}</div>
                                                                 <div className="xl:w-[380px] sm:w-[300px] xs:w-[180px] w-[400px] common-card text-[14px] text-[#595959]">{institution.cancer_screening}</div>
                                                                 <div className="xl:w-[380px] sm:w-[300px] xs:w-[180px] w-[400px] common-row-flex w-[380px] h-[30px] ">
-                                                                    <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
+                                                                    <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} className="w-[20px] h-[20px]"/>
                                                                     <span className="ml-[5px]  text-[14px] text-[#707070]">{institution.view}</span>
                                                                 </div>
                                                             </div>

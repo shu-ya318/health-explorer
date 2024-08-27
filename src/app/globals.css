@@ -27,6 +27,14 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+/*無法解決<Image/>寬高比例報錯問題
+@layer base {
+  img {
+      width: auto;
+      height: auto;
+  }
+}*/
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

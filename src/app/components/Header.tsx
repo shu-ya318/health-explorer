@@ -79,7 +79,7 @@ const toggleMenuBar = (e: React.MouseEvent) => {
               href='/' 
               className="common-row-flex relative mt-2 no-underline font-bold cursor-pointer animate__animated animate__backInLeft animate__slow"
             >
-                <Image src="/images/LOGO.png" alt="Logo" width={46} height={46} className="relative z-0 mr-2"/>
+                <Image src="/images/LOGO.png" alt="Logo" width={45} height={45} className="relative z-0 w-[45px] h-[45px] mr-2 object-cover"/>
                 <div className="absolute w-full h-full top-0 left-0  opacity-0 z-10 bg-white transition-opacity duration-300 hover:opacity-40"></div>
                 <div className="common-col-flex  mr-[5px] hover:text-[#9FC5DF]">
                   <ruby className="text-[20px] text-center">
@@ -92,7 +92,7 @@ const toggleMenuBar = (e: React.MouseEvent) => {
               className={`md:hidden menu-button-selector ${ismenuBarVisible ? 'hidden' : 'block'} absolute top-[15px] right-[20px] w-[25px] h-[25px]`}
               onClick={toggleMenuBar}
             >
-              <Image  src="/images/bars-solid.svg" alt="menu" width={25} height={25} />
+              <Image src="/images/bars-solid.svg" alt="menu" width={25} height={25} className="w-[25px] h-[25px]"/>
             </button>
             <div className={`md:hidden  ${ismenuBarVisible ? 'absolute fixed inset-0 z-40 w-screen h-screen flex bg-black bg-opacity-30' : 'hidden'}`}></div>
             <div 

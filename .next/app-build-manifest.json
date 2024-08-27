@@ -17,6 +17,12 @@
       "static/chunks/main-app.js",
       "static/css/app/search/page.css",
       "static/chunks/app/search/page.js"
+    ],
+    "/search/[hosp_name]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/search/[hosp_name]/page.css",
+      "static/chunks/app/search/[hosp_name]/page.js"
     ]
   }
 }

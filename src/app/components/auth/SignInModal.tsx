@@ -54,7 +54,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ onClose, onShowRegister }) =>
                     <Image 
                         src="/images/xmark-solid.svg"
                         alt="close" width={20} height={20}
-                        className="absolute top-2.5 right-2.5 w-7 h-7 text-gray-600 hover:text-red-500 cursor-pointer" 
+                        className="absolute top-2.5 right-2.5 w-[20px] h-[20px] text-gray-600 hover:text-red-500 cursor-pointer" 
                         onClick={onClose} 
                     />
                     <div className="text-3xl font-bold text-[#1A5665] mb-[35px]">登入會員</div>

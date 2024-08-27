@@ -207,16 +207,18 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
     const currentPosts = currentData.slice(indexOfFirstPost, indexOfLastPost);
 
-
+    
     const setFavoriteHoverState = (hosp_name: string, state: boolean) => {
-        console.log(`Setting favorite hover for ${hosp_name} to ${state}`);
         setFavoriteHover(prev => {
+            if (prev[hosp_name] === state) {
+                return prev; 
+            }
             const updated = { ...prev, [hosp_name]: state };
-            console.log('Updated favoriteHover:', updated);
+            console.log(`Setting favorite hover for ${hosp_name} to ${state}`);
             return updated;
         });
     };
-    
+
 
     const handleAddClick = async (institution: InstitutionInfo, userId:string) => {
         if (!user) return;
@@ -274,7 +276,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
         <main className="w-full h-auto common-col-flex justify-center bg-[#FCFCFC]" >
                 <div className="w-full h-auto relative flex ">
                     <div className="w-full h-[400px] flex">
-                        <Image  priority={false} src="/images/searchPage_banner.jpg" alt="icon" width={1720} height={400} className="w-full h-full object-cover"/>
+                        <Image  priority={false} src="/images/searchPage_banner.jpg" alt="icon" width={1720} height={400} className="max-w-full h-auto object-cover"/>
                     </div>
                     {/*癌篩分類*/}
                     <div style={{ bottom: '-165px' }} className="absolute inset-x-0 lg:w-full max-w-[760px] w-[95%] md:min-h-[200px] h-auto common-page-layout justify-around md:mb-[60px] mb-[80px] mx-auto px-[20px] common-border border"> 
@@ -334,7 +336,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                     onClick={() => toggleDropdowns('institutions')}
                                 >
                                     依機構
-                                    <Image src="/images/down_small_line.svg" alt="institution" width={18} height={18} />
+                                    <Image src="/images/down_small_line.svg" alt="institution" width={18} height={18} className="w-[18px] h-[18px]"/>
                                 </button>
                                 {isOpenInstitutions && (
                                     <ul className="lg:searchPage-label-optionsGrid-lg md:searchPage-label-optionsGrid-md xs:searchPage-label-optionsGrid-xs xxs:searchPage-label-optionsGrid-xxs searchPage-label-optionsGrid-mobile">
@@ -355,7 +357,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                     onClick={() => toggleDropdowns('divisions')}
                                 >
                                     依科別
-                                    <Image src="/images/down_small_line.svg" alt="division" width={18} height={18} />
+                                    <Image src="/images/down_small_line.svg" alt="division" width={18} height={18} className="w-[18px] h-[18px]"/>
                                 </button>
                                 {isOpenDivisions && (
                                     <ul className="lg:searchPage-label-optionsGrid-lg md:searchPage-label-optionsGrid-md xs:searchPage-label-optionsGrid-xs xxs:searchPage-label-optionsGrid-xxs searchPage-label-optionsGrid-mobile">
@@ -377,7 +379,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                     onClick={() => toggleDropdowns('districts')}
                                 >
                                     依地區
-                                    <Image src="/images/down_small_line.svg" alt="district" width={18} height={18} />
+                                    <Image src="/images/down_small_line.svg" alt="district" width={18} height={18} className="w-[18px] h-[18px]"/>
                                 </button>
                                 {isOpenDistricts && (
                                     <ul className="lg:searchPage-label-optionsGrid-lg md:searchPage-label-optionsGrid-md xs:searchPage-label-optionsGrid-xs xxs:searchPage-label-optionsGrid-xxs searchPage-label-optionsGrid-mobile">
@@ -395,10 +397,12 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                             </div>
                         </div>
                         {/*卡片盒 */} 
+                        {!user && isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
+                        {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
                         <div className="w-full h-auto grid lg:grid-cols-2 grid-cols-1 lg:gap-x-[1%] gap-0 justify-center items-start m-auto box-border">
                             {loading ? (
                                 Array.from({ length: postsPerPage-10 }, (_, index) => (
-                                    <Skeleton key={index} height={170} width={300} className="m-[3px]" />
+                                    <Skeleton key={index} height={170} width={300} className="m-[3px]"/>
                                 ))
                             ) : (
                             currentPosts.map((institution) => (
@@ -413,7 +417,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                                     alt="institution"
                                                     width={170}
                                                     height={170}
-                                                    className="object-cover"
+                                                    className="w-[170px] h-[170px] object-cover"
                                                     unoptimized={true}
                                                 />
                                             )}
@@ -422,7 +426,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                                 <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px] common-card text-[14px] text-[#595959]">{institution.division}</div>
                                                 <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px] common-card text-[14px] text-[#595959]">{institution.cancer_screening}</div>
                                                 <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px] common-row-flex w-[380px] h-[30px] ">
-                                                    <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
+                                                    <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} className="w-[20px] h-[20px]"/>
                                                     <span className="ml-[5px]  text-[14px] text-[#707070]">{institution.view}</span>
                                                 </div>
                                             </div>
@@ -440,11 +444,9 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                                         alt="favorite" 
                                                         width={30} 
                                                         height={30} 
-                                                        className={`rounded-full p-[2px] ${favoriteHover[institution.hosp_name] ? 'favorite-button-add':'favorite-button-remove' }`}
+                                                        className={`w-[30px] h-[30px] rounded-full p-[2px] ${favoriteHover[institution.hosp_name] ? 'favorite-button-add':'favorite-button-remove' }`}
                                                     />
                                                 </button>
-                                                {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
-                                                {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
                                             </>
                                         ) : (
                                             <>
@@ -463,7 +465,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                                                 alt="favorite" 
                                                                 width={30} 
                                                                 height={30} 
-                                                                className={`rounded-full p-[2px] ${isFavorited || favoriteHover[institution.hosp_name] ? 'favorite-button-add':'favorite-button-remove' }`} 
+                                                                className={`w-[30px] h-[30px] rounded-full p-[2px] ${isFavorited || favoriteHover[institution.hosp_name] ? 'favorite-button-add':'favorite-button-remove' }`} 
                                                             />
                                                         </button>
                                                     );
