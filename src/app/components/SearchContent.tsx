@@ -77,7 +77,10 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const postsPerPage = 20;
 
-    
+    useEffect(() => {
+        console.log('updated:', favoriteHover);
+    }, [favoriteHover]);
+
     useEffect(() => {
         const fetchAndSetData = async () => {
             setLoading(true);
@@ -206,11 +209,12 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
 
 
     const setFavoriteHoverState = (hosp_name: string, state: boolean) => {
-        setFavoriteHover(prev => ({
-            ...prev,
-            [hosp_name]: state
-        }));
-        console.log(favoriteHover);
+        console.log(`Setting favorite hover for ${hosp_name} to ${state}`);
+        setFavoriteHover(prev => {
+            const updated = { ...prev, [hosp_name]: state };
+            console.log('Updated favoriteHover:', updated);
+            return updated;
+        });
     };
     
 
@@ -428,8 +432,8 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                                 <button 
                                                     type="button"  
                                                     className="absolute top-[5px] left-[130px] z-10" 
-                                                    onMouseEnter={() => setFavoriteHoverState(institution.hosp_name, true)}
-                                                    onMouseLeave={() => setFavoriteHoverState(institution.hosp_name, false)}
+                                                    onMouseEnter={() => {console.log(`Mouse entered for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, true)}}
+                                                    onMouseLeave={() => { console.log(`Mouse left for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, false)}}
                                                     onClick={() => setIsSignInModalVisible(true)}>
                                                     <Image 
                                                         src={favoriteHover[institution.hosp_name] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
@@ -451,8 +455,8 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                                         <button 
                                                             type="button" 
                                                             className="absolute top-[5px] left-[130px] z-10" 
-                                                            onMouseEnter={() => setFavoriteHoverState(institution.hosp_name, true)}
-                                                            onMouseLeave={() => setFavoriteHoverState(institution.hosp_name, false)}
+                                                            onMouseEnter={() => {console.log(`Mouse entered for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, true)}}
+                                                            onMouseLeave={() => { console.log(`Mouse left for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, false)}}
                                                             onClick={handleHeartClick}>
                                                             <Image 
                                                                 src={isFavorited || favoriteHover[institution.hosp_name] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
