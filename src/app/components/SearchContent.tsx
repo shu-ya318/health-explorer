@@ -16,6 +16,12 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 
+interface SearchOptions {
+    filters?: string;
+    query?: string;
+  }
+
+
 const searchClient = algoliasearch(
     process.env.NEXT_PUBLIC_ALGOLIA_APP_ID as string, 
     process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY as string
@@ -59,7 +65,6 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     const searchParams = useSearchParams();
     const filterValue = decodeURIComponent(searchParams.get('filter') || '');
 
-
     const searchInputRef = useRef<HTMLInputElement>(null);
     const [sortByViews, setSortByViews] = useState<boolean>(false);
     const [isOpenInstitutions, setIsOpenInstitutions] = useState(false);
@@ -76,91 +81,72 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     useEffect(() => {
         const fetchAndSetData = async () => {
             setLoading(true);
-            if (filterValue) {
-                let searchOptions = {};
 
-                if (['子宮頸癌', '乳癌', '大腸癌', '口腔癌', '肺癌'].includes(filterValue)) {
-                        facetFilters: [[`cancer_screening:${filterValue}`]]
+            try {
+                if (filterValue) {
+                    let searchOptions: SearchOptions = {};
+                    if (['子宮頸癌', '乳癌', '大腸癌', '口腔癌', '肺癌'].includes(filterValue)) {
+                        searchOptions.query = filterValue;
+                    } else {
+                        switch (filterValue) {
+                            case '蘆洲區':
+                                searchOptions.filters = `area:"${filterValue}"`;
+                                break;
+                            case '家庭醫學科':
+                                searchOptions.query = filterValue;
+                                break;
+                            case '醫院':
+                                searchOptions.query = filterValue;
+                                break;
+                            default:
+                                return; 
+                        }
+                    }
+    
+                    const response = await index.search<InstitutionInfo>(filterValue, searchOptions);
+                    setCurrentData(response.hits); 
+                    setCurrentPage(1);
                 } else {
-                    switch (filterValue) {
-                        case '蘆洲區':
-                            searchOptions = { filters: `area:"${filterValue}"` };
-                            break;
-                        case '家庭醫學科':
-                            facetFilters: [[`division:${filterValue}`]]
-                            break;
-                        case '醫院':
-                            searchOptions = { query: filterValue };
-                            break;
-                        default:
-                            setLoading(false);
-                            return;
+                    let hits: InstitutionInfo[] = [];
+                    await index.browseObjects<InstitutionInfo>({
+                        batch: (batch) => {
+                            hits = hits.concat(batch);
+                        }
+                    });
+    
+                    if (hits.length > 0) {
+                        setCurrentData(hits);
+                        setCurrentPage(1);
+                    } else {
+                        console.error('No data found');
                     }
                 }
-
-                index.search<InstitutionInfo>(filterValue, searchOptions)
-                .then(({ hits }) => {
-                    setCurrentData(hits);
-                    setLoading(false);
-                }).catch(error => {
-                    console.error("Search failed: ", error);
-                    setLoading(false);
-                });
-            } else {
-                let hits: InstitutionInfo[] = [];
-                await index.browseObjects<InstitutionInfo>({
-                    batch: (batch:any) => {
-                        hits = hits.concat(batch as InstitutionInfo[]);
-                    }
-                });
-
-                if (hits.length > 0) {
-                    setCurrentData(hits);
-                } else {
-                    console.error('No data found');
-                }
-                setLoading(false);
+            } catch (error) {
+                console.error('Failed to fetch data:', error); 
+            } finally {
+                setLoading(false); 
             }
         };
-
-        fetchAndSetData().catch(error => {
-            console.error('Failed to fetch data:', error);
-            setLoading(false);
-        });
-    }, [filterValue]);
-
     
-    const handleSearch = async (): Promise<void> => {
-        const searchTerm = searchInputRef.current?.value.trim();
-        setLoading(true);
-
-        index.search<InstitutionInfo>(searchTerm || '')
-            .then(({ hits }) => {
-                setCurrentData(hits as InstitutionInfo[]);
-            }).catch(error => {
-                console.error('Search failed:', error);
-            });
-            setLoading(false);
-    };
-    const deleteSearch = () => {
-        if (searchInputRef.current) {
-            searchInputRef.current.value = "";
-        }
-    }
-
+        fetchAndSetData();
+    }, [filterValue]); 
+    
 
     const handleCancerFilter = async (cancerType: string) => {
+        console.log('Filtering data by', cancerType);
         setLoading(true);
-
-        const searchOptions = { query: cancerType };
-        index.search<InstitutionInfo>(cancerType, searchOptions)
-            .then(({ hits }) => {
-                setCurrentData(hits);
-                console.log('Search Results on Cancer Type Updated:', hits);
-            }).catch(error => {
-                console.error('Search failed:', error);
-            });
-        setLoading(false);
+    
+        try {
+            const searchOptions = { query: cancerType };
+            const { hits } = await index.search<InstitutionInfo>(cancerType, searchOptions);
+            setCurrentData(hits);
+            setCurrentPage(1);
+            console.log('Search results for cancer type:', cancerType, hits);
+        } catch (error) {
+            console.error('Search failed:', error); 
+        } finally {
+            setLoading(false);
+        }
     };
 
 
@@ -169,26 +155,54 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
         setIsOpenDivisions(type === 'divisions' ? !isOpenDivisions : false);
         setIsOpenDistricts(type === 'districts' ? !isOpenDistricts : false);
     };
-    const handleSelectFilter = (filterType: 'institution' | 'division' | 'district', value: string): void => {
+    const handleSelectFilter = async (value: string): Promise<void> => {
+        console.log(`Handling filter with value: ${value}`);
         setLoading(true);
-        
-        const searchOptions = {facetFilters: [[`cancer_screening:${filterValue}`]]};
-        console.error(searchOptions);
-
-        index.search<InstitutionInfo>(value, searchOptions)
-        .then(({ hits }) => {
+    
+        try {
+            const { hits } = await index.search<InstitutionInfo>(value);
+            console.log(`Search results for value ${value}:`, hits);
             setCurrentData(hits);
-            setLoading(false);
-        }).catch(error => {
-            console.error("Search failed: ", error);
-            setLoading(false);
-        });
+            setCurrentPage(1);
 
-        setCurrentPage(1);
-        setIsOpenInstitutions(false);
-        setIsOpenDivisions(false);
-        setIsOpenDistricts(false);
+            setIsOpenInstitutions(false); 
+            setIsOpenDivisions(false);
+            setIsOpenDistricts(false);
+        } catch (error) {
+            console.error(`Search failed for value ${value}:`, error);
+        } finally {
+            setLoading(false);
+        }
     };
+    
+    
+    const handleSearch = async (): Promise<void> => {
+        const searchTerm = searchInputRef.current?.value.trim();
+        console.log('Starting search for term:', searchTerm);
+        setLoading(true);
+    
+        try {
+            const { hits } = await index.search<InstitutionInfo>(searchTerm || '');
+            console.log('Search results:', hits);
+            setCurrentData(hits as InstitutionInfo[]);
+            setCurrentPage(1);
+        } catch (error) {
+            console.error('Search failed:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const deleteSearch = () => {
+        if (searchInputRef.current) {
+            searchInputRef.current.value = "";
+        }
+    }
+
+
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = currentData.slice(indexOfFirstPost, indexOfLastPost);
 
 
     const setFavoriteHoverState = (hosp_name: string, state: boolean) => {
@@ -237,24 +251,19 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     };
     
 
-const handleIncrement = async (institution: InstitutionInfo) => {
-    const docRef = doc(db, 'medicalInstitutions', institution.hosp_name);
-    router.push(`/search/${encodeURIComponent(institution.hosp_name)}`);
+    const handleIncrement = async (institution: InstitutionInfo) => {
+        const docRef = doc(db, 'medicalInstitutions', institution.hosp_name);
+        router.push(`/search/${encodeURIComponent(institution.hosp_name)}`);
 
-    try {
-        await updateDoc(docRef, {
-            view: increment(1)
-        });
-       
-    } catch (error) {
-        console.error('Failed to increment views:', error);
-    }
- };
-    
-    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-    const indexOfLastPost = currentPage * postsPerPage;
-    const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentPosts = currentData.slice(indexOfFirstPost, indexOfLastPost);
+        try {
+            await updateDoc(docRef, {
+                view: increment(1)
+            });
+        
+        } catch (error) {
+            console.error('Failed to increment views:', error);
+        }
+    };
 
 
     return (
@@ -292,7 +301,7 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                     ref={searchInputRef}
                                 />
                                 <button className="absolute top-2 right-10 z-10 hover:scale-110" onClick={deleteSearch}>
-                                    <Image src="/images/xmark-solid.svg" alt="close" width={15} height={15} className="w-auto"/>
+                                    <Image src="/images/xmark-solid.svg" alt="close" width={15} height={20} className="w-auto h-[20px]"/>
                                 </button>                               
                             </div>
                             <button 
@@ -328,7 +337,7 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                         {institutions.map((institution) => (
                                             <li key={institution} 
                                                 className="searchPage-label-option py-2 md:text-center text-left"
-                                                onClick={() => handleSelectFilter('institution', institution)} 
+                                                onClick={() => handleSelectFilter(institution)} 
                                             >
                                                 {institution}
                                             </li>
@@ -350,7 +359,7 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                             <li 
                                                 key={division} 
                                                 className="searchPage-label-option py-1 md:text-center text-left" 
-                                                onClick={() => handleSelectFilter('division', division)}
+                                                onClick={() => handleSelectFilter(division)}
                                             >
                                                 {division}
                                             </li>
@@ -372,7 +381,7 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                             <li 
                                                 key={district} 
                                                 className="searchPage-label-option py-1 md:text-center text-left" 
-                                                onClick={() => handleSelectFilter('district', district)}
+                                                onClick={() => handleSelectFilter(district)}
                                             >
                                                 {district}
                                             </li>
