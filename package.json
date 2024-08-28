@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@react-google-maps/api": "^2.19.3",
     "@react-pdf/renderer": "^3.4.4",
     "@vis.gl/react-google-maps": "^1.1.0",
     "algoliasearch": "^4.24.0",

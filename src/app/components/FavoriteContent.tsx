@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation';
-import { useState, useEffect,useCallback , useRef } from 'react';
+import { useState, useEffect,useCallback , useRef, Fragment } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';
@@ -303,7 +303,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                     </>
                                 ) : (
                                 favoriteData.map((item) => (
-                                    <>  
+                                    <Fragment key={item.id} >  
                                         <div key={item.id} className="grid lg:grid-cols-custom fill-column w-[98%] mx-auto">
                                             <div className="relative lg:w-[180px] xss:w-[85%] w-[90%] lg:h-[180px] h-[300px] xss:pl-0 pl-[10px] common-row-flex aspect-square">
                                                 {item.imageUrl && (
@@ -350,7 +350,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                             </div>
                                         </div>
                                         <hr className="w-full  border border-solid border-[#e8e8e8] my-5"/>
-                                    </>
+                                    </Fragment>
                                     ))
                                 )}
                                 <div ref={lastElementRef}></div>
