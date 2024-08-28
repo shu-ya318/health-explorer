@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import {useState, useEffect, useMemo} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
+
 import { motion, AnimatePresence } from "framer-motion"; 
 import BounceLoader from "react-spinners/BounceLoader";
 import Skeleton from 'react-loading-skeleton';
@@ -18,6 +18,8 @@ import algoliasearch from 'algoliasearch/lite';
 import SignInModal from './auth/SignInModal';
 import RegisterModal from './auth/RegisterModal';
 
+import GoogleMap from './GoogleMap';
+
 
 const searchClient = algoliasearch(
     process.env.NEXT_PUBLIC_ALGOLIA_APP_ID as string, 
@@ -26,7 +28,6 @@ const searchClient = algoliasearch(
 const index = searchClient.initIndex('Medical_Institutions');
 
 const InstitutionContent: React.FC = (): React.ReactElement | null  => {
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY; 
 
     const [openLoading, setOpenLoading] = useState<boolean>(true);
     const [loading,setLoading] = useState<boolean>(false);
@@ -41,11 +42,6 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
     const [institutionDetails, setInstitutionDetails] = useState<InstitutionInfo| null>(null);
     const [comparableInstitutions, setComparableInstitutions] = useState<InstitutionInfo[]>([]);
     const [carouselIndex, setCarouselIndex] = useState(0);
-
-    const { isLoaded } = useLoadScript({
-        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-        libraries: ['places']
-    });
 
 
     useEffect(() => {
@@ -129,13 +125,6 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
         });
     };
 
-    const mapCenter = useMemo(() => {
-        if (institutionDetails && typeof institutionDetails.lat === 'number' && typeof institutionDetails.lng === 'number') {  //因可選參屬性,嚴格檢查型別
-            return { lat: institutionDetails.lat, lng: institutionDetails.lng };
-        }
-        return { lat: 0, lng: 0 };
-    }, [institutionDetails]);
-
 
     const handleNext = () => {
         if (carouselIndex + 3 < comparableInstitutions.length) {
@@ -208,7 +197,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
 
     return(
         <>
-            {isLoaded && institutionDetails ? (
+            { institutionDetails ? (
             <AnimatePresence>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                     <main className="common-col-flex  justify-center w-full h-auto bg-[#FCFCFC]" >
@@ -301,19 +290,7 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                 ) : (
                                     <>
                                         <div  className="flex flex-col w-full  md:h-[450px] sm:h-[400px] xs:h-[350px] h-[300px]"> 
-                                            <GoogleMap
-                                                zoom={15}
-                                                center={mapCenter}
-                                                mapTypeId={google.maps.MapTypeId.ROADMAP}
-                                                mapContainerStyle={{ width: "100%", height: "100%" }}
-                                                onLoad={(map) => console.log("Map Loaded")}
-                                            >
-                                            <Marker
-                                                position={mapCenter}
-                                                icon="/images/hospital_fill.svg"
-                                                onLoad={() => console.log("Marker Loaded")}
-                                            />
-                                    </GoogleMap>
+                                            <GoogleMap institutionDetails={institutionDetails}/>
                                         </div>
                                     </>
                                 )}

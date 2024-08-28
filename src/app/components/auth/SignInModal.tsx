@@ -59,7 +59,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ onClose, onShowRegister }) =>
                     />
                     <div className="text-3xl font-bold text-[#1A5665] mb-[35px]">登入會員</div>
                     <div className="common-row-flex w-full mb-[35px]">
-                        <label htmlFor="email" className="common-row-flex flex-shrink-0 w-[60px] pr-2.5 text-black">Email:</label>
+                        <label htmlFor="email-signin" className="common-row-flex flex-shrink-0 w-[60px] pr-2.5 text-black">Email:</label>
                         <input 
                             type="email" 
                             placeholder="請輸入Email" 
@@ -70,7 +70,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ onClose, onShowRegister }) =>
                         />
                     </div>
                     <div className="common-row-flex w-full mb-[65px]">
-                        <label htmlFor="password" className="common-row-flex flex-shrink-0 w-[60px] pr-2.5 text-black">密碼:</label>
+                        <label htmlFor="password-signin" className="common-row-flex flex-shrink-0 w-[60px] pr-2.5 text-black">密碼:</label>
                         <input 
                             type="password" 
                             placeholder="請輸入密碼" 
