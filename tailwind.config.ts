@@ -25,6 +25,11 @@ const config: Config = {
       },
     //動畫
       keyframes: {
+        //加載中指示器，取代不便RWD的Skeleton
+        pulse: { 
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.5' }
+        },
         //翻轉
         flip: {
           "0%" :{
@@ -37,15 +42,15 @@ const config: Config = {
             transform: "rotateY(0deg)"
           },
         },
-        "flip-up": {
-          "0%": {
-            transform: "translate3d(0, 100%, 0) rotateY(-180deg)",
+        'flip-up': {
+          '0%': {
+            transform: 'translate3d(0, 100%, 0) rotateY(-180deg)',
           },
-          "50%": {
-            transform: "rotateY(-90deg)",
+          '50%': {
+            transform: 'rotateY(-90deg)',
           },
-          "100%": {
-            transform: "translate3d(0, 0, 0) rotateY(0deg)",
+          '100%': {
+            transform: 'translate3d(0, 0, 0) rotateY(0deg)',
           },
         },
       },
@@ -53,6 +58,7 @@ const config: Config = {
         //翻轉
         flip : 'flip 2s 0.25s 1',
         flipUp:'flip-up 1s ease 0.25s 1',
+        pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
       }
     },
   },

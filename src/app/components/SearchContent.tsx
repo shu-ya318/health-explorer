@@ -12,14 +12,12 @@ import Pagination from '../components/Pagination';
 import { useAuth } from '../hooks/useAuth'; 
 import SignInModal from './auth/SignInModal';
 import RegisterModal from './auth/RegisterModal';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 
 interface SearchOptions {
     filters?: string;
     query?: string;
-  }
+}
 
 
 const searchClient = algoliasearch(
@@ -73,14 +71,17 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
 
     const [loading,setLoading] = useState<boolean>(false);
     const [currentData, setCurrentData] = useState<InstitutionInfo[]>([]); 
+    const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
     const [currentPage, setCurrentPage] = useState<number>(1);
     const postsPerPage = 20;
+
 
     useEffect(() => {
         console.log('updated:', favoriteHover);
     }, [favoriteHover]);
 
+    
     useEffect(() => {
         const fetchAndSetData = async () => {
             setLoading(true);
@@ -275,8 +276,8 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     return (
         <main className="w-full h-auto common-col-flex justify-center bg-[#FCFCFC]" >
                 <div className="w-full h-auto relative flex ">
-                    <div className="w-full h-[400px] flex">
-                        <Image  priority={false} src="/images/searchPage_banner.jpg" alt="icon" width={1720} height={400} className="max-w-full h-auto object-cover"/>
+                    <div className="relative w-full h-[400px] flex">
+                        <Image  priority={false} src="/images/searchPage_banner.jpg" alt="icon" fill={true} className="max-w-full h-auto object-cover"/>
                     </div>
                     {/*癌篩分類*/}
                     <div style={{ bottom: '-165px' }} className="absolute inset-x-0 lg:w-full max-w-[760px] w-[95%] md:min-h-[200px] h-auto common-page-layout justify-around md:mb-[60px] mb-[80px] mx-auto px-[20px] common-border border"> 
@@ -322,7 +323,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                     {/*渲資*/}
                     <div className="h-auto w-full flex flex-col items-start">
                         {loading ? (
-                            <Skeleton  height={25} width={250}  />
+                            <div className="w-[250px] h-[25px] bg-gray-300 rounded-lg animate-pulse"></div>   
                         ):( 
                             <p className="text-[#595959] text-left">共有<strong className="mx-[6px]">{currentData.length}</strong>個新北市醫療機構</p>                                                 
                         )} 
@@ -401,8 +402,26 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                         {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
                         <div className="w-full h-auto grid lg:grid-cols-2 grid-cols-1 lg:gap-x-[1%] gap-0 justify-center items-start m-auto box-border">
                             {loading ? (
-                                Array.from({ length: postsPerPage-10 }, (_, index) => (
-                                    <Skeleton key={index} height={170} width={300} className="m-[3px]"/>
+                                Array.from({ length: postsPerPage-12 }, (_, index) => ( 
+                                    <div key={index} role='status' className='max-w-sm border border-gray-300 rounded-lg p-4'>
+                                        <div className="w-full h-48 bg-gray-300 rounded-lg mb-5 flex justify-center items-center animate-pulse ">
+                                            <svg className="w-8 h-8 stroke-gray-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path 
+                                                    d="M20.5499 15.15L19.8781 14.7863C17.4132 13.4517 16.1808 12.7844 14.9244 13.0211C13.6681 13.2578 12.763 14.3279 10.9528 16.4679L7.49988 20.55M3.89988 17.85L5.53708 16.2384C6.57495 15.2167 7.09388 14.7059 7.73433 14.5134C7.98012 14.4396 8.2352 14.4011 8.49185 14.3993C9.16057 14.3944 9.80701 14.7296 11.0999 15.4M11.9999 21C12.3154 21 12.6509 21 12.9999 21C16.7711 21 18.6567 21 19.8283 19.8284C20.9999 18.6569 20.9999 16.7728 20.9999 13.0046C20.9999 12.6828 20.9999 12.3482 20.9999 12C20.9999 11.6845 20.9999 11.3491 20.9999 11.0002C20.9999 7.22883 20.9999 5.34316 19.8283 4.17158C18.6568 3 16.7711 3 12.9998 3H10.9999C7.22865 3 5.34303 3 4.17145 4.17157C2.99988 5.34315 2.99988 7.22877 2.99988 11C2.99988 11.349 2.99988 11.6845 2.99988 12C2.99988 12.3155 2.99988 12.651 2.99988 13C2.99988 16.7712 2.99988 18.6569 4.17145 19.8284C5.34303 21 7.22921 21 11.0016 21C11.3654 21 11.7021 21 11.9999 21ZM7.01353 8.85C7.01353 9.84411 7.81942 10.65 8.81354 10.65C9.80765 10.65 10.6135 9.84411 10.6135 8.85C10.6135 7.85589 9.80765 7.05 8.81354 7.05C7.81942 7.05 7.01353 7.85589 7.01353 8.85Z" 
+                                                    stroke="stroke-current" 
+                                                    strokeWidth="1.6" 
+                                                    strokeLinecap="round"
+                                                >
+                                                </path>
+                                            </svg>
+                                        </div>
+                                        <div className=' w-full flex justify-between items-start animate-pulse'>
+                                            <div className="block">
+                                                <h3 className='h-3 bg-gray-300 rounded-full  w-48 mb-4'></h3>
+                                            </div>
+                                            <span className="h-2 bg-gray-300 rounded-full w-16 "></span>
+                                        </div>
+                                    </div>
                                 ))
                             ) : (
                             currentPosts.map((institution) => (
@@ -419,6 +438,8 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                                     height={170}
                                                     className="w-[170px] h-[170px] object-cover"
                                                     unoptimized={true}
+                                                    onLoad={() => setLoadedImages(prev => ({...prev, [institution.imageUrl]: true}))}
+                                                    style={loadedImages[institution.imageUrl] ? {} : {backgroundImage: 'linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)'}}
                                                 />
                                             )}
                                             <div className="flex flex-col w-full justify-between p-[15px]">
@@ -477,7 +498,7 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                         )}
                         </div>
                         {loading ? (
-                            <Skeleton  height={50} width={300} className="m-[20px]" />
+                            <div className="w-[90%] h-[40px] my-[20px] mx-auto bg-gray-300 rounded-lg animate-pulse"></div>
                         ):( 
                             <Pagination
                                 postsPerPage={postsPerPage}

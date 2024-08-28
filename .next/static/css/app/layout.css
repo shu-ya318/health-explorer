@@ -685,12 +685,6 @@ video {
 .z-50 {
   z-index: 50;
 }
-.m-\[20px\] {
-  margin: 20px;
-}
-.m-\[3px\] {
-  margin: 3px;
-}
 .m-auto {
   margin: auto;
 }
@@ -904,11 +898,20 @@ video {
 .h-11 {
   height: 2.75rem;
 }
+.h-2 {
+  height: 0.5rem;
+}
+.h-3 {
+  height: 0.75rem;
+}
 .h-32 {
   height: 8rem;
 }
 .h-48 {
   height: 12rem;
+}
+.h-8 {
+  height: 2rem;
 }
 .h-9 {
   height: 2.25rem;
@@ -988,6 +991,9 @@ video {
 .h-\[44px\] {
   height: 44px;
 }
+.h-\[450px\] {
+  height: 450px;
+}
 .h-\[45px\] {
   height: 45px;
 }
@@ -1036,6 +1042,9 @@ video {
 .w-1\/2 {
   width: 50%;
 }
+.w-16 {
+  width: 4rem;
+}
 .w-20 {
   width: 5rem;
 }
@@ -1045,6 +1054,9 @@ video {
 .w-44 {
   width: 11rem;
 }
+.w-48 {
+  width: 12rem;
+}
 .w-52 {
   width: 13rem;
 }
@@ -1053,6 +1065,9 @@ video {
 }
 .w-64 {
   width: 16rem;
+}
+.w-8 {
+  width: 2rem;
 }
 .w-9 {
   width: 2.25rem;
@@ -1186,6 +1201,12 @@ video {
 .min-w-\[157px\] {
   min-width: 157px;
 }
+.min-w-\[140px\] {
+  min-width: 140px;
+}
+.min-w-\[130px\] {
+  min-width: 130px;
+}
 .max-w-\[100vw\] {
   max-width: 100vw;
 }
@@ -1215,6 +1236,9 @@ video {
 }
 .max-w-screen-md {
   max-width: 768px;
+}
+.max-w-sm {
+  max-width: 24rem;
 }
 .flex-shrink-0 {
   flex-shrink: 0;
@@ -1306,6 +1330,19 @@ video {
 }
 .animate-flipUp {
   animation: flip-up 1s ease 0.25s 1;
+}
+@keyframes pulse {
+
+  50% {
+    opacity: 0.5;
+  }
+
+  0%, 100% {
+    opacity: 1;
+  }
+}
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 .cursor-not-allowed {
   cursor: not-allowed;
@@ -1644,6 +1681,12 @@ video {
 .bg-no-repeat {
   background-repeat: no-repeat;
 }
+.stroke-current {
+  stroke: currentColor;
+}
+.stroke-gray-400 {
+  stroke: #9ca3af;
+}
 .object-contain {
   -o-object-fit: contain;
      object-fit: contain;
@@ -1655,6 +1698,9 @@ video {
 .object-center {
   -o-object-position: center;
      object-position: center;
+}
+.p-4 {
+  padding: 1rem;
 }
 .p-7 {
   padding: 1.75rem;
@@ -1766,6 +1812,9 @@ video {
 }
 .pt-\[80px\] {
   padding-top: 80px;
+}
+.pt-\[30px\] {
+  padding-top: 30px;
 }
 .text-left {
   text-align: left;
@@ -2568,6 +2617,10 @@ video {
     width: 500px;
   }
 
+  .sm\:w-64 {
+    width: 16rem;
+  }
+
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2638,6 +2691,11 @@ video {
 
   .md\:left-\[57\%\] {
     left: 57%;
+  }
+
+  .md\:my-auto {
+    margin-top: auto;
+    margin-bottom: auto;
   }
 
   .md\:mb-0 {
