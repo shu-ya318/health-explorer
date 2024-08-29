@@ -17,7 +17,7 @@ import { saveAs } from 'file-saver';
 import { Document , Packer, Paragraph, TextRun } from "docx";
 
 import HomePage  from '../page'; 
-import {ConfirmDeleteModal} from '../components/ConfirmDeleteModal';
+import {ConfirmDeleteModal} from './ConfirmDeleteModal';
 
 
 const FavoriteContent: React.FC = (): React.ReactElement | null  => {

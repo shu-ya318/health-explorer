@@ -1,5 +1,5 @@
 'use client';
-import CancersContext from '../components/CancersContent';
+import CancersContext from './CancersContent';
 import { useRouter } from 'next/navigation'; 
 import {useState, useEffect} from 'react';
 

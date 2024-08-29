@@ -6,15 +6,15 @@ import Link from 'next/link';
 
 import { motion, AnimatePresence } from "framer-motion"; 
 import BounceLoader from "react-spinners/BounceLoader";
-import { db } from '../lib/firebaseConfig';
+import { db } from '../../lib/firebaseConfig';
 import { collection, doc, getDocs, getDoc, query, where, deleteDoc, updateDoc, increment } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-import { useFavorite} from '../hooks/useFavorite'; 
-import { FirebaseFavoriteData, InstitutionInfo} from '../lib/types';
-import { useAuth } from '../hooks/useAuth'; 
+import { useFavorite} from '../../hooks/useFavorite'; 
+import { FirebaseFavoriteData, InstitutionInfo} from '../../lib/types';
+import { useAuth } from '../../hooks/useAuth'; 
 import algoliasearch from 'algoliasearch/lite';
-import SignInModal from './auth/SignInModal';
-import RegisterModal from './auth/RegisterModal';
+import SignInModal from '../../components/auth/SignInModal';
+import RegisterModal from '../../components/auth/RegisterModal';
 
 import GoogleMap from './GoogleMap';
 

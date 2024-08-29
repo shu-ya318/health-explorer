@@ -1,5 +1,5 @@
 'use client';
-import InstitutionContent from '../../components/InstitutionContent';
+import InstitutionContent from './InstitutionContent';
 import { FavoriteProvider } from '../../hooks/useFavorite';
 import { useAuth } from '../../hooks/useAuth';
 // import { InstitutionsProvider } from '../../contexts/InstitutionsContext';

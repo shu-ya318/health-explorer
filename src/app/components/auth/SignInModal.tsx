@@ -24,6 +24,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ onClose, onShowRegister }) =>
 
     const handleSignIn = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
+
         const emailInput = document.getElementById('email-signin') as HTMLInputElement;
         const passwordInput = document.getElementById('password-signin') as HTMLInputElement;
         if (!emailInput.value ||  !passwordInput.value) {

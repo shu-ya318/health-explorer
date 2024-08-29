@@ -8,10 +8,10 @@ import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, add
 import { useFavorite} from '../hooks/useFavorite'; 
 import { FirebaseFavoriteData, InstitutionInfo} from '../lib/types';
 import algoliasearch,{ SearchIndex }  from 'algoliasearch';
-import Pagination from '../components/Pagination';
+import Pagination from './Pagination';
 import { useAuth } from '../hooks/useAuth'; 
-import SignInModal from './auth/SignInModal';
-import RegisterModal from './auth/RegisterModal';
+import SignInModal from '../components/auth/SignInModal';
+import RegisterModal from '../components/auth/RegisterModal';
 
 
 interface SearchOptions {

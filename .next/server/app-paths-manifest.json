@@ -1,3 +1,4 @@
 {
+  "/cancerScreening/page": "app/cancerScreening/page.js",
   "/page": "app/page.js"
 }

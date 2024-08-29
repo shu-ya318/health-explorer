@@ -1,5 +1,5 @@
 'use client';
-import SearchContent from '../components/SearchContent';
+import SearchContent from './SearchContent';
 import { FavoriteProvider } from '../hooks/useFavorite';
 import { useAuth } from '../hooks/useAuth';
 // import { InstitutionsProvider } from '../../contexts/InstitutionsContext';

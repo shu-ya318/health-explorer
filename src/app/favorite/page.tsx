@@ -1,5 +1,5 @@
 'use client';
-import FavoriteContent from '../components/FavoriteContent';
+import FavoriteContent from './FavoriteContent';
 import { FavoriteProvider } from '../hooks/useFavorite';
 import { useAuth } from '../hooks/useAuth'; 
 

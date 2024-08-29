@@ -19,55 +19,78 @@ const Header: React.FC = () => {
   const [isSignInModalVisible, setIsSignInModalVisible] = useState(false);
   const [ismenuBarVisible, setIsMenuBarVisible] = useState(false);
   const menuDivRef = useRef<HTMLDivElement>(null); 
+  const toastRef = useRef<HTMLDivElement>(null);
+  const signInButtonRef = useRef<HTMLButtonElement>(null);
+  const registerButtonRef = useRef<HTMLButtonElement>(null);
+  const logoutButtonRef = useRef<HTMLButtonElement>(null);
+  const favoriteButtonRef = useRef<HTMLButtonElement>(null);
 
 
-useEffect(() => {
-  function handler(e: Event): void {
-    if (typeof window !== 'undefined' && typeof MouseEvent !== 'undefined') {
-      if (e instanceof MouseEvent) {
-        const target = e.target as HTMLElement;
+  useEffect(() => {
+    function handler(e: Event): void {
+      if (typeof window !== 'undefined' && typeof MouseEvent !== 'undefined') {
+        if (e instanceof MouseEvent) {
+          const target = e.target as HTMLElement;
 
-        if (menuDivRef.current && !menuDivRef.current.contains(target)) {
-          if (ismenuBarVisible) {
-            setIsMenuBarVisible(false);
+          if (menuDivRef.current && !menuDivRef.current.contains(target)) {
+            if (ismenuBarVisible) {
+              setIsMenuBarVisible(false);
+            }
+          }
+
+          if (isLogoutToastVisible && toastRef.current && !toastRef.current.contains(target)) { 
+            closeToast(); 
           }
         }
       }
     }
-  }
 
-  if (typeof window !== 'undefined') {
-    window.addEventListener('click', handler);
-    return () => {
-      window.removeEventListener('click', handler);
-    };
-  }
-}, [ismenuBarVisible, setIsMenuBarVisible]);
-
-const toggleMenuBar = (e: React.MouseEvent) => {
-  e.stopPropagation();
-  setIsMenuBarVisible(prev => !prev);
-};
+    if (typeof window !== 'undefined') {
+      window.addEventListener('click', handler);
+      return () => {
+        window.removeEventListener('click', handler);
+      };
+    }
+  }, [ismenuBarVisible, setIsMenuBarVisible, isLogoutToastVisible]);
 
 
-  const handleLogout = async () => {
+  const toggleMenuBar = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMenuBarVisible(prev => !prev);
+  };
+
+
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault(); 
+    e.stopPropagation();
+    logoutButtonRef.current?.blur();
     try {
       await logout();
-      setTimeout(() => {
-        setIsLogoutToastVisible(true);
-        setLogoutMessage('您已成功登出!');
-      }, 0); 
+      setIsLogoutToastVisible(true);
+      setLogoutMessage('您已成功登出!');
+      setIsMenuBarVisible(false);
     } catch (error) {
       console.error(error);
       setLogoutMessage('登出失敗，請稍後再試!');
+    } finally {
+      setIsSignInModalVisible(false);
+      setIsRegisterModalVisible(false);
     }
-    setIsSignInModalVisible(false);
-    setIsRegisterModalVisible(false);
   };
-
   const closeToast = () => {
     setIsLogoutToastVisible(false);
     setLogoutMessage(null); 
+  };
+
+  const handleSignInClick = () => {
+    console.log('SignIn button was clicked');
+    signInButtonRef.current?.blur();
+    setIsSignInModalVisible(true);
+  };
+
+const handleRegisterClick = () => {
+    registerButtonRef.current?.blur();
+    setIsRegisterModalVisible(true);
   };
 
 
@@ -75,17 +98,11 @@ const toggleMenuBar = (e: React.MouseEvent) => {
     if (user) {
       router.push('/favorite'); 
     } else {
+      favoriteButtonRef.current?.blur();
       setIsSignInModalVisible(true);
     }
   };
 
-  useEffect(() => {
-    if (isLogoutToastVisible) {
-      console.log('Toast visibility set to true');
-    }
-  }, [isLogoutToastVisible]);
-  
-  console.log('Logout message set:', logoutMessage);
 
   return (
     <>
@@ -106,8 +123,11 @@ const toggleMenuBar = (e: React.MouseEvent) => {
                 </div>
             </Link>
             {isLogoutToastVisible && logoutMessage && (
-              <div className="z-50 w-full max-w-[200px] h-[45px] common-row-flex m-auto px-6 bg-white rounded-xl border border-gray-200 shadow-sm gap-4">
-                <div  className="my-auto text-gray-900 text-center font-medium">{logoutMessage}</div>
+              <div
+                ref={toastRef}  
+                className="z-50  xs:w-full xs:max-w-[160px] max-w-[100px] h-[40px] common-row-flex m-auto px-3 bg-white rounded-xl border border-[#2D759E] shadow-sm gap-4"
+              >
+                <div  className="my-auto text-[#2D759E] text-center xs:text-[14px] text-[12px]">{logoutMessage}</div>
                 <button type="button" className="inline-flex flex-shrink-0 justify-center text-gray-400 transition-all duration-150 " onClick={closeToast}>
                   <span className="sr-only">Close</span>
                   <svg className="w-6 h-6 " viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -125,49 +145,49 @@ const toggleMenuBar = (e: React.MouseEvent) => {
             <div className={`md:hidden  ${ismenuBarVisible ? 'absolute fixed inset-0 z-40 w-screen h-screen flex bg-black bg-opacity-30' : 'hidden'}`}></div>
             <div 
               ref={menuDivRef}
-              className={`md:common-row-flex md:justify-between no-underline font-bold ${ismenuBarVisible ? 'absolute top-0 right-0 z-50 w-44 h-screen common-col-flex pt-20 bg-[white] shadow-[0_0_3px_#1e94b4]' : 'hidden'}`}
+              className={`md:common-row-flex md:justify-between no-underline ${ismenuBarVisible ? 'absolute top-0 right-0 z-50 w-44 h-screen common-col-flex pt-20 bg-[white] shadow-[0_0_3px_#1e94b4]' : 'hidden'}`}
             >
-              <button 
-                type="button" 
-                className="header-button group"
-                onClick={handleFavoriteClick}
-              >
-                <span className="w-52 h-32 header-button-anime group-hover:ml-0 group-hover:mb-32 group-hover:translate-x-0"></span>
-                <span className="header-button-text group-hover:text-white">我的收藏</span>
-              </button>
               {!user ? (
                   <>
                     <button 
+                      ref={signInButtonRef}
                       type="button" 
-                      className="header-button group"
-                      onClick={() => setIsSignInModalVisible(true)} 
+                      className="flex justify-center w-[52px] h-[35px]"
+                      onClick={handleSignInClick}
                     >
-                      <span className="w-52 h-32 header-button-anime group-hover:ml-0 group-hover:mb-32 group-hover:translate-x-0"></span>
-                      <span className="header-button-text group-hover:text-white">登入</span>
+                      <span className="m-auto text-[#2598B6] text-center hover:text-[#2D759E] hover:font-semibold">登入</span>
                     </button>
                     {isSignInModalVisible && <SignInModal  onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
                     <button 
+                      ref={registerButtonRef}
                       type="button" 
-                      className="header-button group"
-                      onClick={() => setIsRegisterModalVisible(true)}
+                      className="flex justify-center w-[52px] h-[35px]"
+                      onClick={handleRegisterClick}
                     >
-                      <span className="w-52 h-32 header-button-anime group-hover:ml-0 group-hover:mb-32 group-hover:translate-x-0"></span>
-                      <span className="header-button-text group-hover:text-white">註冊</span>
+                      <span className="m-auto text-[#2598B6] text-center hover:text-[#2D759E] hover:font-semibold">註冊</span>
                     </button>
                     {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
                   </>
               ) : (
                 <>
                   <button 
+                    ref={logoutButtonRef}
                     type="button" 
-                    className="header-button group"
+                    className="flex justify-center w-[75px] h-[35px]"
                     onClick={handleLogout}
                   >
-                    <span className="w-56 h-48 header-button-anime group-hover:ml-0 group-hover:mb-32 group-hover:translate-x-0"></span>
-                    <span className="header-button-text group-hover:text-white">登出</span>
+                    <span className="m-auto text-[#2598B6] text-center hover:text-[#2D759E] hover:font-semibold">登出</span>
                   </button>
                 </>
               )}
+               <button 
+                  ref={favoriteButtonRef}
+                  type="button" 
+                  className="flex justify-center w-[75px] h-[35px]"
+                  onClick={handleFavoriteClick}
+                >                  
+                <span className="m-auto text-[#2598B6] text-center hover:text-[#2D759E] hover:font-semibold"> 我的收藏 </span>
+              </button>
             </div>
         </div>
       </header>
