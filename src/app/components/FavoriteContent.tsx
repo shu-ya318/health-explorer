@@ -1,22 +1,28 @@
 import { useRouter } from 'next/navigation';
-import { useState, useEffect,useCallback , useRef } from 'react';
+import { useState, useEffect,useCallback , useRef, Fragment } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
+
+import { motion, AnimatePresence } from "framer-motion"; 
+import RingLoader from "react-spinners/RingLoader";
 
 import { db } from '../lib/firebaseConfig';
 import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot, Timestamp } from 'firebase/firestore';
-import { useFavorite} from '../contexts/FavoriteContext'; 
+import { useFavorite} from '../hooks/useFavorite'; 
 import { FirebaseFavoriteData} from '../lib/types';
-import { useAuth } from '../contexts/AuthContext'; 
+import { useAuth } from '../hooks/useAuth'; 
+
+import { Font,pdf, Document as PDFDocument, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { saveAs } from 'file-saver';
+import { Document , Packer, Paragraph, TextRun } from "docx";
 
 import HomePage  from '../page'; 
+import {ConfirmDeleteModal} from '../components/ConfirmDeleteModal';
 
 
 const FavoriteContent: React.FC = (): React.ReactElement | null  => {
     const { uid } = useAuth().user || {}; 
-    const { state, fetchFavoriteData, addFavorite, removeFavorite} = useFavorite();
+    const { state, fetchFavoriteData, removeFavorite} = useFavorite();
 
     const [isInitialLoad, setIsInitialLoad] = useState(true);
     const [loading, setLoading] = useState<boolean>(false);
@@ -25,6 +31,11 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
     const observer = useRef<IntersectionObserver>(null);
     const lastElementRef = useRef<HTMLDivElement>(null);
     const [favoriteData, setFavoriteData] = useState<FirebaseFavoriteData[]>([]);
+    const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+
+    const [hover, setHover] = useState<Record<string, boolean>>({});
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState<string | null>(null);
 
     const router = useRouter();
 
@@ -86,135 +97,317 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
       }, [lastVisible, loading, fetchMoreData, isInitialLoad, allDataLoaded]);
 
 
-    const handleDeleteClick = async (docId: string) => {
-        if (!uid) return;
-
-        try {
-            await removeFavorite(docId);
-            setFavoriteData(favoriteData.filter(item => item.id !== docId));
-        } catch (error) {
-            console.error('刪除失敗:', error);
-        }
+    const toggleHover = (id: string) => { 
+        setHover(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
+        console.log(hover);
     };
     
-  
+
+    const handleDeleteClick = async (docId: string) => {
+        setSelectedId(docId);
+        setIsConfirmModalOpen(true);
+      };
+    const handleConfirmDelete = async () => {
+    if (!selectedId || !uid) return;
+
+    try {
+        await removeFavorite(selectedId);
+        setFavoriteData(favoriteData.filter(item => item.id !== selectedId));
+    } catch (error) {
+        console.error('刪除失敗:', error);
+    }
+    setIsConfirmModalOpen(false);
+    };
+    const handleCloseModal = () => {
+    setIsConfirmModalOpen(false);
+    };
+
+
+    const fetchAllData = async (): Promise<FirebaseFavoriteData[]> => {
+        if (!uid) return [];
+    
+        setLoading(true);
+        const fullQuery = query(
+            collection(db, 'favorites'),
+            where('userId', '==', uid)
+        );
+    
+        try {
+            const querySnapshot = await getDocs(fullQuery);
+            const allData = querySnapshot.docs.map(doc => ({
+                ...doc.data() as FirebaseFavoriteData,
+                id: doc.id
+            }));
+            setFavoriteData(allData); 
+            return allData;
+        } catch (error) {
+            console.error('Error fetching all data:', error);
+            return []; 
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    Font.register({
+        family: 'NotoSansTC',
+        fonts: [
+            { src: '/fonts/NotoSansTC-Regular.ttf', fontWeight: 'normal' },
+            { src: '/fonts/NotoSansTC-Bold.ttf', fontWeight: 'bold' },
+        ]
+    });
+    const styles = StyleSheet.create({
+        header: {
+            fontFamily: 'NotoSansTC',
+            fontWeight: 'bold'
+        },
+        content: {
+            fontFamily: 'NotoSansTC',
+            fontWeight: 'normal'
+        }
+    });
+    const exportToPDF = (data: FirebaseFavoriteData[]) => {
+        const doc = (
+            <PDFDocument>
+                <Page size="A4">
+                    {data.map(item => (
+                        <View key={item.id} style={{ marginBottom: 10 }}>
+                            <Text style={styles.header}>名稱:</Text><Text style={styles.content}>{item.hosp_name}</Text>
+                            <Text style={styles.header}>電話:</Text><Text style={styles.content}>{item.tel}</Text>
+                            <Text style={styles.header}>地址:</Text><Text style={styles.content}>{item.hosp_addr}</Text>
+                            {item.division && (
+                                <>
+                                    <Text style={styles.header}>科別:</Text><Text style={styles.content}>{item.division}</Text>
+                                </>
+                            )}
+                            {item.cancer_screening && (
+                                <>
+                                    <Text style={styles.header}>癌篩項目:</Text><Text style={styles.content}>{item.cancer_screening}</Text>
+                                </>
+                            )}
+                        </View>
+                    ))}
+                </Page>
+            </PDFDocument>
+        );
+        return doc;
+    };
+    const prepareAndExportToPDF = async () => {
+        const allData = await fetchAllData(); 
+        const doc = exportToPDF(allData); 
+    
+        const pdfInstance = pdf();
+        pdfInstance.updateContainer(doc); 
+    
+        const blob = await pdfInstance.toBlob(); 
+        const url = URL.createObjectURL(blob); 
+    
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'FavoriteData.pdf';
+        link.click();
+        URL.revokeObjectURL(url); 
+    };
+
+
+    const exportToCSV = (data: FirebaseFavoriteData[]) => {
+        const headers = "名稱,電話,地址,科別,癌症篩檢項目\n";
+        const rows = data.map(item =>
+            `"${item.hosp_name}","${item.tel}","${item.hosp_addr}","${item.division || ''}","${item.cancer_screening || ''}"\n`
+        ).join('');
+        const csvContent = `data:text/csv;charset=utf-8,\uFEFF${headers}${rows}`;
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "FavoriteData.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+    const prepareAndExportToCSV = async () => {
+        const allData = await fetchAllData();
+        exportToCSV(allData);
+    };
+
+
+    const exportToDocx = (data: FirebaseFavoriteData[]) => {
+        const paragraphs = data.map(item => {
+            return new Paragraph({
+                children: [
+                    new TextRun(`名稱: ${item.hosp_name}\n`),
+                    new TextRun(`電話: ${item.tel}\n`),
+                    new TextRun(`地址: ${item.hosp_addr}\n`),
+                    ...(item.division ? [new TextRun(`科別: ${item.division}\n`)] : []),
+                    ...(item.cancer_screening ? [new TextRun(`癌篩項目: ${item.cancer_screening}\n`)] : [])
+                ]
+            });
+        });
+    
+        const doc = new Document({
+            sections: [{
+                children: paragraphs
+            }]
+        });
+    
+        return Packer.toBlob(doc);
+    };
+    const prepareAndExportToDocx = async () => {
+        const allData = await fetchAllData();
+        const blob = await exportToDocx(allData);
+        saveAs(blob, 'FavoriteData.docx');
+    };
+
+
     return (
         <> 
-        {!uid  ? 
-         <HomePage/>
-          :( 
-            <> 
-                <main className="w-full h-auto flex flex-col  justify-center items-center flex-grow  bg-[#F0F0F0]" >
-                    <div className="flex w-full h-auto relative">
-                        <div className="flex  w-full h-[360px]"  style={{ backgroundImage: `url('images/favoritePage_banner.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}> 
-                            <div className="relative top-0 left-0 w-full h-full z-10 flex items-center justify-center bg-black/10">
-                                <div className="text-[#ffffff] font-bold text-[56px] text-center">收藏清單</div>  
-                            </div>
-                        </div>  
-                    </div>
-                    {/*收藏項目*/}
-                    <div className="w-full flex flex-col min-h-screen bg-[rgba(255,255,255,0.2)] backdrop-blur-sm my-auto pt-5 pb-10 flex justify-center items-center mt-[20px]">
-                        <div className="w-[1200px] flex min-h-screen  shadow-[0_0_5px_#AABBCC] rounded-lg">
-                            <div className="w-full flex flex-col justify-start items-center bg-[rgba(255,255,255,0.6)] backdrop-blur-md py-7 px-8">
-                                {favoriteData.length === 0 ? (
-                                    <>
-                                        <div className="text-2xl text-gray-600 text-center my-auto">目前無收藏機構，推薦前往搜尋頁進行挑選</div>
-                                        <button 
-                                            type="button" 
-                                            className="w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-11  mb-10 hover:bg-[#7199a1] hover:text-black font-bold text-white text-center text-[20px]"
-                                            onClick={()=>router.push('/search')} 
-                                        >
-                                        開始搜尋
-                                        </button>
-                                    </>
-                                ) : (
-                                favoriteData.map((item, index) => (
-                                    <>
-                                        <div key={index} className="h-auto w-full flex justify-between">
-                                            <div className="relative w-[250px] h-[250px]  aspect-square flex items-center">
-                                                {item.imageUrl && <div className="bg-cover bg-center w-full h-full" style={{backgroundImage: `url(${item.imageUrl})`}}></div>}
-                                                {item.id && (
-                                                    <button type="button" className="absolute top-[15px] left-[200px] z-10" onClick={() => item.id && handleDeleteClick(item.id)}>
-                                                        <Image 
-                                                            src="/images/heart_fill.svg" 
-                                                            alt="collection" 
-                                                            width={35} 
-                                                            height={35} 
-                                                            className="bg-[#FFFFFF] border-solid border-2  border-[#6898a5] rounded-full p-[2px]  transition-all duration-300 hover:scale-110 shadow-[0_0_5px_#6898a5]  hover:bg-transparent  hover:shadow-[0_0_3px_#6898a5]" 
-                                                        />
-                                                    </button>
-                                                )}
+            {!uid  ? 
+                <HomePage/>
+            :( 
+                <>
+                    { !favoriteData ? (
+                        <div className="common-row-flex justify-center h-screen" style={{ backgroundColor: "#FFFFFF" }}>
+                            <RingLoader size="300px" color="#24657d"/>
+                        </div>
+                    ) : (
+                        <AnimatePresence>
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                                <main className="common-col-flex justify-center w-full h-auto">
+                                    {isConfirmModalOpen && (
+                                        <ConfirmDeleteModal 
+                                            isOpen={isConfirmModalOpen} 
+                                            onConfirm={handleConfirmDelete} 
+                                            onCancel={handleCloseModal} 
+                                        />
+                                    )}   
+                                    <div className="relative w-full h-auto flex">
+                                        <div className="relative flex flex-col w-full h-[360px]"> 
+                                            <Image  priority={false} src="/images/favoritePage_banner.jpg" alt="icon" fill={true} className="w-full h-full object-cover"/>
+                                            <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-20">
+                                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#ffffff] font-bold sm:text-[56px] xs:text-[48px] text-[37px] text-center">收藏清單</div>  
                                             </div>
-                                            <div className="flex flex-col shrink-0 w-[500px] h-full mr-[10px]">
-                                                <div className="flex flex-row justify-start items-center leading-12 mb-4">
-                                                    <span className="font-bold text-lg text-[#1D445D] mr-1.5">機構名稱:</span>
-                                                    <span className="text-lg text-[#1D445D] mr-1.5">{item.hosp_name}</span>
-                                                </div>
-                                                <div className="flex flex-row justify-start items-center leading-12 mb-4">
-                                                    <span className="font-bold text-lg text-[#1D445D] mr-1.5 ">電話:</span>
-                                                    <span className="text-lg text-[#1D445D] mr-1.5">{item.tel}</span>
-                                                </div>
-                                                <div className="flex flex-row justify-start items-center leading-12 mb-4">
-                                                    <span className="font-bold text-lg text-[#1D445D] mr-1.5 ">地址:</span>
-                                                    <span className="text-lg text-[#1D445D] mr-1.5">{item.hosp_addr}</span>
+                                        </div>  
+                                    </div>
+                                    {/*收藏項目*/}
+                                    <div className="common-col-flex justify-center w-full min-h-screen bg-[#F0F0F0] backdrop-blur-sm my-auto pt-5 pb-10">
+                                        <div className="xl:w-full max-w-[1180px] lg:w-[90%] xs:w-[80%] [95%] flex md:flex-row flex-col min-h-screen  shadow-[0_0_10px_#AABBCC] rounded-lg">
+                                            <div className="common-col-flex justify-start lg:w-[75%] md:w-[65%] w-full  py-7 xss:px-8 bg-[#FFFFFF] backdrop-blur-md md:rounded-l-lg rounded-t-lg">
+                                                {favoriteData.length === 0 ? (
+                                                    <>
+                                                        <div className="text-2xl text-gray-600 text-center md:my-auto mb-[60px] pt-[30px]">尚無收藏機構</div>
+                                                        <button 
+                                                            type="button" 
+                                                            className="sm:w-64 w-[55%] min-w-[130px] h-11 py-4.5 px-2.5 mb-[60px] common-button"
+                                                            onClick={()=>router.push('/search')} 
+                                                        >
+                                                        開始搜尋
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                favoriteData.map((item) => (
+                                                    <Fragment key={item.id} >  
+                                                        <div key={item.id} className="grid lg:grid-cols-custom fill-column w-[98%] mx-auto">
+                                                            <div className="relative lg:w-[180px] xss:w-[85%] w-[90%] lg:h-[180px] h-[300px] xss:pl-0 pl-[10px] common-row-flex aspect-square">
+                                                                {item.imageUrl && (
+                                                                    <Image
+                                                                        src={item.imageUrl}
+                                                                        alt="institution"
+                                                                        fill={true}
+                                                                        onLoad={() => setLoadedImages(prev => ({...prev, [item.imageUrl]: true}))}
+                                                                        style={loadedImages[item.imageUrl] ? {} : {backgroundImage: 'linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)'}}
+                                                                        className="w-full h-full common-bg-image"
+                                                                    />
+                                                                )}
+                                                                {item.id && (
+                                                                    <button 
+                                                                        type="button" 
+                                                                        className="absolute top-[7px] right-[10px] lg:left-[145px]  z-10 w-[30px] h-[30px]"
+                                                                    >
+                                                                        <Image 
+                                                                            src="/images/diamond_selected.png" 
+                                                                            alt="collection" 
+                                                                            width={30} 
+                                                                            height={30} 
+                                                                            className="w-full h-full  p-[2px] favorite-button-add rounded-full"
+                                                                        />
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                            <div className="relative flex w-full lg:ml-[10px] lg:mr-0 ">
+                                                                <div className="flex flex-col w-[90%] h-auto text-[#2D759E] xl:text-base lg:text-sm text-lg leading-12 lg:mt-0 mt-[35px]">
+                                                                    <div className="flex mb-4">
+                                                                        <span className="font-bold lg:w-[43px] text-nowrap mr-[2px]">名稱</span>
+                                                                        <span className="text-[#1D445D]">{item.hosp_name}</span>
+                                                                    </div>
+                                                                    <div className="flex mb-4">
+                                                                        <span className="font-bold lg:w-[43px] text-nowrap mr-[2px]">電話</span>
+                                                                        <span className="text-[#1D445D]">{item.tel}</span>
+                                                                    </div>
+                                                                    <div className="flex mb-4">
+                                                                        <span className="font-bold lg:w-[43px] text-nowrap mr-[5px]">地址</span>
+                                                                        <span className="text-[#1D445D] ml-px">{item.hosp_addr}</span>
+                                                                    </div>
+                                                                </div>
+                                                                {item.id && (
+                                                                <button 
+                                                                    className="absolute lg:top-0 lg:right-0 xss:bottom-[-135px] bottom-[-130px] flex min-h-[150px] z-10" 
+                                                                    onClick={() => item.id && handleDeleteClick(item.id)}
+                                                                >
+                                                                    <Image  src="/images/delete.png" alt="delete" width={30} height={30} />
+                                                                </button>  
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <hr className="w-full  border border-solid border-[#e8e8e8] my-5"/>
+                                                    </Fragment>
+                                                    ))
+                                                )}
+                                                <div ref={lastElementRef}></div>
+                                            </div>
+                                            <div className="common-col-flex justify-start lg:w-[25%] md:w-[35%] w-full py-10 px-8 bg-gradient-to-t from-[#F0F0F0] via-[#C3D8EA] to-[#77ACCC] backdrop-blur-md md:rounded-r-lg rounded-b-lg  text-lg shadow-md">
+                                                <div className="mb-[30px] text-[#FFFFFF] lg:text-[28px] text-[30px] font-bold">匯出格式</div>
+                                                <div className="common-col-flex justify-between lg:w-[200px] md:w-[180px] w-[55%] min-w-[130px] h-auto text-[#1D445D]">
+                                                    <button 
+                                                        className={`common-row-flex justify-center w-full h-11 rounded-lg py-4.5 mt-5 mb-5 bg-[#FFEEDD] hover:bg-[#FFC78E] hover:text-[#ffffff] border-2 border-solid border-[#eb980a] text-center text-[20px] cursor-pointer transition-all duration-300 hover:scale-110
+                                                                    ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
+                                                        onClick={prepareAndExportToPDF}
+                                                        disabled={favoriteData.length === 0}
+                                                    >
+                                                        PDF
+                                                        <Image src="/images/file-pdf-solid.svg" alt="PDF" width={25} height={25} className="ml-[10px]" />
+                                                    </button>
+                                                    <button 
+                                                            className={`common-row-flex justify-center  w-full min-w-[130px] h-11 rounded-lg py-4.5 mt-5 mb-5 bg-[#D1E9E9] hover:bg-[#B3D9D9] hover:text-[#ffffff] border-2 border-solid border-[#1f5127]  text-center text-[20px] transition-all duration-300 hover:scale-110
+                                                                        ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
+                                                            onClick={prepareAndExportToCSV}
+                                                            disabled={favoriteData.length === 0}
+                                                    >
+                                                        CSV
+                                                        <Image src="/images/file-csv-solid.svg" alt="CSV" width={25} height={25} className="ml-[10px]"/>
+                                                    </button >
+                                                    <button 
+                                                            className={`common-row-flex justify-center w-full min-w-[130px] h-11 rounded-lg py-4.5 mt-5 mb-5 bg-[#D2E9FF] hover:bg-[#C4E1FF] hover:text-[#ffffff] border-2 border-solid border-[#19a8e6]  text-center text-[20px] transition-all duration-300 hover:scale-110
+                                                                        ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
+                                                            onClick={prepareAndExportToDocx}
+                                                            disabled={favoriteData.length === 0}
+                                                    >
+                                                        DOCX
+                                                        <Image src="/images/file-word-solid.svg" alt="DOC" width={25} height={25} className="ml-[10px]"/>
+                                                    </button >
                                                 </div>
                                             </div>
                                         </div>
-                                        <hr className="w-full  border border-solid border-[#e8e8e8] my-5"/>
-                                    </>
-                                    ))
-                                )}
-                                <div ref={lastElementRef}></div>
-                            </div>
-                            <div className="w-2/5 min-w-[285px] flex flex-col justify-start items-center bg-gradient-to-b  from-[#eff4f5]  to-[#c8d6da] backdrop-blur-md rounded-tr-lg rounded-br-lg py-10 px-8 text-lg shadow-md">
-                                <div className="text-2xl mb-7.5 text-[#1D445D] font-bold mb-[30px]">匯出格式</div>
-                                <div className="flex flex-col justify-between items-center w-[200px] h-auto text-[#1D445D] ">
-                                    <button 
-                                            className={`flex justify-center items-center w-full rounded-md py-4.5  h-11  mt-5 mb-5 bg-[#FFEEDD] hover:bg-[#FFC78E] hover:text-[#ffffff] border-2 border-solid border-[#eb980a]  text-center text-[20px] transition-all duration-300 hover:scale-110
-                                                        ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none  text-white' : ''}`} 
-                                            onClick={() => {
-                                                if (favoriteData.length > 0) {
-                                                window.print();
-                                                }
-                                            }}
-                                    >
-                                    PDF檔
-                                        <Image src="/images/file-pdf-solid.svg" alt="PDF" width={25} height={25} className="ml-[10px]"/>
-                                    </button >
-                                    <button 
-                                            className={`flex justify-center items-center w-full rounded-md py-4.5  h-11  mt-5 mb-5 bg-[#D1E9E9] hover:bg-[#B3D9D9] hover:text-[#ffffff] border-2 border-solid border-[#1f5127]  text-center text-[20px] transition-all duration-300 hover:scale-110
-                                                        ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
-                                            onClick={() => {
-                                                if (favoriteData.length > 0) {
-                                                window.print();
-                                                }
-                                            }}
-                                    >
-                                    CSV檔
-                                        <Image src="/images/file-csv-solid.svg" alt="CSV" width={25} height={25} className="ml-[10px]"/>
-                                    </button >
-                                    <button 
-                                            className={`flex justify-center items-center w-full rounded-md py-4.5  h-11  mt-5 mb-5 bg-[#D2E9FF] hover:bg-[#C4E1FF] hover:text-[#ffffff] border-2 border-solid border-[#19a8e6]  text-center text-[20px] transition-all duration-300 hover:scale-110
-                                                        ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
-                                            onClick={() => {
-                                                if (favoriteData.length > 0) {
-                                                window.print();
-                                                }
-                                            }}
-                                    >
-                                    WORD檔
-                                        <Image src="/images/file-word-solid.svg" alt="PDF" width={25} height={25} className="ml-[10px]"/>
-                                    </button >
-                                </div>
-                                    
-                            </div>
-                        </div>
-                    </div>
+                                    </div>
 
 
-                </main>
-            </>
-          )}
+                                </main>
+                            </motion.div>
+                        </AnimatePresence>
+                    )}
+                </>
+            )}
         </>
     );
 }

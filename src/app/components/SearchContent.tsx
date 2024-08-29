@@ -5,15 +5,19 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { db } from '../lib/firebaseConfig';
 import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot, updateDoc, increment, getDoc } from 'firebase/firestore';
-import { useFavorite} from '../contexts/FavoriteContext'; 
+import { useFavorite} from '../hooks/useFavorite'; 
 import { FirebaseFavoriteData, InstitutionInfo} from '../lib/types';
 import algoliasearch,{ SearchIndex }  from 'algoliasearch';
 import Pagination from '../components/Pagination';
-import { useAuth } from '../contexts/AuthContext'; 
+import { useAuth } from '../hooks/useAuth'; 
 import SignInModal from './auth/SignInModal';
 import RegisterModal from './auth/RegisterModal';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
+
+
+interface SearchOptions {
+    filters?: string;
+    query?: string;
+}
 
 
 const searchClient = algoliasearch(
@@ -35,7 +39,7 @@ const institutions = [
 const divisions = [
     '婦產科', '牙醫一般科', '耳鼻喉科',
     '皮膚科', '眼科', '骨科',
-    '精神', '心理諮商及心理治療', '家庭醫學科',
+    '精神科', '心理諮商及治療科', '家庭醫學科',
     '泌尿科', '內科', '外科'
 ];
 const districts = [
@@ -51,13 +55,13 @@ const districts = [
 const SearchContent: React.FC = (): React.ReactElement | null  => {
     const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
     const [isSignInModalVisible, setIsSignInModalVisible] = useState(false);
+    const [favoriteHover, setFavoriteHover] = useState<Record<string, boolean>>({});
     const { user } = useAuth();
     const { state, addFavorite, removeFavorite} = useFavorite();
 
     const router = useRouter();
     const searchParams = useSearchParams();
     const filterValue = decodeURIComponent(searchParams.get('filter') || '');
-
 
     const searchInputRef = useRef<HTMLInputElement>(null);
     const [sortByViews, setSortByViews] = useState<boolean>(false);
@@ -67,100 +71,86 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
 
     const [loading,setLoading] = useState<boolean>(false);
     const [currentData, setCurrentData] = useState<InstitutionInfo[]>([]); 
+    const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
     const [currentPage, setCurrentPage] = useState<number>(1);
     const postsPerPage = 20;
 
+
+    useEffect(() => {
+        console.log('updated:', favoriteHover);
+    }, [favoriteHover]);
+
     
-    // 初次載入頁面:跳轉的過濾資料或全部資料
     useEffect(() => {
         const fetchAndSetData = async () => {
             setLoading(true);
-            if (filterValue) {
-                let searchOptions = {};
 
-                if (['子宮頸癌', '乳癌', '大腸癌', '口腔癌', '肺癌'].includes(filterValue)) {
-                        facetFilters: [[`cancer_screening:${filterValue}`]]
+            try {
+                if (filterValue) {
+                    let searchOptions: SearchOptions = {};
+                    if (['子宮頸癌', '乳癌', '大腸癌', '口腔癌', '肺癌'].includes(filterValue)) {
+                        searchOptions.query = filterValue;
+                    } else {
+                        switch (filterValue) {
+                            case '蘆洲區':
+                                searchOptions.filters = `area:"${filterValue}"`;
+                                break;
+                            case '家庭醫學科':
+                                searchOptions.query = filterValue;
+                                break;
+                            case '醫院':
+                                searchOptions.query = filterValue;
+                                break;
+                            default:
+                                return; 
+                        }
+                    }
+    
+                    const response = await index.search<InstitutionInfo>(filterValue, searchOptions);
+                    setCurrentData(response.hits); 
+                    setCurrentPage(1);
                 } else {
-                    switch (filterValue) {
-                        case '蘆洲區':
-                            searchOptions = { filters: `area:"${filterValue}"` };
-                            break;
-                        case '家庭醫學科':
-                            facetFilters: [[`division:${filterValue}`]]
-                            break;
-                        case '醫院':
-                            searchOptions = { query: filterValue };
-                            break;
-                        default:
-                            setLoading(false);
-                            return;
+                    let hits: InstitutionInfo[] = [];
+                    await index.browseObjects<InstitutionInfo>({
+                        batch: (batch) => {
+                            hits = hits.concat(batch);
+                        }
+                    });
+    
+                    if (hits.length > 0) {
+                        setCurrentData(hits);
+                        setCurrentPage(1);
+                    } else {
+                        console.error('No data found');
                     }
                 }
-
-                index.search<InstitutionInfo>(filterValue, searchOptions)
-                .then(({ hits }) => {
-                    setCurrentData(hits);
-                    setLoading(false);
-                }).catch(error => {
-                    console.error("Search failed: ", error);
-                    setLoading(false);
-                });
-            } else {
-                let hits: InstitutionInfo[] = [];
-                await index.browseObjects<InstitutionInfo>({
-                    batch: (batch:any) => {
-                        hits = hits.concat(batch as InstitutionInfo[]);
-                    }
-                });
-
-                if (hits.length > 0) {
-                    setCurrentData(hits);
-                } else {
-                    console.error('No data found');
-                }
-                setLoading(false);
+            } catch (error) {
+                console.error('Failed to fetch data:', error); 
+            } finally {
+                setLoading(false); 
             }
         };
-
-        fetchAndSetData().catch(error => {
-            console.error('Failed to fetch data:', error);
-            setLoading(false);
-        });
-    }, [filterValue]);
-
     
-    const handleSearch = async (): Promise<void> => {
-        const searchTerm = searchInputRef.current?.value.trim();
-        setLoading(true);
-
-        index.search<InstitutionInfo>(searchTerm || '')
-            .then(({ hits }) => {
-                setCurrentData(hits as InstitutionInfo[]);
-            }).catch(error => {
-                console.error('Search failed:', error);
-            });
-            setLoading(false);
-    };
-    const deleteSearch = () => {
-        if (searchInputRef.current) {
-            searchInputRef.current.value = "";
-        }
-    }
-
+        fetchAndSetData();
+    }, [filterValue]); 
+    
 
     const handleCancerFilter = async (cancerType: string) => {
+        console.log('Filtering data by', cancerType);
         setLoading(true);
-
-        const searchOptions = { query: cancerType };
-        index.search<InstitutionInfo>(cancerType, searchOptions)
-            .then(({ hits }) => {
-                setCurrentData(hits);
-                console.log('Search Results on Cancer Type Updated:', hits);
-            }).catch(error => {
-                console.error('Search failed:', error);
-            });
-        setLoading(false);
+    
+        try {
+            const searchOptions = { query: cancerType };
+            const { hits } = await index.search<InstitutionInfo>(cancerType, searchOptions);
+            setCurrentData(hits);
+            setCurrentPage(1);
+            console.log('Search results for cancer type:', cancerType, hits);
+        } catch (error) {
+            console.error('Search failed:', error); 
+        } finally {
+            setLoading(false);
+        }
     };
 
 
@@ -169,27 +159,67 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
         setIsOpenDivisions(type === 'divisions' ? !isOpenDivisions : false);
         setIsOpenDistricts(type === 'districts' ? !isOpenDistricts : false);
     };
-    const handleSelectFilter = (filterType: 'institution' | 'division' | 'district', value: string): void => {
+    const handleSelectFilter = async (value: string): Promise<void> => {
+        console.log(`Handling filter with value: ${value}`);
         setLoading(true);
-        
-        const searchOptions = {facetFilters: [[`cancer_screening:${filterValue}`]]};
-        console.error(searchOptions);
-
-        index.search<InstitutionInfo>(value, searchOptions)
-        .then(({ hits }) => {
+    
+        try {
+            const { hits } = await index.search<InstitutionInfo>(value);
+            console.log(`Search results for value ${value}:`, hits);
             setCurrentData(hits);
-            setLoading(false);
-        }).catch(error => {
-            console.error("Search failed: ", error);
-            setLoading(false);
-        });
+            setCurrentPage(1);
 
-        setCurrentPage(1);
-        setIsOpenInstitutions(false);
-        setIsOpenDivisions(false);
-        setIsOpenDistricts(false);
+            setIsOpenInstitutions(false); 
+            setIsOpenDivisions(false);
+            setIsOpenDistricts(false);
+        } catch (error) {
+            console.error(`Search failed for value ${value}:`, error);
+        } finally {
+            setLoading(false);
+        }
     };
     
+    
+    const handleSearch = async (): Promise<void> => {
+        const searchTerm = searchInputRef.current?.value.trim();
+        console.log('Starting search for term:', searchTerm);
+        setLoading(true);
+    
+        try {
+            const { hits } = await index.search<InstitutionInfo>(searchTerm || '');
+            console.log('Search results:', hits);
+            setCurrentData(hits as InstitutionInfo[]);
+            setCurrentPage(1);
+        } catch (error) {
+            console.error('Search failed:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const deleteSearch = () => {
+        if (searchInputRef.current) {
+            searchInputRef.current.value = "";
+        }
+    }
+
+
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = currentData.slice(indexOfFirstPost, indexOfLastPost);
+
+    
+    const setFavoriteHoverState = (hosp_name: string, state: boolean) => {
+        setFavoriteHover(prev => {
+            if (prev[hosp_name] === state) {
+                return prev; 
+            }
+            const updated = { ...prev, [hosp_name]: state };
+            console.log(`Setting favorite hover for ${hosp_name} to ${state}`);
+            return updated;
+        });
+    };
+
 
     const handleAddClick = async (institution: InstitutionInfo, userId:string) => {
         if (!user) return;
@@ -228,92 +258,93 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
     };
     
 
-const handleIncrement = async (institution: InstitutionInfo) => {
-    const docRef = doc(db, 'medicalInstitutions', institution.hosp_name);
-    router.push(`/search/${encodeURIComponent(institution.hosp_name)}`);
+    const handleIncrement = async (institution: InstitutionInfo) => {
+        const docRef = doc(db, 'medicalInstitutions', institution.hosp_name);
+        router.push(`/search/${encodeURIComponent(institution.hosp_name)}`);
 
-    try {
-        await updateDoc(docRef, {
-            view: increment(1)
-        });
-       
-    } catch (error) {
-        console.error('Failed to increment views:', error);
-    }
- };
-    
-    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-    const indexOfLastPost = currentPage * postsPerPage;
-    const indexOfFirstPost = indexOfLastPost - postsPerPage;
-    const currentPosts = currentData.slice(indexOfFirstPost, indexOfLastPost);
+        try {
+            await updateDoc(docRef, {
+                view: increment(1)
+            });
+        
+        } catch (error) {
+            console.error('Failed to increment views:', error);
+        }
+    };
 
 
     return (
-        <main className="w-full h-auto flex flex-col justify-center items-center flex-grow bg-[#FCFCFC]" >
-                <div className="flex w-full h-auto relative">
-                    <div className="flex  w-full h-[400px]"  style={{ backgroundImage: `url('images/searchPage_banner.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+        <main className="w-full h-auto common-col-flex justify-center bg-[#FCFCFC]" >
+                <div className="w-full h-auto relative flex ">
+                    <div className="relative w-full h-[400px] flex">
+                        <Image  priority={false} src="/images/searchPage_banner.jpg" alt="icon" fill={true} className="max-w-full h-auto object-cover"/>
+                    </div>
                     {/*癌篩分類*/}
-                    <div style={{ bottom: '-165px' }} className="absolute inset-x-0 max-w-screen-md h-[200px] flex  flex-col justify-between items-center mb-[60px] mx-auto px-[20px] rounded-lg border-solid border border-[#6898a5] shadow-[0_0_5px_#AABBCC] bg-[#FFFFFF]"> 
-                        <div className="text-[#003E3E] text-center font-bold text-[24px] mt-[10px]">依癌篩資格搜尋</div>
-                        <div  className="flex w-full justify-between mb-[20px]">
+                    <div style={{ bottom: '-165px' }} className="absolute inset-x-0 lg:w-full max-w-[760px] w-[95%] md:min-h-[200px] h-auto common-page-layout justify-around md:mb-[60px] mb-[80px] mx-auto px-[20px] common-border border"> 
+                        <div className=" mt-[10px] common-title text-[24px]">依癌篩資格搜尋</div>
+                        <div  className="grid md:grid-cols-5 grid-cols-3 md:gap-x-16 xs:gap-x-20 xss:gap-x-12 gap-x-10">
                             {cancers.map((cancer, index) => (
                                 <button 
                                     key={index} 
-                                    className="w-2/12 flex flex-col justify-between text-[#0e4b66] transition-transform duration-300 hover:scale-110 hover:shadow-lg hover:shadow-gray-400 hover:bg-gradient-to-b  from-[#eff4f5]  to-[#a7bdc1]"
+                                    className="common-col-flex justify-between transition-transform duration-300 hover:scale-110 hover:rounded-lg  hover:shadow-lg hover:shadow-gray-400 hover:bg-gradient-to-b from-[#FFFFFF] via-[#C3D8EA] to-[#77ACCC]"
                                     onClick={() => handleCancerFilter(cancer.filter)}
                                 >
-                                    <div className="w-full h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
-                                    <div className="w-full text-center text-[20px] text-[#013f5b] font-bold mb-[10px]">{cancer.filter}</div>
+                                    <div className="w-full h-[100px] common-bg-image" style={{ backgroundImage: `url(${cancer.image})` }}></div>
+                                    <div className="w-full mb-[10px] xs:text-[20px] text-[14px] text-[#252525] text-center font-bold">{cancer.filter}</div>
                                 </button>
                             ))}
                         </div>
                     </div>
                 </div>
-                <div className="w-[1200px] pt-[80px]">
+                <div className="xl:w-full max-w-[1180px] w-[95%] pt-[80px]">
                     {/*搜*/}
-                    <div className="w-full h-10 mt-[60px]  mb-[30px]"> 
-                        <div className="flex max-w-screen-md h-full mx-auto"> 
-                            <div className="flex relative w-full h-full ">
+                    <div className="w-full h-10 mt-[60px] mb-[30px]"> 
+                        <div className="max-w-[760px] w-full h-full flex mx-auto"> 
+                            <div className="flex relative w-full h-full">
                                 <input
-                                    className="flex-grow h-full px-4 text-lg font-bold text-gray-500 border-solid border border-[#6898a5] shadow-[0_0_3px_#AABBCC] rounded-l-md"
+                                    className="h-full flex-grow px-4 text-[18px] font-bold text-gray-500 common-border border shadow-[0_0_3px_#AABBCC] rounded-l-md"
                                     type="text"
                                     placeholder="請輸入關鍵字搜尋"
                                     ref={searchInputRef}
                                 />
-                                <button className="hover:scale-110 absolute top-2 right-10 z-10" onClick={deleteSearch}>
-                                    <Image className="" src="/images/xmark-solid.svg" alt="close" width={15} height={15} />
+                                <button className="absolute top-2 right-10 z-10 hover:scale-110" onClick={deleteSearch}>
+                                    <Image src="/images/xmark-solid.svg" alt="close" width={15} height={20} className="w-auto h-[20px]"/>
                                 </button>                               
                             </div>
                             <button 
-                                className="w-32 h-full bg-[#24657d] hover:bg-[#7199a1] hover:text-black rounded-r-md flex items-center justify-center font-bold"
+                                className="w-32 h-full common-row-flex justify-center flex-grow bg-[#2D759E] hover:bg-[#5B98BC] rounded-r-md text-white font-bold xs:text-[18px] text-[0px]"
                                 onClick={handleSearch}
                             >
-                                <Image className="w-auto h-auto" src="/images/search.png" alt="Search" width={30} height={30}/>
+                                <Image className="w-auto h-auto mr-[7px]" src="/images/search.png" alt="search" width={30} height={30}/>
                                 搜尋
                             </button>
                         </div>
                     </div>
                     {/*渲資*/}
                     <div className="h-auto w-full flex flex-col items-start">
-                        <p className="text-[#595959] text-left">共查詢到<strong className="mx-[6px]">{currentData.length}</strong>個新北市醫療機構</p>
-                        <hr className="w-full border-solid border border-[#E0E0E0] my-[20px]"/>
+                        {loading ? (
+                            <div className="w-[250px] h-[25px] bg-gray-300 rounded-lg animate-pulse"></div>   
+                        ):( 
+                            <p className="text-[#595959] text-left">共有<strong className="mx-[6px]">{currentData.length}</strong>個新北市醫療機構</p>                                                 
+                        )} 
+                        <hr className="w-full my-[20px] border border-solid border-[#E0E0E0]"/>
                         {/*選標籤*/}
-                        <div className="mx-w-screen-md h-9 flex justify-center mb-[20px]">
-                            <div className="w-[150px] bg-2 bg-[#E0E0E0]  rounded-l-md text-black text-center text-[16px] py-1">排序:</div>
-                            <div className="relative w-36">
+                        <div className="mx-w-screen-md h-9 flex flex-row justify-center mb-[20px]">
+                            <div className="sm:w-[150px] w-[100px] py-1 bg-2 bg-[#E0E0E0] rounded-l-md text-black text-center text-[16px]">排序:</div>
+                            <div className="relative sm:w-36 w-20">
                                 <button
-                                    className={`text-center pl-[5px] w-full h-full flex justify-around items-center text-[16px]  border border-[#E0E0E0] ${isOpenInstitutions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'}`}
+                                    className={`searchPage-label ${isOpenInstitutions ? 'bg-[#2D759E] text-[#ffffff]' : 'searchPage-label-notOpened'}`}
                                     onClick={() => toggleDropdowns('institutions')}
                                 >
                                     依機構
-                                    <Image src="/images/down_small_line.svg" alt="institution" width={18} height={18} />
+                                    <Image src="/images/down_small_line.svg" alt="institution" width={18} height={18} className="w-[18px] h-[18px]"/>
                                 </button>
                                 {isOpenInstitutions && (
-                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] py-[15px] px-[10px] shadow-[0_0_5px_#AABBCC]">
+                                    <ul className="lg:searchPage-label-optionsGrid-lg md:searchPage-label-optionsGrid-md xs:searchPage-label-optionsGrid-xs xxs:searchPage-label-optionsGrid-xxs searchPage-label-optionsGrid-mobile">
                                         {institutions.map((institution) => (
                                             <li key={institution} 
-                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-2 border-solid border border-[#e6e6e6] rounded-md  cursor-pointer"
-                                                onClick={() => handleSelectFilter('institution', institution)} 
+                                                className="searchPage-label-option py-2 md:text-center text-left"
+                                                onClick={() => handleSelectFilter(institution)} 
                                             >
                                                 {institution}
                                             </li>
@@ -321,21 +352,21 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                     </ul>
                                 )}
                             </div>
-                            <div className="relative w-36">
+                            <div className="relative sm:w-36 w-20">
                                 <button
-                                    className={`flex justify-around items-center text-[16px] border border-[#E0E0E0] ${isOpenDivisions ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`}
+                                    className={`searchPage-label ${isOpenDivisions ? 'bg-[#2D759E] text-[#ffffff]' : 'searchPage-label-notOpened'}`}
                                     onClick={() => toggleDropdowns('divisions')}
                                 >
                                     依科別
-                                    <Image src="/images/down_small_line.svg" alt="division" width={18} height={18} />
+                                    <Image src="/images/down_small_line.svg" alt="division" width={18} height={18} className="w-[18px] h-[18px]"/>
                                 </button>
                                 {isOpenDivisions && (
-                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] p-[10px] shadow-[0_0_5px_#AABBCC]">
+                                    <ul className="lg:searchPage-label-optionsGrid-lg md:searchPage-label-optionsGrid-md xs:searchPage-label-optionsGrid-xs xxs:searchPage-label-optionsGrid-xxs searchPage-label-optionsGrid-mobile">
                                         {divisions.map((division) => (
                                             <li 
                                                 key={division} 
-                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]  rounded-md  cursor-pointer " 
-                                                onClick={() => handleSelectFilter('division', division)}
+                                                className="searchPage-label-option py-1 md:text-center text-left" 
+                                                onClick={() => handleSelectFilter(division)}
                                             >
                                                 {division}
                                             </li>
@@ -343,22 +374,22 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                                     </ul>
                                 )}
                             </div>
-                            <div className="relative w-36">
+                            <div className="relative sm:w-36 w-20">
                                 <button
-                                    className={`rounded-r-md flex justify-around items-center text-[16px] border border-[#E0E0E0] ${isOpenDistricts ? 'bg-[#acb8b6] text-[#ffffff]' : 'bg-[#FCFCFC] hover:bg-[#acb8b6] hover:text-[#ffffff] text-[#707070]'} text-center py-1 w-full h-full`} 
+                                    className={`rounded-r-md searchPage-label ${isOpenDistricts ? 'bg-[#2D759E] text-[#ffffff]' : 'searchPage-label-notOpened'}`} 
                                     onClick={() => toggleDropdowns('districts')}
                                 >
                                     依地區
-                                    <Image src="/images/down_small_line.svg" alt="district" width={18} height={18} />
+                                    <Image src="/images/down_small_line.svg" alt="district" width={18} height={18} className="w-[18px] h-[18px]"/>
                                 </button>
                                 {isOpenDistricts && (
-                                    <ul className="grid grid-cols-3 gap-2  absolute z-20 bg-[#ffffff] border-2 border-[#acb8b6] rounded-md w-[500px] p-[10px] shadow-[0_0_5px_#AABBCC]">
+                                    <ul className="lg:searchPage-label-optionsGrid-lg md:searchPage-label-optionsGrid-md xs:searchPage-label-optionsGrid-xs xxs:searchPage-label-optionsGrid-xxs searchPage-label-optionsGrid-mobile">
                                         {districts.map((district) => (
                                             <li 
                                                 key={district} 
-                                                className="z-20 hover:bg-[#acb8b6] hover:text-[#ffffff] text-center text-[#707070] py-1 border-solid border border-[#e6e6e6]  rounded-md  cursor-pointer " 
-                                                onClick={() => handleSelectFilter('district', district)}
-                                                >
+                                                className="searchPage-label-option py-1 md:text-center text-left" 
+                                                onClick={() => handleSelectFilter(district)}
+                                            >
                                                 {district}
                                             </li>
                                         ))}
@@ -367,66 +398,95 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                             </div>
                         </div>
                         {/*卡片盒 */} 
-                        <div className="w-full h-auto m-auto grid grid-cols-2 justify-center items-start box-border my-[10px] gap-[2%]">
-                        {loading ? (
-                            Array.from({ length: postsPerPage-12 }, (_, index) => (
-                                <Skeleton key={index} height={150} width={600} className="m-[5px]" />
-                            ))
-                        ) : (
+                        {!user && isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
+                        {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
+                        <div className="w-full h-auto grid lg:grid-cols-2 grid-cols-1 lg:gap-x-[1%] gap-0 justify-center items-start m-auto box-border">
+                            {loading ? (
+                                Array.from({ length: postsPerPage-12 }, (_, index) => ( 
+                                    <div key={index} role='status' className='max-w-sm border border-gray-300 rounded-lg p-4'>
+                                        <div className="w-full h-48 bg-gray-300 rounded-lg mb-5 flex justify-center items-center animate-pulse ">
+                                            <svg className="w-8 h-8 stroke-gray-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path 
+                                                    d="M20.5499 15.15L19.8781 14.7863C17.4132 13.4517 16.1808 12.7844 14.9244 13.0211C13.6681 13.2578 12.763 14.3279 10.9528 16.4679L7.49988 20.55M3.89988 17.85L5.53708 16.2384C6.57495 15.2167 7.09388 14.7059 7.73433 14.5134C7.98012 14.4396 8.2352 14.4011 8.49185 14.3993C9.16057 14.3944 9.80701 14.7296 11.0999 15.4M11.9999 21C12.3154 21 12.6509 21 12.9999 21C16.7711 21 18.6567 21 19.8283 19.8284C20.9999 18.6569 20.9999 16.7728 20.9999 13.0046C20.9999 12.6828 20.9999 12.3482 20.9999 12C20.9999 11.6845 20.9999 11.3491 20.9999 11.0002C20.9999 7.22883 20.9999 5.34316 19.8283 4.17158C18.6568 3 16.7711 3 12.9998 3H10.9999C7.22865 3 5.34303 3 4.17145 4.17157C2.99988 5.34315 2.99988 7.22877 2.99988 11C2.99988 11.349 2.99988 11.6845 2.99988 12C2.99988 12.3155 2.99988 12.651 2.99988 13C2.99988 16.7712 2.99988 18.6569 4.17145 19.8284C5.34303 21 7.22921 21 11.0016 21C11.3654 21 11.7021 21 11.9999 21ZM7.01353 8.85C7.01353 9.84411 7.81942 10.65 8.81354 10.65C9.80765 10.65 10.6135 9.84411 10.6135 8.85C10.6135 7.85589 9.80765 7.05 8.81354 7.05C7.81942 7.05 7.01353 7.85589 7.01353 8.85Z" 
+                                                    stroke="stroke-current" 
+                                                    strokeWidth="1.6" 
+                                                    strokeLinecap="round"
+                                                >
+                                                </path>
+                                            </svg>
+                                        </div>
+                                        <div className=' w-full flex justify-between items-start animate-pulse'>
+                                            <div className="block">
+                                                <h3 className='h-3 bg-gray-300 rounded-full  w-48 mb-4'></h3>
+                                            </div>
+                                            <span className="h-2 bg-gray-300 rounded-full w-16 "></span>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
                             currentPosts.map((institution) => (
                                     <div  
                                         key={institution.hosp_name} 
-                                        className="relative h-auto  border border-gray-300 overflow-hidden bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC] h-[150px] fill-two-columns rounded-sm mb-[25px]"
+                                        className="h-[136px] relative lg:fill-two-columns fill-column mb-[15px] border border-gray-300 rounded-sm overflow-hidden bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]"
                                     >
-                                         <button onClick={() => handleIncrement(institution)} className="h-full w-full flex">
+                                         <button onClick={() => handleIncrement(institution)} className="flex h-full w-full">
                                             {institution.imageUrl && (
                                                 <Image
                                                     src={institution.imageUrl}
                                                     alt="institution"
-                                                    width={150}
-                                                    height={150}
-                                                    className="object-cover object-center h-[150px] w-[150px]"
+                                                    width={170}
+                                                    height={170}
+                                                    className="w-[170px] h-[170px] object-cover"
                                                     unoptimized={true}
+                                                    onLoad={() => setLoadedImages(prev => ({...prev, [institution.imageUrl]: true}))}
+                                                    style={loadedImages[institution.imageUrl] ? {} : {backgroundImage: 'linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)'}}
                                                 />
                                             )}
-                                            <div className="flex flex-col justify-between py-[10px] pl-[12px]">
-                                                <div className="w-full h-[30px]  text-left text-[#3E3A39] font-bold  pr-[15px] text-[18px]">{institution.hosp_name}</div>
-                                                <div className=" text-left text-[16px] text-[#595959] h-[30px]">{institution.division}</div>
-                                                <div className=" text-left text-[16px] text-[#595959] h-[30px]">{institution.cancer_screening}</div>
-                                                <div className="w-full h-[30px] flex items-center">
-                                                    <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} />
-                                                    <span className="ml-2  text-[16px] text-[#707070] mt-[3px]">觀看數:{institution.view}</span>
+                                            <div className="flex flex-col w-full justify-between p-[15px]">
+                                                <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px] common-card text-[16px] text-[#3E3A39] font-bold pr-[15px]">{institution.hosp_name}</div>
+                                                <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px] common-card text-[14px] text-[#595959]">{institution.division}</div>
+                                                <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px] common-card text-[14px] text-[#595959]">{institution.cancer_screening}</div>
+                                                <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px] common-row-flex w-[380px] h-[30px] ">
+                                                    <Image src="/images/eye-regular.svg" alt="view" width={20} height={20} className="w-[20px] h-[20px]"/>
+                                                    <span className="ml-[5px]  text-[14px] text-[#707070]">{institution.view}</span>
                                                 </div>
                                             </div>
                                         </button>
                                         {!user ? (
                                             <>
-                                                <button type="button"  className="absolute top-[10px] left-[100px] z-10 " onClick={() => setIsSignInModalVisible(true)}>
+                                                <button 
+                                                    type="button"  
+                                                    className="absolute top-[5px] left-[130px] z-10" 
+                                                    onMouseEnter={() => {console.log(`Mouse entered for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, true)}}
+                                                    onMouseLeave={() => { console.log(`Mouse left for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, false)}}
+                                                    onClick={() => setIsSignInModalVisible(true)}>
                                                     <Image 
-                                                        src="/images/heart_line.svg" 
-                                                        alt="collection" 
-                                                        width={40} 
-                                                        height={40} 
-                                                        className="border-solid border-2 border-[#6898a5] rounded-full p-[2px]" 
+                                                        src={favoriteHover[institution.hosp_name] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
+                                                        alt="favorite" 
+                                                        width={30} 
+                                                        height={30} 
+                                                        className={`w-[30px] h-[30px] rounded-full p-[2px] ${favoriteHover[institution.hosp_name] ? 'favorite-button-add':'favorite-button-remove' }`}
                                                     />
                                                 </button>
-                                                {isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
-                                                {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
                                             </>
                                         ) : (
                                             <>
                                                 {(() => {
                                                     const isFavorited = state.favorites.some(item => item.userId === user.uid && item.hosp_name === institution.objectID);
-                                                    
                                                     const handleHeartClick = isFavorited ? () => handleRemoveClick(institution.objectID, user.uid) : () => handleAddClick(institution, user.uid);
                                                     return (
-                                                        <button type="button" className="absolute top-[10px] left-[100px] z-10" onClick={handleHeartClick}>
+                                                        <button 
+                                                            type="button" 
+                                                            className="absolute top-[5px] left-[130px] z-10" 
+                                                            onMouseEnter={() => {console.log(`Mouse entered for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, true)}}
+                                                            onMouseLeave={() => { console.log(`Mouse left for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, false)}}
+                                                            onClick={handleHeartClick}>
                                                             <Image 
-                                                                src={isFavorited? "/images/heart_fill.svg" : "/images/heart_line.svg"} 
-                                                                alt="collection" 
+                                                                src={isFavorited || favoriteHover[institution.hosp_name] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
+                                                                alt="favorite" 
                                                                 width={30} 
                                                                 height={30} 
-                                                                className={`${isFavorited ? 'bg-[#FFFFFF] shadow-[0_0_5px_#6898a5]' : 'bg-transparent '} border-solid border-2  border-[#6898a5] rounded-full p-[2px] transition-all duration-300 hover:scale-110 hover:shadow-[0_0_3px_#6898a5]`}
+                                                                className={`w-[30px] h-[30px] rounded-full p-[2px] ${isFavorited || favoriteHover[institution.hosp_name] ? 'favorite-button-add':'favorite-button-remove' }`} 
                                                             />
                                                         </button>
                                                     );
@@ -438,7 +498,7 @@ const handleIncrement = async (institution: InstitutionInfo) => {
                         )}
                         </div>
                         {loading ? (
-                            <Skeleton  height={50} width={1200} className="m-[20px]" />
+                            <div className="w-[90%] h-[40px] my-[20px] mx-auto bg-gray-300 rounded-lg animate-pulse"></div>
                         ):( 
                             <Pagination
                                 postsPerPage={postsPerPage}

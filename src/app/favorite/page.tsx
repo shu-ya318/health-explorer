@@ -1,7 +1,7 @@
 'use client';
 import FavoriteContent from '../components/FavoriteContent';
-import { FavoriteProvider } from '../contexts/FavoriteContext';
-import { useAuth } from '../contexts/AuthContext'; 
+import { FavoriteProvider } from '../hooks/useFavorite';
+import { useAuth } from '../hooks/useAuth'; 
 
 const FavoritePage: React.FC = (): React.ReactElement | null  => {
     const { user } = useAuth();

@@ -4,15 +4,22 @@ import { useRouter } from 'next/navigation';
 import {useState, useEffect} from 'react';
 
 
-const surveyItems = [
-    {id:"1",title:"第一題:您的出生民國年份?",itemOptions:""},
-    {id:"2",title:"第二題:您是否為原住民?",itemOptions:"是;否"},
-    {id:"3",title:"第三題:您的性別?",itemOptions:"男性;女性"},
-    {id:"4",title:"第四題:您是否有嚼檳榔的習慣?",itemOptions:"曾經有，目前已戒掉;有;無"},
-    {id:"5",title:"第五題:您是否有抽菸的習慣?",itemOptions:"1天抽1包以上;1天只抽幾支;無"},
-    {id:"6",title:"第六題:您是否有肺癌家族史(父母、子女、兄弟姊妹曾罹患肺癌)?",itemOptions:"有;無"},
-    {id:"7",title:"第七題:您是否有乳癌家族史(父母、子女、兄弟姊妹曾罹患乳癌)?",itemOptions:"有;無;非女性"},
-]
+interface SurveyItem {
+    id: string;
+    title: string;
+    itemOptions: string;
+}
+
+
+const surveyItems: SurveyItem[] = [
+    { id: "1", title: "1.您的出生民國年份?", itemOptions: "" },
+    { id: "2", title: "2.您是否為原住民?", itemOptions: "是;否" },
+    { id: "3", title: "3.您的性別?", itemOptions: "男性;女性" },
+    { id: "4", title: "4.您是否有嚼檳榔的習慣?", itemOptions: "目前已戒掉;有;無" },
+    { id: "5", title: "5.您是否有抽菸的習慣?", itemOptions: "1天抽1包以上;1天只抽幾支;無" },
+    { id: "6", title: "6.您是否有肺癌家族史(父母、子女、兄弟姊妹曾罹患肺癌)?", itemOptions: "有;無" },
+    { id: "7", title: "7.您是否有乳癌家族史(父母、子女、兄弟姊妹曾罹患乳癌)?", itemOptions: "有;無;非女性" }
+];
 
 
 const CancerScreeningPage: React.FC = (): React.ReactElement | null  => {
@@ -21,6 +28,7 @@ const CancerScreeningPage: React.FC = (): React.ReactElement | null  => {
     const [isLast, setIsLast] = useState<boolean>(false);
     const [answers, setAnswers] = useState<any[]>([]);
     const [finished, setFinished] = useState<boolean>(false);
+    const [progress, setProgress] = useState<number>(0);
 
 
     useEffect(()=>{
@@ -45,6 +53,13 @@ const CancerScreeningPage: React.FC = (): React.ReactElement | null  => {
             }
             return newGroupNum;
         });
+
+        if (!isLast && groupNum >= 1) {
+            setProgress(prevProgress => {
+                const newProgress = Math.round(prevProgress + 16.5);
+                return newProgress > 100 ? 100 : newProgress;
+            });
+        }
     };
 
 
@@ -61,6 +76,7 @@ const CancerScreeningPage: React.FC = (): React.ReactElement | null  => {
                 key={groupNum} 
                 handleNextClick={handleNextClick} 
                 setAnswer={handleSetAnswer} 
+                progress={progress}  
                 isLast={isLast}
                 {...surveyItems[groupNum - 1]}
             />

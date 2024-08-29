@@ -1,7 +1,6 @@
 'use client';
 import {useState, useEffect} from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import 'animate.css';
 import AOS from 'aos';
@@ -27,20 +26,21 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
   const router = useRouter();
  
   const searches = [
-    { description: '依行政區', filter: '蘆洲區', image: '/images/building-solid.svg' },
-    { description: '依科別', filter: '家庭醫學科', image: '/images/stethoscope-solid.svg' },
-    { description: '依癌篩項目', filter: '子宮頸癌', image: '/images/magnifying-glass-plus-solid.svg' },
-    { description: '依機構類型', filter: '醫院', image: '/images/hospital-regular.svg' }
+    { description: '依行政區', filter: '蘆洲區', image: '/images/building.jpg', icon: '/images/building-solid.svg' },
+    { description: '依科別', filter: '家庭醫學科', image: '/images/division.jpg', icon: '/images/stethoscope-solid.svg' },
+    { description: '依癌篩項目', filter: '子宮頸癌', image: '/images/cancer.jpg', icon: '/images/magnifying-glass-plus-solid.svg' },
+    { description: '依機構類型', filter: '醫院', image: '/images/institution.jpg', icon: '/images/hospital-regular.svg' }
   ];
   const cancers = [
-    { filter: '子宮頸癌', image:"/images/cervicalCancer.png"},
-    { filter: '乳癌', image: "/images/breastCancer.png" },
-    { filter: '大腸癌', image:"/images/colorectalCancer.png"},
-    { filter: '口腔癌', image:"/images/oralCancer.png"},
-    { filter: '肺癌', image:"/images/lungCancer.png"}
+    { filter: '子宮頸癌', image:"/images/cervical.jpg", icon:"/images/cervicalCancer.png"},
+    { filter: '乳癌', image: "/images/breast.jpg", icon:"/images/breastCancer.png" },
+    { filter: '大腸癌', image:"/images/colorectal.jpg", icon:"/images/colorectalCancer.png"},
+    { filter: '口腔癌', image:"/images/oral.jpg", icon:"/images/oralCancer.png"},
+    { filter: '肺癌', image:"/images/lung.jpg", icon:"/images/lungCancer.png"}
   ];
 
   const [openLoading, setOpenLoading] = useState<boolean>(true);
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -59,7 +59,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
 
   const scrollDown = () => {
     window.scrollTo({
-      top: 600,
+      top: 700,
       behavior: 'smooth'
     });
   };
@@ -72,76 +72,95 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
 
   if (openLoading) {
     return (
-      <div className="flex justify-center items-center h-screen" style={{ backgroundColor: '#24657d' }}>
+      <div className="common-row-flex justify-center h-screen bg-[#1e94b4]">
         <PuffLoader size="300px" color="#FFFFFF"/>
       </div>
     );
   }
 
-  return (       
+  return ( 
     <AnimatePresence>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-        <div className="relative w-full h-[640px] bg-[url('/images/homeBanner.webp')] bg-cover bg-center">
-          <div className="absolute top-[75%] left-[27%] -translate-x-[80%] -translate-y-[80%] flex flex-col justify-between">
-            <div className="flex flex-col animate__animated  animate__backInLeft animate__slow">
-              <h1 className="text-center text-[50px] font-bold text-white">健康探索者</h1>
-              <h3 className="text-center text-[30px] font-medium text-white">診救健康醫起來</h3>
-            </div>
-            <div className="text-center mt-20 cursor-pointer"  data-aos="fade-up" onClick={ scrollDown }>
-              <span className="font-semibold text-xl text-black">往下看更多</span>
+        <div className="relative w-full h-[750px] common-bg-image bg-[url('/images/homeBanner.png')]">
+          <div className="absolute top-[77%] lg:left-[55%] md:left-[57%] sm:left-[61%] xss:left-[60%] left-[65%] -translate-x-[80%] -translate-y-[80%] common-col-flex justify-between">
+            <div data-aos="fade-up" className="mt-22 cursor-pointer" onClick={ scrollDown }>
+              <span className="sm:text-[50px] xss:text-[30px] text-[26px] text-[#FFFFFF] text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]">開始探索</span>
               <br/>
-              <Image src="/images/angles-down-solid.svg" alt="scroll-down" width={36} height={36} className="mx-auto w-9 h-9 mt-10 animate-bounce" />
+              <Image src="/images/angles-down-solid.svg" alt="scroll-down" width={36} height={66} className="w-[36px] h-[66px] mx-auto mt-4 animate-bounce" />
             </div>
           </div>
         </div>
-
-        <div className="flex flex-col justify-center items-center bg-gradient-to-b  from-[#eff4f5] via-[#c8d6da] to-[#a7bdc1]">
-          <div  data-aos="fade-right" className="max-w-[1200px] w-[92%] bg-white  backdrop-blur-[10px] rounded-[10px] shadow-[0_0_8px_rgb(0,0,0)] flex flex-col justify-between items-center p-[20px] my-20">
-            <div className="text-[32px] font-bold mb-[30px] text-[#003E3E]">醫療機構搜尋分類</div>
-            <div className="grid grid-cols-4 gap-40">
-              {searches.map((search, index) => (
-                  <button 
-                    key={index} 
-                    className="flex flex-col justify-between  p-[10px] text-[#336666] hover:bg-[#F0FFF0] rounded-[10px] transition-transform duration-300 hover:scale-110 hover:bg-gradient-to-b  from-[#eff4f5] via-[#c8d6da] to-[#a7bdc1] hover:shadow-lg hover:shadow-gray-400" 
-                    onClick={() => handleSearchClick(search.filter)}
+        {/*拆子元件*/}
+        <div className="flex flex-col w-full h-auto bg-gradient-to-b from-[#FFFFFF] via-[#C3D8EA] to-[#77ACCC]">
+          <div className="common-col-flex justify-center w-full">
+            <div 
+              data-aos="fade-left" 
+              className="common-page-layout justify-between xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] xl:p-[20px] py-[20px] mb-0 mt-20 backdrop-blur-[5px]"
+            >
+              <div  className="mb-[30px] common-title xs:text-[32px] text-[28px]">癌篩機構搜尋分類</div>
+              <div className="grid lg:grid-cols-5 sm:grid-cols-3 xl:gap-20 lg:gap-[29px] md:gap-x-14 sm:gap-y-8 sm:gap-x-3 gap-y-10 gap-x-0">
+                {cancers.map((cancer, index) => (
+                  <button  
+                      key={index}
+                      className="common-col-flex justify-between" 
+                      onClick={() => handleSearchClick(cancer.filter)}
                   >
-                    <div className="w-full h-[80px] bg-contain bg-center bg-no-repeat mb-[10px]" style={{ backgroundImage: `url(${search.image})` }}></div>
-                    <div className="w-full text-center text-[24px]  font-bold py-5 text-[#013f5b]">{search.description}</div>
+                    <div className=" w-[160px] h-[160px] p-[4px] overflow-hidden bg-[#FFFFFF] border-[4px] rounded-full common-border">
+                      <div className="relative transition-all duration-300 hover:scale-110">
+                        <Image  src={cancer.image} alt="icon" width={145} height={145} className="w-auto h-auto rounded-full object-cover"/>
+                        <div className="absolute inset-0 bg-gray-900 bg-opacity-45 rounded-full"></div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                          <Image  src={cancer.icon} alt="icon" width={80} height={85} className="w-auto h-auto object-cover"/>
+                        </div>  
+                      </div>  
+                    </div>
+                    <div className="homePage-subtitle">{cancer.filter}</div>
                   </button>
+                ))}
+              </div>
+              <button 
+                  type="button"  
+                  className="common-button mt-[30px] w-52 h-11 py-4.5 px-2.5  mb-5" 
+                  onClick={()=>router.push('/cancerScreening')} 
+              >
+                立即查詢資格
+              </button>
+            </div>
+          </div>
+          <div className="common-row-flex justify-center w-full">
+            <div  
+              data-aos="fade-right" 
+              className="common-page-layout justify-between xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] xl:p-[20px] py-[20px] lg:my-20 my-20 backdrop-blur-[5px]"
+            >
+              <div className="mb-[30px] common-title xs:text-[32px] text-[28px]">醫療機構搜尋分類</div>
+              <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 xl:gap-40 lg:gap-20 md:gap-x-52 sm:gap-y-8 sm:gap-x-32 gap-y-10 gap-x-0">
+              {searches.map((search, index) => (
+                <button  
+                  key={index}
+                  className="common-col-flex justify-between" 
+                  onClick={() => handleSearchClick(search.filter)}
+                >
+                  <div className="overflow-hidden w-[165px] h-[165px] p-[4px] bg-[#FFFFFF] border-[4px] rounded-full common-border">
+                    <div className="relative transition-all duration-300 hover:scale-110">
+                      <Image  src={search.image} alt="icon" width={148} height={148} className="w-[148px] h-[148px] rounded-full object-cover"/>
+                      <div className="absolute inset-0 bg-gray-900 bg-opacity-20 rounded-full"></div>
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                        <Image  src={search.icon} alt="icon" width={75} height={85} className="w-[75px] h-[85px] object-contain"/>
+                      </div>  
+                    </div>  
+                  </div>
+                  <div className="homePage-subtitle">{search.description}</div>
+                </button>
               ))}
             </div>
             <button 
               type="button" 
-              className="mt-[30px] w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-11  mb-5 hover:bg-[#7199a1]  font-bold text-white text-center text-[20px] transition-all duration-300 hover:scale-105"
+              className="common-button mt-[30px] w-52 h-11 py-4.5 px-2.5 mb-5"
               onClick={()=>router.push('/search')} 
             >
               立即搜尋更多
             </button>
           </div>
-        </div>
-
-        <div className="flex flex-col justify-center items-center bg-gradient-to-b  from-[#a7bdc1] via-[#c8d6da] to-[#eff4f5]">
-          <div data-aos="fade-left" className="max-w-[1200px] w-[92%] bg-white backdrop-blur-[10px] rounded-[10px] shadow-[0_0_8px_rgb(0,0,0)] flex flex-col justify-between items-center p-[20px] my-20">
-            <div  className="text-[32px] font-bold mb-[30px] text-[#003E3E]">癌症篩檢搜尋分類</div>
-            <div className="grid grid-cols-5 gap-20">
-              {cancers.map((cancer, index) => (
-                  <button  
-                    key={index} 
-                    className="flex flex-col justify-between  p-[20px] text-[#336666] hover:bg-white rounded-[10px] transition-transform duration-300 hover:scale-105 hover:shadow-lg hover:shadow-gray-400 hover:bg-gradient-to-b  from-[#eff4f5] via-[#c8d6da] to-[#a7bdc1]" 
-                    onClick={() => handleSearchClick(cancer.filter)}
-                  >
-                    <div className="w-[120px] h-[100px] bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${cancer.image})` }}></div>
-                    <div className="w-full text-center text-[24px] text-[#013f5b] font-bold mt-[15px]">{cancer.filter}</div>
-                  </button>
-                ))}
-            </div>
-            <button 
-                type="button"  
-                className="mt-[30px] w-64 bg-[#24657d] rounded-md py-4.5 px-2.5  h-11  mt-5 mb-5 hover:bg-[#7199a1]  font-bold text-white text-center text-[20px] transition-all duration-300 hover:scale-110" 
-                onClick={()=>router.push('/cancerScreening')} 
-            >
-                立即查詢資格
-            </button>
           </div>
         </div>
       </motion.div>
