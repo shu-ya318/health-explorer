@@ -2,7 +2,6 @@
 import { FirebaseInstitutionData } from '../lib/types';
 import {db, storage} from '../lib/firebaseConfig';
 import { collection, doc, writeBatch, getDocs, setDoc} from 'firebase/firestore';
-import { useLoadScript, useGoogleMap } from '@react-google-maps/api';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 

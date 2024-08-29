@@ -13,6 +13,8 @@ import ProgressBar from '../hooks/useReadingProgress';
 const Header: React.FC = () => {
   const router = useRouter();
   const { user, logout } = useAuth();
+  const [logoutMessage, setLogoutMessage] = useState<string | null>(null);
+  const [isLogoutToastVisible, setIsLogoutToastVisible] = useState(false);
   const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
   const [isSignInModalVisible, setIsSignInModalVisible] = useState(false);
   const [ismenuBarVisible, setIsMenuBarVisible] = useState(false);
@@ -48,6 +50,27 @@ const toggleMenuBar = (e: React.MouseEvent) => {
 };
 
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setTimeout(() => {
+        setIsLogoutToastVisible(true);
+        setLogoutMessage('您已成功登出!');
+      }, 0); 
+    } catch (error) {
+      console.error(error);
+      setLogoutMessage('登出失敗，請稍後再試!');
+    }
+    setIsSignInModalVisible(false);
+    setIsRegisterModalVisible(false);
+  };
+
+  const closeToast = () => {
+    setIsLogoutToastVisible(false);
+    setLogoutMessage(null); 
+  };
+
+
   const handleFavoriteClick = () => {
     if (user) {
       router.push('/favorite'); 
@@ -56,19 +79,13 @@ const toggleMenuBar = (e: React.MouseEvent) => {
     }
   };
 
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      alert('您已成功登出!感謝您的使用!');
-    } catch (error) {
-      console.error(error);
-      alert('登出失敗!請稍後再試!');
+  useEffect(() => {
+    if (isLogoutToastVisible) {
+      console.log('Toast visibility set to true');
     }
-    setIsSignInModalVisible(false);
-    setIsRegisterModalVisible(false);
-  };
-
+  }, [isLogoutToastVisible]);
+  
+  console.log('Logout message set:', logoutMessage);
 
   return (
     <>
@@ -88,6 +105,17 @@ const toggleMenuBar = (e: React.MouseEvent) => {
                   </ruby>
                 </div>
             </Link>
+            {isLogoutToastVisible && logoutMessage && (
+              <div className="z-50 w-full max-w-[200px] h-[45px] common-row-flex m-auto px-6 bg-white rounded-xl border border-gray-200 shadow-sm gap-4">
+                <div  className="my-auto text-gray-900 text-center font-medium">{logoutMessage}</div>
+                <button type="button" className="inline-flex flex-shrink-0 justify-center text-gray-400 transition-all duration-150 " onClick={closeToast}>
+                  <span className="sr-only">Close</span>
+                  <svg className="w-6 h-6 " viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 17L17 7M17 17L7 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              </div>
+            )}
              <button 
               className={`md:hidden menu-button-selector ${ismenuBarVisible ? 'hidden' : 'block'} absolute top-[15px] right-[20px] w-[25px] h-[25px]`}
               onClick={toggleMenuBar}
