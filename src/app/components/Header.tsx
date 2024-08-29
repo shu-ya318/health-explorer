@@ -23,7 +23,7 @@ const Header: React.FC = () => {
   const signInButtonRef = useRef<HTMLButtonElement>(null);
   const registerButtonRef = useRef<HTMLButtonElement>(null);
   const logoutButtonRef = useRef<HTMLButtonElement>(null);
-  const favoriteButtonRef = useRef<HTMLButtonElement>(null);
+  const myFavoriteButtonRef = useRef<HTMLButtonElement>(null);
 
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const handleRegisterClick = () => {
     if (user) {
       router.push('/favorite'); 
     } else {
-      favoriteButtonRef.current?.blur();
+      myFavoriteButtonRef.current?.blur();
       setIsSignInModalVisible(true);
     }
   };
@@ -152,19 +152,19 @@ const handleRegisterClick = () => {
                     <button 
                       ref={signInButtonRef}
                       type="button" 
-                      className="flex justify-center w-[52px] h-[35px]"
+                      className={`flex justify-center w-[52px] h-[35px] ${!isSignInModalVisible ? 'hover:text-[#2D759E] hover:font-semibold' : ''}`}
                       onClick={handleSignInClick}
                     >
-                      <span className="m-auto text-[#2598B6] text-center hover:text-[#2D759E] hover:font-semibold">登入</span>
+                      <span className="m-auto text-[#2598B6] text-center">登入</span>
                     </button>
                     {isSignInModalVisible && <SignInModal  onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
                     <button 
                       ref={registerButtonRef}
                       type="button" 
-                      className="flex justify-center w-[52px] h-[35px]"
+                      className={`flex justify-center w-[52px] h-[35px] ${!isRegisterModalVisible ? 'hover:text-[#2D759E] hover:font-semibold' : ''}`}
                       onClick={handleRegisterClick}
                     >
-                      <span className="m-auto text-[#2598B6] text-center hover:text-[#2D759E] hover:font-semibold">註冊</span>
+                      <span className="m-auto text-[#2598B6] text-center hover:text-[#2D759E]">註冊</span>
                     </button>
                     {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
                   </>
@@ -173,20 +173,20 @@ const handleRegisterClick = () => {
                   <button 
                     ref={logoutButtonRef}
                     type="button" 
-                    className="flex justify-center w-[75px] h-[35px]"
+                    className="flex justify-center w-[75px] h-[35px]  hover:text-[#2D759E] hover:font-semibold"
                     onClick={handleLogout}
                   >
-                    <span className="m-auto text-[#2598B6] text-center hover:text-[#2D759E] hover:font-semibold">登出</span>
+                    <span className="m-auto text-[#2598B6] text-center">登出</span>
                   </button>
                 </>
               )}
                <button 
-                  ref={favoriteButtonRef}
+                  ref={myFavoriteButtonRef}
                   type="button" 
-                  className="flex justify-center w-[75px] h-[35px]"
+                  className={`flex justify-center w-[75px] h-[35px] ${!isSignInModalVisible ? 'hover:text-[#2D759E] hover:font-semibold' : ''}`}
                   onClick={handleFavoriteClick}
                 >                  
-                <span className="m-auto text-[#2598B6] text-center hover:text-[#2D759E] hover:font-semibold"> 我的收藏 </span>
+                <span className="m-auto text-[#2598B6] text-center"> 我的收藏 </span>
               </button>
             </div>
         </div>

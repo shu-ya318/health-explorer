@@ -1,5 +1,5 @@
 'use client';
-import { useState, MouseEvent} from 'react';
+import { useState, useRef, useEffect, MouseEvent} from 'react';
 import { useAuth } from '../../hooks/useAuth';         
 import { UserCredential,AuthError }from 'firebase/auth';
 import Image from 'next/image';
@@ -20,6 +20,12 @@ const SignInModal: React.FC<SignInModalProps> = ({ onClose, onShowRegister }) =>
     const [email, setEmail] = useState(defaultEmail);
     const [password, setPassword] = useState(defaultPassword);
     const [signInMessage, setSignInMessage] = useState<string | null>(null);
+    const firstInputRef = useRef<HTMLInputElement>(null);
+
+
+    useEffect(() => {
+        firstInputRef.current?.focus();
+    }, []);
 
 
     const handleSignIn = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -62,6 +68,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ onClose, onShowRegister }) =>
                     <div className="common-row-flex w-full mb-[35px]">
                         <label htmlFor="email-signin" className="common-row-flex flex-shrink-0 w-[60px] pr-2.5 text-black">Email:</label>
                         <input 
+                            ref={firstInputRef} 
                             type="email" 
                             placeholder="請輸入Email" 
                             id="email-signin"

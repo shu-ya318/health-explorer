@@ -1,5 +1,5 @@
 'use client';
-import { useState, MouseEvent} from 'react';
+import { useState, useRef, useEffect, MouseEvent} from 'react';
 import { useAuth } from '../../hooks/useAuth';         
 import { UserCredential,AuthError }from 'firebase/auth';
 import Image from 'next/image';
@@ -10,9 +10,16 @@ interface RegisterModalProps {
     onShowSignIn: (visible: boolean) => void;
 }
 
+
 const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onShowSignIn}) => {
     const { user, register} = useAuth();
     const [rigisterMessage, setRigisterMessage] = useState<string | null>(null);
+    const firstInputRef = useRef<HTMLInputElement>(null);
+
+
+    useEffect(() => {
+        firstInputRef.current?.focus();
+    }, []);
 
 
     const handleRegister = async (e:React.MouseEvent<HTMLButtonElement>) => {
@@ -62,6 +69,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose, onShowSignIn}) =
                     <div className="common-row-flex w-full mb-[35px]">
                         <label htmlFor="email-register" className="common-row-flex flex-shrink-0 w-[60px] pr-2.5 text-black">Email:</label>
                         <input 
+                            ref={firstInputRef} 
                             type="email" 
                             placeholder="請輸入Email" 
                             id="email-register"

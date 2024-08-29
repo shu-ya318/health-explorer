@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import Image from 'next/image';
-import { FirebaseFavoriteData, InstitutionInfo} from '../lib/types';
+import { FirebaseFavoriteData, InstitutionInfo} from '../../lib/types';
 import { useApiIsLoaded, APIProvider, Map, AdvancedMarker} from '@vis.gl/react-google-maps';
 
 

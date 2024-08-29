@@ -1,6 +1,6 @@
 //import {useInstitutions }  from "../contexts/InstitutionsContext";
 import { useRouter } from 'next/navigation'; 
-import {useState, useEffect, useMemo} from 'react';
+import {useState, useEffect, useMemo, useRef} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -9,7 +9,7 @@ import BounceLoader from "react-spinners/BounceLoader";
 import { db } from '../../lib/firebaseConfig';
 import { collection, doc, getDocs, getDoc, query, where, deleteDoc, updateDoc, increment } from 'firebase/firestore';
 import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-import { useFavorite} from '../../hooks/useFavorite'; 
+import { useFavorite } from '../../hooks/useFavorite'; 
 import { FirebaseFavoriteData, InstitutionInfo} from '../../lib/types';
 import { useAuth } from '../../hooks/useAuth'; 
 import algoliasearch from 'algoliasearch/lite';
@@ -30,6 +30,8 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
     const [openLoading, setOpenLoading] = useState<boolean>(true);
     const [loading,setLoading] = useState<boolean>(false);
 
+    const favoriteButtonRef = useRef<HTMLButtonElement>(null);
+    const loggedFavoriteButtonRef = useRef<HTMLButtonElement>(null);
     const [favoriteHover, setFavoriteHover] = useState<Record<string, boolean>>({});
     const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
     const [isSignInModalVisible, setIsSignInModalVisible] = useState(false);
@@ -46,6 +48,14 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
     useEffect(() => {
         console.log('updated:', favoriteHover);
     }, [favoriteHover]);
+
+    useEffect(() => {
+        if (!user && favoriteButtonRef.current) {
+            favoriteButtonRef.current.focus();
+        } else if (user && loggedFavoriteButtonRef.current) {
+            loggedFavoriteButtonRef.current.focus();
+        }
+    }, [user]);
 
     
     useEffect(() => {
@@ -219,10 +229,15 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                         {!user ? (
                                             <>
                                                 <button 
+                                                    ref={favoriteButtonRef}
                                                     type="button" 
                                                     onMouseEnter={() => {console.log(`Mouse entered for ${institutionDetails.hosp_name}`); setFavoriteHoverState(institutionDetails.hosp_name, true)}}
-                                                    onMouseLeave={() => { console.log(`Mouse left for ${institutionDetails.hosp_name}`); setFavoriteHoverState(institutionDetails.hosp_name, false)}} 
-                                                    onClick={() => setIsSignInModalVisible(true)}
+                                                    onMouseLeave={() => {console.log(`Mouse left for ${institutionDetails.hosp_name}`); setFavoriteHoverState(institutionDetails.hosp_name, false)}} 
+                                                    onClick={() => {
+                                                        console.log(`Click for ${institutionDetails.hosp_name}`);
+                                                        setFavoriteHoverState(institutionDetails.hosp_name, false);
+                                                        setIsSignInModalVisible(true);
+                                                    }}
                                                 >
                                                     <Image 
                                                         src={favoriteHover[institutionDetails.hosp_name] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
@@ -239,10 +254,16 @@ const InstitutionContent: React.FC = (): React.ReactElement | null  => {
                                                     const isFavorited = state.favorites.some(item => item.userId === user.uid && item.hosp_name === institutionDetails.objectID);
                                                     const handleHeartClick = isFavorited ? () => handleRemoveClick(institutionDetails.objectID, user.uid) : () => handleAddClick(institutionDetails, user.uid);
                                                     return (
-                                                        <button type="button" 
+                                                        <button 
+                                                            ref={loggedFavoriteButtonRef}
+                                                            type="button" 
                                                             onMouseEnter={() => {console.log(`Mouse entered for ${institutionDetails.hosp_name}`); setFavoriteHoverState(institutionDetails.hosp_name, true)}}
                                                             onMouseLeave={() => { console.log(`Mouse left for ${institutionDetails.hosp_name}`); setFavoriteHoverState(institutionDetails.hosp_name, false)}} 
-                                                            onClick={handleHeartClick}
+                                                            onClick={() => {
+                                                                console.log(`Click for ${institutionDetails.hosp_name}`);
+                                                                setFavoriteHoverState(institutionDetails.hosp_name, false);
+                                                                handleHeartClick();
+                                                            }}
                                                         >
                                                             <Image 
                                                                 src={isFavorited || favoriteHover[institutionDetails.hosp_name]? "/images/diamond_selected.png" : "/images/diamond_white.png"}  
