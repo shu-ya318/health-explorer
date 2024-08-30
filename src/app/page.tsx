@@ -94,7 +94,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
         <div className="flex flex-col w-full h-auto bg-gradient-to-b from-[#FFFFFF] via-[#C3D8EA] to-[#77ACCC]">
           <div className="common-col-flex justify-center w-full">
             <div 
-              data-aos="fade-left" 
+              
               className="common-page-layout justify-between xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] xl:p-[20px] py-[20px] mb-0 mt-20 backdrop-blur-[5px]"
             >
               <div  className="mb-[30px] common-title xs:text-[32px] text-[28px]">癌篩機構搜尋分類</div>
@@ -129,7 +129,7 @@ const HomePage: React.FC = (): React.ReactElement | null  => {
           </div>
           <div className="common-row-flex justify-center w-full">
             <div  
-              data-aos="fade-right" 
+              
               className="common-page-layout justify-between xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] xl:p-[20px] py-[20px] lg:my-20 my-20 backdrop-blur-[5px]"
             >
               <div className="mb-[30px] common-title xs:text-[32px] text-[28px]">醫療機構搜尋分類</div>

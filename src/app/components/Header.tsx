@@ -1,44 +1,50 @@
 'use client';
+
 import { useState, useEffect, useRef} from 'react'; 
+
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+
 import { useAuth } from '../hooks/useAuth'; 
+
 import SignInModal from './auth/SignInModal';
 import RegisterModal from './auth/RegisterModal';
-import 'animate.css';
-import ProgressBar from '../hooks/useReadingProgress';
+import ProgressBar from './ProgressBar';
 
+import 'animate.css';
 
 const Header: React.FC = () => {
   const router = useRouter();
   const { user, logout } = useAuth();
+
   const [logoutMessage, setLogoutMessage] = useState<string | null>(null);
-  const [isLogoutToastVisible, setIsLogoutToastVisible] = useState(false);
-  const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
-  const [isSignInModalVisible, setIsSignInModalVisible] = useState(false);
-  const [ismenuBarVisible, setIsMenuBarVisible] = useState(false);
-  const menuDivRef = useRef<HTMLDivElement>(null); 
+  const [isLogoutToastVisible, setIsLogoutToastVisible] = useState<boolean>(false);
+  const [isRegisterModalVisible, setIsRegisterModalVisible] = useState<boolean>(false);
+  const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
+  const [isMenuBarVisible, setIsMenuBarVisible] = useState<boolean>(false);  
+
+  const logoutButtonRef = useRef<HTMLButtonElement>(null);
   const toastRef = useRef<HTMLDivElement>(null);
   const signInButtonRef = useRef<HTMLButtonElement>(null);
   const registerButtonRef = useRef<HTMLButtonElement>(null);
-  const logoutButtonRef = useRef<HTMLButtonElement>(null);
   const myFavoriteButtonRef = useRef<HTMLButtonElement>(null);
-
+  const menuDivRef = useRef<HTMLDivElement>(null); 
 
   useEffect(() => {
-    function handler(e: Event): void {
+    function handler(event: MouseEvent): void {
       if (typeof window !== 'undefined' && typeof MouseEvent !== 'undefined') {
-        if (e instanceof MouseEvent) {
-          const target = e.target as HTMLElement;
+        if (event instanceof MouseEvent) {
+          const target = event.target as HTMLElement;
 
-          if (menuDivRef.current && !menuDivRef.current.contains(target)) {
-            if (ismenuBarVisible) {
+          //menu、toast功能分別指定點擊元素以外範圍會關閉
+          if (isMenuBarVisible && menuDivRef.current && !menuDivRef.current.contains(target)) {
+            if (isMenuBarVisible) {
               setIsMenuBarVisible(false);
             }
           }
 
-          if (isLogoutToastVisible && toastRef.current && !toastRef.current.contains(target)) { 
+          if (isLogoutToastVisible && isLogoutToastVisible && toastRef.current && !toastRef.current.contains(target)) { 
             closeToast(); 
           }
         }
@@ -51,36 +57,37 @@ const Header: React.FC = () => {
         window.removeEventListener('click', handler);
       };
     }
-  }, [ismenuBarVisible, setIsMenuBarVisible, isLogoutToastVisible]);
+  }, [isMenuBarVisible, setIsMenuBarVisible, isLogoutToastVisible]);
 
-
-  const toggleMenuBar = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const toggleMenuBar = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
     setIsMenuBarVisible(prev => !prev);
   };
 
 
-  const handleLogout = async (e: React.MouseEvent) => {
-    e.preventDefault(); 
-    e.stopPropagation();
+  const handleLogout = async (event: React.MouseEvent<HTMLButtonElement>) => {
     logoutButtonRef.current?.blur();
+
     try {
       await logout();
-      setIsLogoutToastVisible(true);
-      setLogoutMessage('您已成功登出!');
       setIsMenuBarVisible(false);
+      setLogoutMessage('您已成功登出!');
+      setIsLogoutToastVisible(true);
     } catch (error) {
       console.error(error);
       setLogoutMessage('登出失敗，請稍後再試!');
     } finally {
+      //解決UI延遲渲染，誤觸發登入跟註冊按鈕跳出modal
       setIsSignInModalVisible(false);
       setIsRegisterModalVisible(false);
     }
   };
+
   const closeToast = () => {
     setIsLogoutToastVisible(false);
     setLogoutMessage(null); 
   };
+
 
   const handleSignInClick = () => {
     console.log('SignIn button was clicked');
@@ -93,7 +100,6 @@ const handleRegisterClick = () => {
     setIsRegisterModalVisible(true);
   };
 
-
   const handleFavoriteClick = () => {
     if (user) {
       router.push('/favorite'); 
@@ -102,7 +108,6 @@ const handleRegisterClick = () => {
       setIsSignInModalVisible(true);
     }
   };
-
 
   return (
     <>
@@ -137,15 +142,15 @@ const handleRegisterClick = () => {
               </div>
             )}
              <button 
-              className={`md:hidden menu-button-selector ${ismenuBarVisible ? 'hidden' : 'block'} absolute top-[15px] right-[20px] w-[25px] h-[25px]`}
+              className={`md:hidden menu-button-selector ${isMenuBarVisible ? 'hidden' : 'block'} absolute top-[15px] right-[20px] w-[25px] h-[25px]`}
               onClick={toggleMenuBar}
             >
               <Image src="/images/bars-solid.svg" alt="menu" width={25} height={25} className="w-[25px] h-[25px]"/>
             </button>
-            <div className={`md:hidden  ${ismenuBarVisible ? 'absolute fixed inset-0 z-40 w-screen h-screen flex bg-black bg-opacity-30' : 'hidden'}`}></div>
+            <div className={`md:hidden  ${isMenuBarVisible ? 'absolute fixed inset-0 z-40 w-screen h-screen flex bg-black bg-opacity-30' : 'hidden'}`}></div>
             <div 
               ref={menuDivRef}
-              className={`md:common-row-flex md:justify-between no-underline ${ismenuBarVisible ? 'absolute top-0 right-0 z-50 w-44 h-screen common-col-flex pt-20 bg-[white] shadow-[0_0_3px_#1e94b4]' : 'hidden'}`}
+              className={`md:common-row-flex md:justify-between no-underline ${isMenuBarVisible ? 'absolute top-0 right-0 z-50 w-44 h-screen common-col-flex pt-20 bg-[white] shadow-[0_0_3px_#1e94b4]' : 'hidden'}`}
             >
               {!user ? (
                   <>
@@ -173,7 +178,7 @@ const handleRegisterClick = () => {
                   <button 
                     ref={logoutButtonRef}
                     type="button" 
-                    className="flex justify-center w-[75px] h-[35px]  hover:text-[#2D759E] hover:font-semibold"
+                    className="flex justify-center w-[50px] h-[35px]  hover:text-[#2D759E] hover:font-semibold"
                     onClick={handleLogout}
                   >
                     <span className="m-auto text-[#2598B6] text-center">登出</span>
@@ -183,7 +188,7 @@ const handleRegisterClick = () => {
                <button 
                   ref={myFavoriteButtonRef}
                   type="button" 
-                  className={`flex justify-center w-[75px] h-[35px] ${!isSignInModalVisible ? 'hover:text-[#2D759E] hover:font-semibold' : ''}`}
+                  className={`flex justify-center w-[70px] h-[35px] ${!isSignInModalVisible ? 'hover:text-[#2D759E] hover:font-semibold' : ''}`}
                   onClick={handleFavoriteClick}
                 >                  
                 <span className="m-auto text-[#2598B6] text-center"> 我的收藏 </span>
@@ -192,6 +197,7 @@ const handleRegisterClick = () => {
         </div>
       </header>
     </>
-    );
-  }
-  export default Header;
+  );
+}
+
+export default Header;

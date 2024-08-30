@@ -587,9 +587,6 @@ video {
 .pointer-events-none {
   pointer-events: none;
 }
-.pointer-events-auto {
-  pointer-events: auto;
-}
 .visible {
   visibility: visible;
 }
@@ -1164,6 +1161,9 @@ video {
 .w-\[46px\] {
   width: 46px;
 }
+.w-\[50px\] {
+  width: 50px;
+}
 .w-\[52px\] {
   width: 52px;
 }
@@ -1175,6 +1175,9 @@ video {
 }
 .w-\[70\%\] {
   width: 70%;
+}
+.w-\[70px\] {
+  width: 70px;
 }
 .w-\[75px\] {
   width: 75px;

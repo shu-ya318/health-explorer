@@ -55,6 +55,8 @@ const districts = [
 const SearchContent: React.FC = (): React.ReactElement | null  => {
     const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
     const [isSignInModalVisible, setIsSignInModalVisible] = useState(false);
+    const favoriteButtonRef = useRef<HTMLButtonElement>(null);
+    const loggedFavoriteButtonRef = useRef<HTMLButtonElement>(null);
     const [favoriteHover, setFavoriteHover] = useState<Record<string, boolean>>({});
     const { user } = useAuth();
     const { state, addFavorite, removeFavorite} = useFavorite();
@@ -455,11 +457,17 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                         {!user ? (
                                             <>
                                                 <button 
+                                                    ref={favoriteButtonRef}
                                                     type="button"  
                                                     className="absolute top-[5px] left-[130px] z-10" 
                                                     onMouseEnter={() => {console.log(`Mouse entered for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, true)}}
                                                     onMouseLeave={() => { console.log(`Mouse left for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, false)}}
-                                                    onClick={() => setIsSignInModalVisible(true)}>
+                                                    onClick={() => {
+                                                        console.log(`Click for ${institution.hosp_name}`);
+                                                        setFavoriteHoverState(institution.hosp_name, false);
+                                                        setIsSignInModalVisible(true);
+                                                    }}
+                                                >
                                                     <Image 
                                                         src={favoriteHover[institution.hosp_name] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
                                                         alt="favorite" 
@@ -476,11 +484,17 @@ const SearchContent: React.FC = (): React.ReactElement | null  => {
                                                     const handleHeartClick = isFavorited ? () => handleRemoveClick(institution.objectID, user.uid) : () => handleAddClick(institution, user.uid);
                                                     return (
                                                         <button 
+                                                            ref={loggedFavoriteButtonRef}
                                                             type="button" 
                                                             className="absolute top-[5px] left-[130px] z-10" 
                                                             onMouseEnter={() => {console.log(`Mouse entered for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, true)}}
                                                             onMouseLeave={() => { console.log(`Mouse left for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, false)}}
-                                                            onClick={handleHeartClick}>
+                                                            onClick={() => {
+                                                                console.log(`Click for ${institution.hosp_name}`);
+                                                                setFavoriteHoverState(institution.hosp_name, false);
+                                                                handleHeartClick();
+                                                            }}
+                                                        >
                                                             <Image 
                                                                 src={isFavorited || favoriteHover[institution.hosp_name] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
                                                                 alt="favorite" 
