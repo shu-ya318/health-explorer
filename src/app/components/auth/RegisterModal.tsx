@@ -17,7 +17,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     onClose, 
     onShowSignIn
 }) => {
-    const { register} = useAuth();
+    const { register } = useAuth();
     const [registerMessage, setRegisterMessage] = useState<string | null>(null);
     const firstInputRef = useRef<HTMLInputElement>(null);
 
@@ -31,7 +31,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
         const emailInput = document.getElementById("email-register") as HTMLInputElement;
         const passwordInput = document.getElementById("password-register") as HTMLInputElement;
 
-        if (!emailInput.value ||  !passwordInput.value) {
+        if (!emailInput.value || !passwordInput.value) {
             setRegisterMessage("欄位不可空白!"); 
           return;
         }
@@ -57,24 +57,24 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     };
 
     return (
-        <div 
+        <div
+            onClick={onClose} 
             className="fixed inset-0 z-50 common-row-flex justify-center bg-black bg-opacity-30" 
-            onClick={onClose}
         >
             <div 
-                className="max-w-[900px] md:w-[92%] w-[85%] h-[490px] flex rounded-lg shadow-lg" 
                 onClick={event => event.stopPropagation()}
+                className="max-w-[900px] md:w-[92%] w-[85%] h-[490px] flex rounded-lg shadow-lg" 
             >
                 <div className="w-1/2 sm:common-col-flex hidden justify-center p-7 rounded-l-lg bg-[#4b96af] backdrop-blur-sm">
                     <div className="md:w-[300px] md:h-[300px] sm:w-[250px] sm:h-[250px] mb-2.5 common-bg-image bg-[url('/images/LOGO.png')]"></div>
                     <div className="mt-4 text-white text-3xl font-bold">健康探索者</div>
                 </div>
                 <div className="relative sm:w-1/2 xs:w-[90%] w-[85%] common-col-flex p-7 rounded-lg sm:rounded-l-none sm:rounded-r-lg backdrop-blur-sm bg-white bg-opacity-70">
-                    <Image 
+                    <Image
+                        onClick={onClose}  
                         src="/images/xmark-solid.svg"
                         alt="close" width={20} height={20}
                         className="absolute top-2.5 right-2.5 w-[20px] h-[20px] text-gray-600 hover:text-red-500 cursor-pointer" 
-                        onClick={onClose} 
                     />
                     <div className="mb-[35px] text-3xl font-bold text-[#1A5665]">註冊會員</div>
                     <div className="w-full common-row-flex mb-[35px]">
@@ -106,20 +106,20 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                             className="w-full h-9 md:px-3.5 px-[5px] bg-[#FFFFFF] leading-5 md:text-base text-[14px] text-gray-600 font-medium border-none focus:outline-none focus:border-[#36B2D7]"
                         />
                     </div>
-                    <button 
+                    <button
+                        onClick={handleRegister} 
                         type="button" 
                         className="w-full h-[44px] mb-[20px] rounded-lg bg-[#5B98BC] hover:bg-[#2D759E] font-bold text-white text-center text-[20px]"
-                        onClick={handleRegister}
                     >
                     註冊
                     </button>
                     <div className="w-full common-col-flex justify-center mt-[15px] text-base">
-                        <span 
-                            className="text-center text-[18px] text-[#5B98BC] hover:text-[#2D759E] cursor-pointer"
+                        <span
                             onClick={() => {
                                 onClose();
                                 onShowSignIn(true);
-                            }}
+                            }} 
+                            className="text-center text-[18px] text-[#5B98BC] hover:text-[#2D759E] cursor-pointer"
                         >
                             已有會員?點此登入
                         </span>

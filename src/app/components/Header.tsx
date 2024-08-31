@@ -67,17 +67,18 @@ const Header: React.FC = () => {
 
   const handleLogOut = async (event: React.MouseEvent<HTMLButtonElement>) => {
     logOutButtonRef.current?.blur();
+    event.preventDefault();
 
     try {
       await logOut();
       setIsMenuBarVisible(false);
       setLogOutMessage("您已成功登出!");
       setIsLogOutToastVisible(true);
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
       setLogOutMessage("登出失敗，請稍後再試!");
     } finally {
-      //解決UI延遲渲染，誤觸發登入跟註冊按鈕跳出modal
+      //為了解決UI延遲渲染，誤觸發登入跟註冊按鈕跳出modal
       setIsSignInModalVisible(false);
       setIsRegisterModalVisible(false);
     }
@@ -90,7 +91,6 @@ const Header: React.FC = () => {
 
 
   const handleSignInClick = () => {
-    console.log("SignIn button was clicked");
     signInButtonRef.current?.blur();
     setIsSignInModalVisible(true);
   };
@@ -162,10 +162,10 @@ const handleRegisterClick = () => {
                 </button>
               </div>
             )}
-             <button 
-               onClick={toggleMenuBar}
-               type="button"
-               className={`absolute top-[15px] right-[20px] w-[25px] h-[25px] md:hidden menu-button-selector ${isMenuBarVisible ? 'hidden' : 'block'}`}
+              <button 
+                onClick={toggleMenuBar}
+                type="button"
+                className={`absolute top-[15px] right-[20px] w-[25px] h-[25px] md:hidden menu-button-selector ${isMenuBarVisible ? 'hidden' : 'block'}`}
               >
               <Image 
                 src="/images/bars-solid.svg" 
@@ -223,11 +223,11 @@ const handleRegisterClick = () => {
                   </button>
                 </>
               )}
-               <button 
-                 onClick={handleFavoriteClick}
-                 ref={myFavoriteButtonRef}
-                 type="button" 
-                 className={`flex justify-center w-[70px] h-[35px] ${!isSignInModalVisible ? 'hover:text-[#2D759E] hover:font-semibold' : ''}`}
+                <button 
+                  onClick={handleFavoriteClick}
+                  ref={myFavoriteButtonRef}
+                  type="button" 
+                  className={`flex justify-center w-[70px] h-[35px] ${!isSignInModalVisible ? 'hover:text-[#2D759E] hover:font-semibold' : ''}`}
                 >                  
                 <span className="m-auto text-[#2598B6] text-center">我的收藏</span>
               </button>

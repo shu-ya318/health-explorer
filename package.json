@@ -28,7 +28,6 @@
     "react-dom": "^18",
     "react-instantsearch": "^7.12.4",
     "react-instantsearch-core": "^7.12.4",
-    "react-loading-skeleton": "^3.4.0",
     "react-spinners": "^0.14.1"
   },
   "devDependencies": {
