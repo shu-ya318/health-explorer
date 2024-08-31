@@ -1,16 +1,15 @@
-'use client';
+"use client";
+
 // import { InstitutionsProvider} from './contexts/InstitutionsContext';
-import { AuthContextProvider } from './hooks/useAuth';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import { AuthProvider } from "./hooks/useAuth";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
+import { InstantSearch} from "react-instantsearch";
 import algoliasearch from "algoliasearch/lite";
-import "instantsearch.css/themes/satellite.css";  // 改更小幅度，改修改部分CSS import "instantsearch.css/themes/algolia-min.css"
-import { InstantSearch, Hits, SearchBox, Configure} from "react-instantsearch";
-
+import "instantsearch.css/themes/satellite.css";
 
 const searchClient = algoliasearch("N0FZM6IRFS", "f0a299471e81f359d8306ebca289feaf");
-
 
 export default function ParentProvider({
     children
@@ -18,14 +17,14 @@ export default function ParentProvider({
     children: React.ReactNode
 }) {
     return (
-        <AuthContextProvider>
+        <AuthProvider>
             <InstantSearch searchClient={searchClient} indexName="Medical_Institutions">
                 <>
-                    <Header />
+                    <Header/>
                     {children}
-                    <Footer />
+                    <Footer/>
                 </>
             </InstantSearch>
-        </AuthContextProvider>
+        </AuthProvider>
     )
 }
