@@ -1,14 +1,15 @@
-'use client';
-import InstitutionContent from './InstitutionContent';
-import { FavoriteProvider } from '../../hooks/useFavorite';
-import { useAuth } from '../../hooks/useAuth';
-// import { InstitutionsProvider } from '../../contexts/InstitutionsContext';
+"use client";
+
+import { useAuth } from "../../hooks/useAuth";
+import { FavoriteProvider } from "../../hooks/useFavorite";
+
+import InstitutionContent from "./InstitutionContent";
+// import { InstitutionsProvider } from "../../contexts/InstitutionsContext";
 
 
-const InstitutionPage: React.FC = (): React.ReactElement | null  => {
+const InstitutionPage: React.FC = () => {
     const { user } = useAuth();
 
-    
     return(
         //<InstitutionsProvider>  
         <FavoriteProvider user={user}> 
@@ -17,6 +18,5 @@ const InstitutionPage: React.FC = (): React.ReactElement | null  => {
         //</InstitutionsProvider>
     )
 }
-
 
 export default InstitutionPage;

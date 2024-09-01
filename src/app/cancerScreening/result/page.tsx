@@ -34,7 +34,6 @@ const CancerScreeningResultPage: React.FC = () => {
         }
     }, []);
 
-
     if (!answers || answers.length === 0) {
         return <p>正在加載答案...</p>; 
     }

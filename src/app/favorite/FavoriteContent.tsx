@@ -1,30 +1,58 @@
-import { useRouter } from 'next/navigation';
-import { useState, useEffect,useCallback , useRef, Fragment } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import { 
+    useState, 
+    useEffect,
+    useCallback, 
+    useRef
+} from "react";
+import Image from "next/image";
+
+import { useFavorite } from "../hooks/useFavorite";
+import { useAuth } from "../hooks/useAuth"; 
+
+import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
+import FavoriteDataDisplay from "./FavoriteDataDisplay";
+import FavoriteExporter from "./FavoriteExporter";
+
+import { db } from "../lib/firebaseConfig";
+import { 
+    collection
+    ,doc 
+    , query
+    , where
+    , startAfter
+    , limit
+    , getDocs
+    , deleteDoc
+    , DocumentSnapshot
+} from "firebase/firestore";
+import { FirebaseFavoriteData } from "../lib/types";
+
+import { 
+    Font,
+    pdf, 
+    Document as PDFDocument, 
+    Page, 
+    Text, 
+    View, 
+    StyleSheet 
+} from "@react-pdf/renderer";
+import { saveAs } from "file-saver";
+import { 
+    Document, 
+    Packer, 
+    Paragraph, 
+    TextRun 
+} from "docx";
+import HomePage  from "../page"; 
 
 import { motion, AnimatePresence } from "framer-motion"; 
 import RingLoader from "react-spinners/RingLoader";
 
-import { db } from '../lib/firebaseConfig';
-import { collection,doc , query, where, orderBy, startAfter, limit, getDocs, addDoc, deleteDoc, DocumentSnapshot, Timestamp } from 'firebase/firestore';
-import { useFavorite} from '../hooks/useFavorite'; 
-import { FirebaseFavoriteData} from '../lib/types';
-import { useAuth } from '../hooks/useAuth'; 
-
-import { Font,pdf, Document as PDFDocument, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import { saveAs } from 'file-saver';
-import { Document , Packer, Paragraph, TextRun } from "docx";
-
-import HomePage  from '../page'; 
-import {ConfirmDeleteModal} from './ConfirmDeleteModal';
-
-
-const FavoriteContent: React.FC = (): React.ReactElement | null  => {
+const FavoritePage: React.FC = () => {
     const { uid } = useAuth().user || {}; 
-    const { state, fetchFavoriteData, removeFavorite} = useFavorite();
+    const { removeFavorite } = useFavorite();
 
-    const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(false);
     const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
     const [allDataLoaded, setAllDataLoaded] = useState(false);
@@ -33,21 +61,17 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
     const [favoriteData, setFavoriteData] = useState<FirebaseFavoriteData[]>([]);
     const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
-    const [hover, setHover] = useState<Record<string, boolean>>({});
-    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
-    const router = useRouter();
-
-
     const fetchMoreData = useCallback(async () => {
-        if (! uid  || loading || (!lastVisible && !isInitialLoad) || allDataLoaded) return;
+        if (! uid || loading || (!lastVisible && !isInitialLoad) || allDataLoaded) return;
 
         setLoading(true);
         try {
             const nextQuery = query(
-                collection(db, 'favorites'),
-                where('userId', '==', uid),
+                collection(db, "favorites"),
+                where("userId", "==", uid),
                 lastVisible ? startAfter(lastVisible) : limit(3),
                 limit(3)
             );
@@ -56,7 +80,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
             if (documentSnapshots.docs.length > 0) {
                 const newData = documentSnapshots.docs.map(doc => ({ ...doc.data()as FirebaseFavoriteData, id: doc.id }));
                 setFavoriteData(prev => {
-                    console.log('Updating favoriteData:', prev, newData);
+                    console.log("Updating favoriteData:", prev, newData);
                     return [...prev, ...newData];
                 });
                 setLastVisible(documentSnapshots.docs[documentSnapshots.docs.length - 1]);
@@ -67,7 +91,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                 }
             }
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error("Error fetching data:", error);
         }
         setLoading(false);
     }, [uid,loading, lastVisible, isInitialLoad, allDataLoaded]);
@@ -87,45 +111,41 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
         }, { threshold: 1.0 });
     
         if (lastElementRef.current) {
-          observer.observe(lastElementRef.current);
+            observer.observe(lastElementRef.current);
         }
 
         return () => {
-        console.log(" Cleanup: lastVisible", lastVisible);
-          observer.disconnect();
+            console.log("Cleanup: lastVisible", lastVisible);
+            observer.disconnect();
         };
-      }, [lastVisible, loading, fetchMoreData, isInitialLoad, allDataLoaded]);
-
-
-    const toggleHover = (id: string) => { 
-        setHover(prev => ({
-            ...prev,
-            [id]: !prev[id]
-        }));
-        console.log(hover);
-    };
+    }, [lastVisible, loading, fetchMoreData, isInitialLoad, allDataLoaded]);
     
 
-    const handleDeleteClick = async (docId: string) => {
+    const handleDeleteClick = (docId: string) => {
         setSelectedId(docId);
         setIsConfirmModalOpen(true);
-      };
+    };
+
     const handleConfirmDelete = async () => {
-    if (!selectedId || !uid) return;
-
-    try {
-        await removeFavorite(selectedId);
-        setFavoriteData(favoriteData.filter(item => item.id !== selectedId));
-    } catch (error) {
-        console.error('刪除失敗:', error);
-    }
-    setIsConfirmModalOpen(false);
+        if (!selectedId || !uid) return;
+    
+        try {
+            await removeFavorite(selectedId);
+            //確保即時更新favoriteData，重渲染反映在UI
+            setFavoriteData(prevData => prevData.filter(item => item.id !== selectedId));
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsConfirmModalOpen(false);
+        }
     };
+
     const handleCloseModal = () => {
-    setIsConfirmModalOpen(false);
-    };
+        setIsConfirmModalOpen(false);
+        };
+    
 
-
+    //匯出前，確保取得所有收藏資料，非僅當前滾動頁面資料
     const fetchAllData = async (): Promise<FirebaseFavoriteData[]> => {
         if (!uid) return [];
     
@@ -159,6 +179,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
             { src: '/fonts/NotoSansTC-Bold.ttf', fontWeight: 'bold' },
         ]
     });
+
     const styles = StyleSheet.create({
         header: {
             fontFamily: 'NotoSansTC',
@@ -169,6 +190,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
             fontWeight: 'normal'
         }
     });
+
     const exportToPDF = (data: FirebaseFavoriteData[]) => {
         const doc = (
             <PDFDocument>
@@ -195,6 +217,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
         );
         return doc;
     };
+
     const prepareAndExportToPDF = async () => {
         const allData = await fetchAllData(); 
         const doc = exportToPDF(allData); 
@@ -227,6 +250,7 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
         link.click();
         document.body.removeChild(link);
     };
+
     const prepareAndExportToCSV = async () => {
         const allData = await fetchAllData();
         exportToCSV(allData);
@@ -254,27 +278,34 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
     
         return Packer.toBlob(doc);
     };
+
     const prepareAndExportToDocx = async () => {
         const allData = await fetchAllData();
         const blob = await exportToDocx(allData);
         saveAs(blob, 'FavoriteData.docx');
     };
 
-
-    return (
-        <> 
+    return ( 
+        <>   
             {!uid  ? 
                 <HomePage/>
             :( 
                 <>
                     { !favoriteData ? (
-                        <div className="common-row-flex justify-center h-screen" style={{ backgroundColor: "#FFFFFF" }}>
-                            <RingLoader size="300px" color="#24657d"/>
+                        <div className="h-screen common-row-flex justify-center bg-[#FFFFFF]">
+                            <RingLoader 
+                                size="300px" 
+                                color="#24657d"
+                            />
                         </div>
                     ) : (
                         <AnimatePresence>
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                                <main className="common-col-flex justify-center w-full h-auto">
+                            <motion.div 
+                                initial={{ opacity: 0 }} 
+                                animate={{ opacity: 1 }} 
+                                exit={{ opacity: 0 }}
+                            >
+                                <main className="w-full h-auto common-col-flex justify-center">
                                     {isConfirmModalOpen && (
                                         <ConfirmDeleteModal 
                                             isOpen={isConfirmModalOpen} 
@@ -283,121 +314,33 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                                         />
                                     )}   
                                     <div className="relative w-full h-auto flex">
-                                        <div className="relative flex flex-col w-full h-[360px]"> 
-                                            <Image  priority={false} src="/images/favoritePage_banner.jpg" alt="icon" fill={true} className="w-full h-full object-cover"/>
+                                        <div className="relative w-full h-[360px] flex flex-col "> 
+                                            <Image 
+                                                src="/images/favoritePage_banner.jpg" 
+                                                alt="icon" 
+                                                fill={true} 
+                                                className="w-full h-full object-cover"
+                                            />
                                             <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-20">
-                                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#ffffff] font-bold sm:text-[56px] xs:text-[48px] text-[37px] text-center">收藏清單</div>  
+                                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-bold text-[#FFFFFF] text-center sm:text-[56px] xs:text-[48px] text-[37px]">收藏清單</div>  
                                             </div>
                                         </div>  
                                     </div>
-                                    {/*收藏項目*/}
                                     <div className="common-col-flex justify-center w-full min-h-screen bg-[#F0F0F0] backdrop-blur-sm my-auto pt-5 pb-10">
-                                        <div className="xl:w-full max-w-[1180px] lg:w-[90%] xs:w-[80%] [95%] flex md:flex-row flex-col min-h-screen  shadow-[0_0_10px_#AABBCC] rounded-lg">
-                                            <div className="common-col-flex justify-start lg:w-[75%] md:w-[65%] w-full  py-7 xss:px-8 bg-[#FFFFFF] backdrop-blur-md md:rounded-l-lg rounded-t-lg">
-                                                {favoriteData.length === 0 ? (
-                                                    <>
-                                                        <div className="text-2xl text-gray-600 text-center md:my-auto mb-[60px] pt-[30px]">尚無收藏機構</div>
-                                                        <button 
-                                                            type="button" 
-                                                            className="sm:w-64 w-[55%] min-w-[130px] h-11 py-4.5 px-2.5 mb-[60px] common-button"
-                                                            onClick={()=>router.push('/search')} 
-                                                        >
-                                                        開始搜尋
-                                                        </button>
-                                                    </>
-                                                ) : (
-                                                favoriteData.map((item) => (
-                                                    <Fragment key={item.id} >  
-                                                        <div key={item.id} className="grid lg:grid-cols-custom fill-column w-[98%] mx-auto">
-                                                            <div className="relative lg:w-[180px] xss:w-[85%] w-[90%] lg:h-[180px] h-[300px] xss:pl-0 pl-[10px] common-row-flex aspect-square">
-                                                                {item.imageUrl && (
-                                                                    <Image
-                                                                        src={item.imageUrl}
-                                                                        alt="institution"
-                                                                        fill={true}
-                                                                        onLoad={() => setLoadedImages(prev => ({...prev, [item.imageUrl]: true}))}
-                                                                        style={loadedImages[item.imageUrl] ? {} : {backgroundImage: 'linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)'}}
-                                                                        className="w-full h-full common-bg-image"
-                                                                    />
-                                                                )}
-                                                                {item.id && (
-                                                                    <button 
-                                                                        type="button" 
-                                                                        className="absolute top-[7px] right-[10px] lg:left-[145px]  z-10 w-[30px] h-[30px]"
-                                                                    >
-                                                                        <Image 
-                                                                            src="/images/diamond_selected.png" 
-                                                                            alt="collection" 
-                                                                            width={30} 
-                                                                            height={30} 
-                                                                            className="w-full h-full  p-[2px] favorite-button-add rounded-full"
-                                                                        />
-                                                                    </button>
-                                                                )}
-                                                            </div>
-                                                            <div className="relative flex w-full lg:ml-[10px] lg:mr-0 ">
-                                                                <div className="flex flex-col w-[90%] h-auto text-[#2D759E] xl:text-base lg:text-sm text-lg leading-12 lg:mt-0 mt-[35px]">
-                                                                    <div className="flex mb-4">
-                                                                        <span className="font-bold lg:w-[43px] text-nowrap mr-[2px]">名稱</span>
-                                                                        <span className="text-[#1D445D]">{item.hosp_name}</span>
-                                                                    </div>
-                                                                    <div className="flex mb-4">
-                                                                        <span className="font-bold lg:w-[43px] text-nowrap mr-[2px]">電話</span>
-                                                                        <span className="text-[#1D445D]">{item.tel}</span>
-                                                                    </div>
-                                                                    <div className="flex mb-4">
-                                                                        <span className="font-bold lg:w-[43px] text-nowrap mr-[5px]">地址</span>
-                                                                        <span className="text-[#1D445D] ml-px">{item.hosp_addr}</span>
-                                                                    </div>
-                                                                </div>
-                                                                {item.id && (
-                                                                <button 
-                                                                    className="absolute lg:top-0 lg:right-0 xss:bottom-[-135px] bottom-[-130px] flex min-h-[150px] z-10" 
-                                                                    onClick={() => item.id && handleDeleteClick(item.id)}
-                                                                >
-                                                                    <Image  src="/images/delete.png" alt="delete" width={30} height={30} />
-                                                                </button>  
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                        <hr className="w-full  border border-solid border-[#e8e8e8] my-5"/>
-                                                    </Fragment>
-                                                    ))
-                                                )}
-                                                <div ref={lastElementRef}></div>
-                                            </div>
-                                            <div className="common-col-flex justify-start lg:w-[25%] md:w-[35%] w-full py-10 px-8 bg-gradient-to-t from-[#F0F0F0] via-[#C3D8EA] to-[#77ACCC] backdrop-blur-md md:rounded-r-lg rounded-b-lg  text-lg shadow-md">
-                                                <div className="mb-[30px] text-[#FFFFFF] lg:text-[28px] text-[30px] font-bold">匯出格式</div>
-                                                <div className="common-col-flex justify-between lg:w-[200px] md:w-[180px] w-[55%] min-w-[130px] h-auto text-[#1D445D]">
-                                                    <button 
-                                                        className={`common-row-flex justify-center w-full h-11 rounded-lg py-4.5 mt-5 mb-5 bg-[#FFEEDD] hover:bg-[#FFC78E] hover:text-[#ffffff] border-2 border-solid border-[#eb980a] text-center text-[20px] cursor-pointer transition-all duration-300 hover:scale-110
-                                                                    ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
-                                                        onClick={prepareAndExportToPDF}
-                                                        disabled={favoriteData.length === 0}
-                                                    >
-                                                        PDF
-                                                        <Image src="/images/file-pdf-solid.svg" alt="PDF" width={25} height={25} className="ml-[10px]" />
-                                                    </button>
-                                                    <button 
-                                                            className={`common-row-flex justify-center  w-full min-w-[130px] h-11 rounded-lg py-4.5 mt-5 mb-5 bg-[#D1E9E9] hover:bg-[#B3D9D9] hover:text-[#ffffff] border-2 border-solid border-[#1f5127]  text-center text-[20px] transition-all duration-300 hover:scale-110
-                                                                        ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
-                                                            onClick={prepareAndExportToCSV}
-                                                            disabled={favoriteData.length === 0}
-                                                    >
-                                                        CSV
-                                                        <Image src="/images/file-csv-solid.svg" alt="CSV" width={25} height={25} className="ml-[10px]"/>
-                                                    </button >
-                                                    <button 
-                                                            className={`common-row-flex justify-center w-full min-w-[130px] h-11 rounded-lg py-4.5 mt-5 mb-5 bg-[#D2E9FF] hover:bg-[#C4E1FF] hover:text-[#ffffff] border-2 border-solid border-[#19a8e6]  text-center text-[20px] transition-all duration-300 hover:scale-110
-                                                                        ${favoriteData.length === 0 ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
-                                                            onClick={prepareAndExportToDocx}
-                                                            disabled={favoriteData.length === 0}
-                                                    >
-                                                        DOCX
-                                                        <Image src="/images/file-word-solid.svg" alt="DOC" width={25} height={25} className="ml-[10px]"/>
-                                                    </button >
-                                                </div>
-                                            </div>
+                                        <div className="xl:w-full max-w-[1180px] lg:w-[90%] xs:w-[80%] w-[95%] flex md:flex-row flex-col min-h-screen shadow-[0_0_10px_#AABBCC] rounded-lg">
+                                            <FavoriteDataDisplay 
+                                                favoriteData={favoriteData}
+                                                loadedImages={loadedImages} 
+                                                setLoadedImages={setLoadedImages} 
+                                                lastElementRef={lastElementRef}
+                                                handleDeleteClick={handleDeleteClick}
+                                            />
+                                            <FavoriteExporter 
+                                                prepareAndExportToPDF={prepareAndExportToPDF}
+                                                prepareAndExportToCSV={prepareAndExportToCSV}
+                                                prepareAndExportToDocx={prepareAndExportToDocx}
+                                                isDataEmpty={favoriteData.length === 0}
+                                            />
                                         </div>
                                     </div>
 
@@ -408,9 +351,8 @@ const FavoriteContent: React.FC = (): React.ReactElement | null  => {
                     )}
                 </>
             )}
-        </>
-    );
-}
-  
+        </> 
+    )
+};
 
-export default FavoriteContent;
+export default FavoritePage;

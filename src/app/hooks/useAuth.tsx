@@ -16,7 +16,7 @@ import {
 import { auth } from "../lib/firebaseConfig";
 
 //只使用user的部分屬性值
-interface UserType {
+export interface UserType {
   uid: string;
   email: string | null;
 }

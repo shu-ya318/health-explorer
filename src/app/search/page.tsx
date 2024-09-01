@@ -1,13 +1,12 @@
-'use client';
-import SearchContent from './SearchContent';
-import { FavoriteProvider } from '../hooks/useFavorite';
-import { useAuth } from '../hooks/useAuth';
-// import { InstitutionsProvider } from '../../contexts/InstitutionsContext';
+"use client";
 
+import { useAuth } from "../hooks/useAuth";
+import { FavoriteProvider } from "../hooks/useFavorite";
 
-const SearchPage: React.FC = (): React.ReactElement | null  => {
+import SearchContent from "./SearchContent";
+
+const SearchPage: React.FC = () => {
     const { user } = useAuth();
-
     
     return (     
         //<InstitutionsProvider>  
@@ -17,6 +16,5 @@ const SearchPage: React.FC = (): React.ReactElement | null  => {
         //</InstitutionsProvider>
     )
 };
-
 
 export default SearchPage;

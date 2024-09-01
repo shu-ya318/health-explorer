@@ -19,7 +19,6 @@ export interface FirebaseFavoriteData{
     hosp_addr: string;
     division?: string;
     cancer_screening?: string;
-    timestamp: Date;
     imageUrl: string;
 }
 

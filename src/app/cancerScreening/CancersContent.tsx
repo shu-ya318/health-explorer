@@ -10,7 +10,6 @@ interface CancersContextProps {
     itemOptions: string[];
     progress: number; 
 }
-
 const CancersContext: React.FC<CancersContextProps> = ({ 
     id, 
     title, 
@@ -164,7 +163,7 @@ const CancersContext: React.FC<CancersContextProps> = ({
                         )}
                         {itemOptions && (
                             <div className="md:w-[60%] w-[80%] flex flex-col justify-between mx-auto mb-[20px] text-[20px]">
-                                {itemOptions.split(";").map((element: string, index: number) => (
+                                {itemOptions.map((element: string, index: number) => (
                                     <div 
                                         key={`${element}-${index}`} 
                                         className={`mb-[20px] block border rounded-lg transition-all duration-300 ${selectedOption === index + 1 ? 'bg-[#5B98BC] text-white' : 'border-gray-300'}`}
