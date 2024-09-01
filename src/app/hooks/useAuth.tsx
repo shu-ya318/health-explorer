@@ -1,105 +1,107 @@
-'use client';
-import { createContext, useContext, useEffect, useState } from 'react';
+"use client";
+
+import { 
+    createContext,
+    useContext, 
+    useState,
+    useEffect
+} from "react";
 import {
-  User,
-  UserCredential,
-  onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  AuthError
-} from 'firebase/auth';
-import { auth } from '../lib/firebaseConfig';
+    onAuthStateChanged,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+    AuthError
+} from "firebase/auth";
+import { auth } from "../lib/firebaseConfig";
 
-
-interface CustomUser {
+//只使用user的部分屬性值
+export interface UserType {
   uid: string;
   email: string | null;
-  displayName: string | null;
 }
 
 interface AuthContextType {
-  user: CustomUser | null;
-  register: (email: string, password: string) => Promise<UserCredential>;
-  signin: (email: string, password: string) => Promise<UserCredential>;
-  logout: () => Promise<void>;
+  user: UserType | null;
+  register: (email: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
+  logOut: () => Promise<void>;
 }
-
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   register: async (email: string, password: string) => {
-    throw new Error('註冊函式未執行');
+    return Promise.reject("註冊函式未執行!");
   },
-  signin: async (email: string, password: string) => {
-    throw new Error('登入函式未執行');
+  signIn: async (email: string, password: string) => {
+    return Promise.reject("登入函式未執行!");
   },
-  logout: async () => {
-    throw new Error('登出函式未執行');
+  logOut: async () => {
+    return Promise.reject("登出函式未執行!");
   },
 });
 
-
-export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<CustomUser | null>(null);
-  const [loading, setLoading] = useState(true);
-
+export const AuthProvider = ({ 
+  children 
+}: { 
+  children: React.ReactNode 
+}) => {
+  const [user, setUser] = useState<UserType | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser({
           uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
+          email: user.email
         })
       } else {
         setUser(null);
       }
+
       setLoading(false);
     });
 
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);  
-
 
   const register = async (email: string, password: string) => {
     try {
-      return createUserWithEmailAndPassword(auth, email, password);
+      await createUserWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      const e = error as AuthError;
-      throw new Error(e.message);
+      const err = error as AuthError;
+      console.error("register error:", err.message);
+      throw err;
     }
   };
 
-  const signin = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string) => {
     try {
-      return signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      const e = error as AuthError;
-      throw new Error(e.message);
+      const err = error as AuthError;
+      console.error("signIn error:", err.message);
+      throw err;
     }
   };
 
-  const logout = async () => {
+  const logOut = async () => {
     try {
       await signOut(auth);
       setUser(null);
     } catch (error) {
-      const e = error as AuthError;
-      throw new Error(e.message);
+      const err = error as AuthError;
+      console.error("logOut error:", err.message);
+      throw err;
     }
   };
 
-
   return (
-    <AuthContext.Provider value={{ user, register, signin, logout }}>
-      {loading ? <div>加載中...</div> : children}
+    <AuthContext.Provider value={{ user, register, signIn, logOut }}>
+      {loading ? null : children}
     </AuthContext.Provider>
   );
 }
-
 
 export const useAuth = () => useContext(AuthContext);

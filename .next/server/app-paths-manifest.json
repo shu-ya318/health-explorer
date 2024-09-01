@@ -1,3 +1,7 @@
 {
+  "/search/[hosp_name]/page": "app/search/[hosp_name]/page.js",
+  "/search/page": "app/search/page.js",
+  "/cancerScreening/page": "app/cancerScreening/page.js",
+  "/cancerScreening/result/page": "app/cancerScreening/result/page.js",
   "/page": "app/page.js"
 }

@@ -1,11 +1,12 @@
-'use client';
-import FavoriteContent from '../components/FavoriteContent';
-import { FavoriteProvider } from '../hooks/useFavorite';
-import { useAuth } from '../hooks/useAuth'; 
+"use client";
 
-const FavoritePage: React.FC = (): React.ReactElement | null  => {
+import { useAuth } from "../hooks/useAuth"; 
+import { FavoriteProvider } from "../hooks/useFavorite";
+
+import FavoriteContent from "./FavoriteContent";
+
+const FavoritePage: React.FC = () => {
     const { user } = useAuth();
-
 
     return (     
         <FavoriteProvider user={user}>  
@@ -13,6 +14,5 @@ const FavoritePage: React.FC = (): React.ReactElement | null  => {
         </FavoriteProvider>
     )
 };
-
 
 export default FavoritePage;

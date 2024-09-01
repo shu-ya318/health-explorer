@@ -1,19 +1,23 @@
-import { useMemo } from 'react';
-import Image from 'next/image';
-import { FirebaseFavoriteData, InstitutionInfo} from '../lib/types';
-import { useApiIsLoaded, APIProvider, Map, AdvancedMarker} from '@vis.gl/react-google-maps';
+import { useMemo } from "react";
+import Image from "next/image";
+import { FirebaseFavoriteData, InstitutionInfo } from "../../lib/types";
+import { useApiIsLoaded, APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
 
+interface GoogleMapProps {
+    institutionDetails: InstitutionInfo;
+}
 
-const GoogleMap: React.FC <{ institutionDetails: InstitutionInfo }> = ({ institutionDetails }): React.ReactElement | null => { 
+const GoogleMap: React.FC<GoogleMapProps> = ({ 
+    institutionDetails 
+}) => {
     const apiIsLoaded = useApiIsLoaded();
 
     const mapCenter = useMemo(() => {
-        if (institutionDetails && typeof institutionDetails.lat === 'number' && typeof institutionDetails.lng === 'number') { 
+        if (institutionDetails && typeof institutionDetails.lat === "number" && typeof institutionDetails.lng === "number") { 
             return { lat: institutionDetails.lat, lng: institutionDetails.lng };
         }
         return { lat: 0, lng: 0 };
     }, [institutionDetails]);
-
 
     return(
         <>
@@ -28,7 +32,13 @@ const GoogleMap: React.FC <{ institutionDetails: InstitutionInfo }> = ({ institu
                         mapId={"DEMO_MAP_ID"}
                     >
                         <AdvancedMarker position={mapCenter}>
-                            <Image src="/images/hospital_fill.svg" alt="icon" width={52} height={52} className="w-[52px] h-[52px]"/>
+                            <Image 
+                                src="/images/hospital_fill.svg" 
+                                alt="icon" 
+                                width={52} 
+                                height={52} 
+                                className="w-[52px] h-[52px]"
+                            />
                         </AdvancedMarker>
                     </Map>
                 )}

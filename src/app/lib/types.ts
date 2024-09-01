@@ -11,7 +11,6 @@ export interface FirebaseInstitutionData {
     imageUrl?: string | null;
 }
 
-
 export interface FirebaseFavoriteData{
     id?: string;          //每筆收藏文件id，由firestore內建
     userId: string;
@@ -20,10 +19,8 @@ export interface FirebaseFavoriteData{
     hosp_addr: string;
     division?: string;
     cancer_screening?: string;
-    timestamp: Date;
     imageUrl: string;
 }
-
 
 export interface InstitutionInfo {
     objectID: string;
