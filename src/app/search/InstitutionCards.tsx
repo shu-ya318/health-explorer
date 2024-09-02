@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 
 import { FavoriteState } from "../hooks/useFavorite";
+import { UserType } from "../hooks/useAuth"; 
 
 import SignInModal from "../components/auth/SignInModal";
 import RegisterModal from "../components/auth/RegisterModal";
@@ -9,7 +10,7 @@ import RegisterModal from "../components/auth/RegisterModal";
 import { InstitutionInfo } from "../lib/types";
 
 interface InstitutionCardsProps {
-    user: any; 
+    user: UserType | null; 
     loading: boolean;
     postsPerPage: number;
     currentPosts:InstitutionInfo[];
@@ -17,8 +18,6 @@ interface InstitutionCardsProps {
     setFavoriteHoverState: (hosp_name: string, state: boolean) => void;
     handleAddClick: (institution: InstitutionInfo, userId:string) => void;
     handleRemoveClick: (objectID:string, userId:string) => void;
-    favoriteButtonRef: React.RefObject<HTMLButtonElement>;
-    loggedFavoriteButtonRef: React.RefObject<HTMLButtonElement>;
     favoriteHover: Record<string, boolean>;
     state: FavoriteState;
 }
@@ -32,14 +31,15 @@ const InstitutionCards: React.FC<InstitutionCardsProps> = ({
     setFavoriteHoverState,
     handleAddClick,
     handleRemoveClick,
-    favoriteButtonRef,
-    loggedFavoriteButtonRef,
     favoriteHover,
     state
 }) => {
     const [isRegisterModalVisible, setIsRegisterModalVisible] = useState<boolean>(false);
     const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
     const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+
+    const favoriteButtonRef = useRef<HTMLButtonElement>(null);
+    const loggedFavoriteButtonRef = useRef<HTMLButtonElement>(null);
 
     return (
         <>
@@ -67,9 +67,9 @@ const InstitutionCards: React.FC<InstitutionCardsProps> = ({
                         </div>
                         <div className="w-full flex justify-between items-start animate-pulse">
                             <div className="block">
-                                <h3 className="h-3 bg-gray-300 rounded-full w-48 mb-4"></h3>
+                                <h3 className="w-48 h-3 mb-4 bg-gray-300 rounded-full"></h3>
                             </div>
-                            <span className="h-2 bg-gray-300 rounded-full w-16"></span>
+                            <span className="w-16 h-2 bg-gray-300 rounded-full"></span>
                         </div>
                     </div>
                 ))
@@ -92,11 +92,11 @@ const InstitutionCards: React.FC<InstitutionCardsProps> = ({
                                     style={loadedImages[institution.imageUrl] ? {} : {backgroundImage: "linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)"}}
                                 />
                             )}
-                            <div className="flex flex-col w-full justify-between p-[15px]">
-                                <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px] common-card text-[16px] text-[#3E3A39] font-bold pr-[15px]">{institution.hosp_name}</div>
+                            <div className="w-full flex flex-col justify-between p-[15px]">
+                                <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px] common-card pr-[15px] text-[16px] text-[#3E3A39] font-bold">{institution.hosp_name}</div>
                                 <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px] common-card text-[14px] text-[#595959]">{institution.division}</div>
                                 <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px] common-card text-[14px] text-[#595959]">{institution.cancer_screening}</div>
-                                <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px] common-row-flex w-[380px] h-[30px] ">
+                                <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px]  h-[30px] common-row-flex">
                                     <Image 
                                         src="/images/eye-regular.svg" 
                                         alt="view" 
@@ -104,7 +104,7 @@ const InstitutionCards: React.FC<InstitutionCardsProps> = ({
                                         height={20} 
                                         className="w-[20px] h-[20px]"
                                     />
-                                    <span className="ml-[5px]  text-[14px] text-[#707070]">{institution.view}</span>
+                                    <span className="ml-[5px] text-[14px] text-[#707070]">{institution.view}</span>
                                 </div>
                             </div>
                         </button>
@@ -136,7 +136,7 @@ const InstitutionCards: React.FC<InstitutionCardsProps> = ({
                             <>
                                 {(() => {
                                     const isFavorited = (institution: InstitutionInfo) => state.favorites.some(item => item.userId === user.uid && item.hosp_name === institution.hosp_name);
-                                    const handleHeartClick = isFavorited(institution) ? () => handleRemoveClick(institution.objectID, user.uid) : () => handleAddClick(institution, user.uid);
+                                    const handleHeartClick = isFavorited(institution) ? () => handleRemoveClick(institution.hosp_name, user.uid) : () => handleAddClick(institution, user.uid);
 
                                     return (
                                         <button
@@ -157,7 +157,7 @@ const InstitutionCards: React.FC<InstitutionCardsProps> = ({
                                                 width={30} 
                                                 height={30} 
                                                 className={`w-[30px] h-[30px] rounded-full p-[2px] 
-                                                            ${isFavorited(institution) || favoriteHover[institution.hosp_name] ? 'favorite-button-add':'favorite-button-remove'}`}
+                                                            ${isFavorited(institution) || favoriteHover[institution.hosp_name] ? "favorite-button-add":"favorite-button-remove"}`}
 
                                             />
                                         </button>

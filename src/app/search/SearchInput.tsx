@@ -1,18 +1,26 @@
-import {  useState, useRef } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 
 interface SearchInputProps {
+    searchTerm:string;
+    setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
     handleSearch: (searchTerm: string) => void;
-    deleteSearch: () => void;
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({ 
-    handleSearch, 
-    deleteSearch
+    searchTerm,
+    setSearchTerm,
+    handleSearch
 }) => {
-    const [searchTerm, setSearchTerm] = useState("");
     const searchInputRef = useRef<HTMLInputElement>(null);
 
+    const deleteSearchInput = () => {
+        setSearchTerm(""); 
+        if (searchInputRef.current) {
+            searchInputRef.current.focus();
+        }
+    };
+  
     return (
         <div className="w-full h-10 mt-[60px] mb-[30px]"> 
             <div className="max-w-[760px] w-full h-full flex mx-auto"> 
@@ -26,7 +34,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
                         onChange={event => setSearchTerm(event.target.value)}
                     />
                     <button
-                        onClick={deleteSearch} 
+                        onClick={deleteSearchInput} 
                         type="button"
                         className="absolute top-2 right-10 z-10 hover:scale-110"
                     >

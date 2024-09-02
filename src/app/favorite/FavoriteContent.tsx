@@ -16,13 +16,11 @@ import FavoriteExporter from "./FavoriteExporter";
 import { db } from "../lib/firebaseConfig";
 import { 
     collection
-    ,doc 
     , query
     , where
     , startAfter
     , limit
     , getDocs
-    , deleteDoc
     , DocumentSnapshot
 } from "firebase/firestore";
 import { FirebaseFavoriteData } from "../lib/types";
@@ -52,22 +50,32 @@ const FavoritePage: React.FC = () => {
     const { uid } = useAuth().user || {}; 
     const { removeFavorite } = useFavorite();
 
+    const [openLoading, setOpenLoading] = useState<boolean>(true);
     const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(false);
     const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
     const [allDataLoaded, setAllDataLoaded] = useState(false);
-    const observer = useRef<IntersectionObserver>(null);
-    const lastElementRef = useRef<HTMLDivElement>(null);
     const [favoriteData, setFavoriteData] = useState<FirebaseFavoriteData[]>([]);
     const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
-
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
     const [selectedId, setSelectedId] = useState<string | null>(null);
+
+    const observer = useRef<IntersectionObserver>(null);
+    const lastElementRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+          setOpenLoading(false);
+        }, 1500);
+    
+        return () => clearTimeout(timer);
+    }, []);
 
     const fetchMoreData = useCallback(async () => {
         if (! uid || loading || (!lastVisible && !isInitialLoad) || allDataLoaded) return;
 
         setLoading(true);
+
         try {
             const nextQuery = query(
                 collection(db, "favorites"),
@@ -92,8 +100,9 @@ const FavoritePage: React.FC = () => {
             }
         } catch (error) {
             console.error("Error fetching data:", error);
+        } finally{
+            setLoading(false);
         }
-        setLoading(false);
     }, [uid,loading, lastVisible, isInitialLoad, allDataLoaded]);
 
     useEffect(() => {
@@ -142,7 +151,7 @@ const FavoritePage: React.FC = () => {
 
     const handleCloseModal = () => {
         setIsConfirmModalOpen(false);
-        };
+    };
     
 
     //匯出前，確保取得所有收藏資料，非僅當前滾動頁面資料
@@ -291,7 +300,7 @@ const FavoritePage: React.FC = () => {
                 <HomePage/>
             :( 
                 <>
-                    { !favoriteData ? (
+                    { !favoriteData && openLoading ? (
                         <div className="h-screen common-row-flex justify-center bg-[#FFFFFF]">
                             <RingLoader 
                                 size="300px" 
@@ -343,8 +352,6 @@ const FavoritePage: React.FC = () => {
                                             />
                                         </div>
                                     </div>
-
-
                                 </main>
                             </motion.div>
                         </AnimatePresence>

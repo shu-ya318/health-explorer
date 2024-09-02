@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect} from "react"; 
+import { useState, useEffect} from "react"; 
 
 const cancers = [
     { filter: "子宮頸癌"},

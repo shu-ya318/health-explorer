@@ -72,7 +72,7 @@ const CancerScreeningPage: React.FC = () => {
             <CancersContext 
                 key={groupNum} 
                 handleNextClick={handleNextClick} 
-                setAnswer={handleSetAnswer} 
+                handleSetAnswer={handleSetAnswer} 
                 progress={progress}  
                 isLast={isLast}
                 {...surveyItems[groupNum - 1]}
