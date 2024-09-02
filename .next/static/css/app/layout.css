@@ -1128,9 +1128,6 @@ video {
 .w-\[36px\] {
   width: 36px;
 }
-.w-\[380px\] {
-  width: 380px;
-}
 .w-\[400px\] {
   width: 400px;
 }
@@ -1676,6 +1673,9 @@ video {
 }
 .bg-contain {
   background-size: contain;
+}
+.bg-cover {
+  background-size: cover;
 }
 .bg-center {
   background-position: center;

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 
@@ -69,11 +69,12 @@ const index = searchClient.initIndex("Medical_Institutions");
 const SearchContent: React.FC = () => {    
     const { user } = useAuth();
     const { state, addFavorite, removeFavorite} = useFavorite();
+    
     const router = useRouter();
     const searchParams = useSearchParams();
     const filterValue = decodeURIComponent(searchParams.get('filter') || '');
 
-    
+    const [searchTerm, setSearchTerm] = useState<string>("");
     const [favoriteHover, setFavoriteHover] = useState<Record<string, boolean>>({});
     const [isOpenInstitutions, setIsOpenInstitutions] = useState<boolean>(false);
     const [isOpenDivisions, setIsOpenDivisions] = useState<boolean>(false);
@@ -82,10 +83,6 @@ const SearchContent: React.FC = () => {
     const [currentData, setCurrentData] = useState<InstitutionInfo[]>([]); 
     const [currentPage, setCurrentPage] = useState<number>(1);
     const postsPerPage = 20;
-
-    const favoriteButtonRef = useRef<HTMLButtonElement>(null);
-    const loggedFavoriteButtonRef = useRef<HTMLButtonElement>(null);
-    const searchInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         console.log("updated:", favoriteHover);
@@ -158,12 +155,6 @@ const SearchContent: React.FC = () => {
             setLoading(false);
         }
     };
-
-    const deleteSearch = () => {
-        if (searchInputRef.current) {
-            searchInputRef.current.value = "";
-        }
-    }
 
 
     const handleCancerFilter = async (cancerType: string) => {
@@ -290,9 +281,10 @@ const SearchContent: React.FC = () => {
                 />
             </div>
             <div className="xl:w-full max-w-[1180px] w-[95%] pt-[80px]">
-                <SearchInput 
+                <SearchInput
+                    searchTerm={searchTerm}
+                    setSearchTerm={setSearchTerm}
                     handleSearch={handleSearch} 
-                    deleteSearch={deleteSearch}
                 />
                 <div className="h-auto w-full flex flex-col items-start">
                     {loading ? (
@@ -322,8 +314,6 @@ const SearchContent: React.FC = () => {
                         setFavoriteHoverState={setFavoriteHoverState}
                         handleAddClick={handleAddClick} 
                         handleRemoveClick={handleRemoveClick} 
-                        favoriteButtonRef={favoriteButtonRef}
-                        loggedFavoriteButtonRef={loggedFavoriteButtonRef}
                         favoriteHover={favoriteHover}
                         state={state} 
                     />
