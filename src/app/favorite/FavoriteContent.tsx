@@ -46,9 +46,9 @@ import HomePage  from "../page";
 import { motion, AnimatePresence } from "framer-motion"; 
 import RingLoader from "react-spinners/RingLoader";
 
-const FavoritePage: React.FC = () => {
+const FavoriteContent: React.FC = () => {
     const { uid } = useAuth().user || {}; 
-    const { removeFavorite } = useFavorite();
+    const { state, removeFavorite } = useFavorite();
 
     const [openLoading, setOpenLoading] = useState<boolean>(true);
     const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
@@ -70,6 +70,7 @@ const FavoritePage: React.FC = () => {
     
         return () => clearTimeout(timer);
     }, []);
+
 
     const fetchMoreData = useCallback(async () => {
         if (! uid || loading || (!lastVisible && !isInitialLoad) || allDataLoaded) return;
@@ -155,48 +156,23 @@ const FavoritePage: React.FC = () => {
     
 
     //匯出前，確保取得所有收藏資料，非僅當前滾動頁面資料
-    const fetchAllData = async (): Promise<FirebaseFavoriteData[]> => {
-        if (!uid) return [];
-    
-        setLoading(true);
-        const fullQuery = query(
-            collection(db, 'favorites'),
-            where('userId', '==', uid)
-        );
-    
-        try {
-            const querySnapshot = await getDocs(fullQuery);
-            const allData = querySnapshot.docs.map(doc => ({
-                ...doc.data() as FirebaseFavoriteData,
-                id: doc.id
-            }));
-            setFavoriteData(allData); 
-            return allData;
-        } catch (error) {
-            console.error('Error fetching all data:', error);
-            return []; 
-        } finally {
-            setLoading(false);
-        }
-    };
-
 
     Font.register({
-        family: 'NotoSansTC',
+        family: "NotoSansTC",
         fonts: [
-            { src: '/fonts/NotoSansTC-Regular.ttf', fontWeight: 'normal' },
-            { src: '/fonts/NotoSansTC-Bold.ttf', fontWeight: 'bold' },
+            { src: "/fonts/NotoSansTC-Regular.ttf", fontWeight: "normal" },
+            { src: "/fonts/NotoSansTC-Bold.ttf", fontWeight: "bold" },
         ]
     });
 
     const styles = StyleSheet.create({
         header: {
-            fontFamily: 'NotoSansTC',
-            fontWeight: 'bold'
+            fontFamily: "NotoSansTC",
+            fontWeight: "bold"
         },
         content: {
-            fontFamily: 'NotoSansTC',
-            fontWeight: 'normal'
+            fontFamily: "NotoSansTC",
+            fontWeight: "normal"
         }
     });
 
@@ -228,7 +204,7 @@ const FavoritePage: React.FC = () => {
     };
 
     const prepareAndExportToPDF = async () => {
-        const allData = await fetchAllData(); 
+        const allData = state.favorites; 
         const doc = exportToPDF(allData); 
     
         const pdfInstance = pdf();
@@ -237,9 +213,9 @@ const FavoritePage: React.FC = () => {
         const blob = await pdfInstance.toBlob(); 
         const url = URL.createObjectURL(blob); 
     
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
-        link.download = 'FavoriteData.pdf';
+        link.download = "FavoriteData.pdf";
         link.click();
         URL.revokeObjectURL(url); 
     };
@@ -261,7 +237,7 @@ const FavoritePage: React.FC = () => {
     };
 
     const prepareAndExportToCSV = async () => {
-        const allData = await fetchAllData();
+        const allData = state.favorites;
         exportToCSV(allData);
     };
 
@@ -289,9 +265,9 @@ const FavoritePage: React.FC = () => {
     };
 
     const prepareAndExportToDocx = async () => {
-        const allData = await fetchAllData();
+        const allData = state.favorites;
         const blob = await exportToDocx(allData);
-        saveAs(blob, 'FavoriteData.docx');
+        saveAs(blob, "FavoriteData.docx");
     };
 
     return ( 
@@ -318,8 +294,8 @@ const FavoritePage: React.FC = () => {
                                     {isConfirmModalOpen && (
                                         <ConfirmDeleteModal 
                                             isOpen={isConfirmModalOpen} 
-                                            onConfirm={handleConfirmDelete} 
-                                            onCancel={handleCloseModal} 
+                                            handleConfirmDelete={handleConfirmDelete} 
+                                            handleCloseModal={handleCloseModal} 
                                         />
                                     )}   
                                     <div className="relative w-full h-auto flex">
@@ -362,4 +338,4 @@ const FavoritePage: React.FC = () => {
     )
 };
 
-export default FavoritePage;
+export default FavoriteContent;

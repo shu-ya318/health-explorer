@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; 
 
-import CancersContext from "./CancersContent";
+import CancersContent  from "./CancersContent";
 
 interface SurveyItem {
     id: string;
@@ -69,7 +69,7 @@ const CancerScreeningPage: React.FC = () => {
 
     return (     
         <>  
-            <CancersContext 
+            <CancersContent 
                 key={groupNum} 
                 handleNextClick={handleNextClick} 
                 handleSetAnswer={handleSetAnswer} 

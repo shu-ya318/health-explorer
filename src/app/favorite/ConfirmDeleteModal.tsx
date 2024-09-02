@@ -1,14 +1,14 @@
 interface ConfirmModalProps {
   isOpen: boolean;
-  onConfirm: () => void;
-  onCancel: () => void;
+  handleConfirmDelete: () => void;
+  handleCloseModal: () => void;
 }
 
 
 export const ConfirmDeleteModal: React.FC<ConfirmModalProps> = ({ 
   isOpen, 
-  onConfirm, 
-  onCancel 
+  handleConfirmDelete, 
+  handleCloseModal 
 }) => {
   if (!isOpen) return null;
 
@@ -22,14 +22,14 @@ export const ConfirmDeleteModal: React.FC<ConfirmModalProps> = ({
           </div>
           <div className="common-row-flex justify-end pt-4 space-x-4">
             <button 
-              onClick={onCancel} 
+              onClick={handleCloseModal} 
               type="button"
               className="py-2.5 px-5 text-xs bg-[#f0ffff] text-black rounded-full shadow-xs transition-all duration-500 hover:bg-[#afeeee]"
             >
               取消
             </button>
             <button 
-              onClick={onConfirm}
+              onClick={handleConfirmDelete}
               type="button" 
               className="py-2.5 px-5 text-xs bg-[#19a8e6] text-white rounded-full shadow-xs transition-all duration-500 hover:bg-[#2D759E]"
             >

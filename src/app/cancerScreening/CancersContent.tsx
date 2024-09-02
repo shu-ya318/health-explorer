@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Image from "next/image";
 
-interface CancersContextProps {
+interface CancersContentProps {
     id: string;
     title: string;
     isLast: boolean;
@@ -10,7 +10,7 @@ interface CancersContextProps {
     itemOptions: string[];
     progress: number; 
 }
-const CancersContext: React.FC<CancersContextProps> = ({ 
+const CancersContent: React.FC<CancersContentProps> = ({ 
     id, 
     title, 
     isLast, 
@@ -125,4 +125,4 @@ const CancersContext: React.FC<CancersContextProps> = ({
     )
 }
 
-export default CancersContext;
+export default CancersContent;

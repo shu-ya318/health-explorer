@@ -10,7 +10,7 @@ const FavoritePage: React.FC = () => {
 
     return (     
         <FavoriteProvider user={user}>  
-            <FavoriteContent />
+            <FavoriteContent/>
         </FavoriteProvider>
     )
 };
