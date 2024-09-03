@@ -81,7 +81,7 @@ const CancersContent: React.FC<CancersContentProps> = ({
                                 className="relative h-[30px] bg-gradient-to-r from-cyan-500 to-blue-500 rounded-l-lg"
                                 style={{ width: `${progress}%` }}
                             >
-                                <div className="text-[18px] text-center text-white font-bold">{Math.round(progress)}%</div>
+                                <div className="pl-[10px] text-[18px] text-center text-white font-bold">{Math.round(progress)}%</div>
                                 <Image
                                     src="/images/pen.png"
                                     alt="progress"

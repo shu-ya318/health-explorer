@@ -70,7 +70,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
                     <div className="md:w-[300px] md:h-[300px] sm:w-[250px] sm:h-[250px] mb-2.5 common-bg-image bg-[url('/images/LOGO.png')]"></div>
                     <div className="mt-4 text-white text-3xl font-bold">健康探索者</div>
                 </div>
-                <div className="relative sm:w-1/2 xs:w-[90%] w-[85%] common-col-flex p-7 rounded-lg sm:rounded-l-none sm:rounded-r-lg backdrop-blur-sm bg-white bg-opacity-70">
+                <div className="relative sm:w-1/2 xs:w-[90%] w-[85%] common-col-flex mx-auto p-7 rounded-lg sm:rounded-l-none sm:rounded-r-lg backdrop-blur-sm bg-white bg-opacity-70">
                     <Image 
                         onClick={onClose} 
                         src="/images/xmark-solid.svg"

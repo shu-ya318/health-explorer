@@ -29,7 +29,7 @@ const InstitutionSearchSection: React.FC<InstitutionSearchSectionProps> = ({ han
                 className="common-page-layout justify-between xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] xl:p-[20px] py-[20px] lg:my-20 my-20 backdrop-blur-[5px]"
             >
                 <div className="mb-[30px] common-title xs:text-[32px] text-[28px]">醫療機構搜尋分類</div>
-                <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 xl:gap-40 lg:gap-20 md:gap-x-52 sm:gap-y-8 sm:gap-x-32 gap-y-10 gap-x-0">
+                <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 xl:gap-36 lg:gap-20 md:gap-x-52 sm:gap-y-8 sm:gap-x-32 gap-y-10 gap-x-0">
                 {searches.map((search, index) => (
                 <button
                     onClick={() => handleSearchClick(search.filter)}  

@@ -48,8 +48,12 @@ const InstitutionCards: React.FC<InstitutionCardsProps> = ({
             <div className="w-full h-auto grid lg:grid-cols-2 grid-cols-1 lg:gap-x-[1%] gap-0 justify-center items-start m-auto box-border">
             {loading ? (
                 Array.from({ length: postsPerPage-12 }, (_, index) => ( 
-                    <div key={index} role='status' className='max-w-sm border border-gray-300 rounded-lg p-4'>
-                        <div className="w-full h-48 bg-gray-300 rounded-lg mb-5 flex justify-center items-center animate-pulse">
+                    <div 
+                        key={index} 
+                        role="status" 
+                        className="lg:fill-two-columns fill-column mb-[15px] border border-gray-300 rounded-lg p-4"
+                    >
+                        <div className="w-full h-48 flex justify-center items-center mb-[15px] bg-gray-300 rounded-lg animate-pulse">
                             <svg 
                                 className="w-8 h-8 stroke-gray-400" 
                                 viewBox="0 0 24 24" 
@@ -79,7 +83,7 @@ const InstitutionCards: React.FC<InstitutionCardsProps> = ({
                         key={institution.hosp_name} 
                         className="h-[136px] relative lg:fill-two-columns fill-column mb-[15px] border border-gray-300 rounded-sm overflow-hidden bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]"
                     >
-                            <button onClick={() => handleIncrement(institution)} className="flex h-full w-full">
+                            <button onClick={() => handleIncrement(institution)} className="h-full w-full flex">
                             {institution.imageUrl && (
                                 <Image
                                     src={institution.imageUrl}

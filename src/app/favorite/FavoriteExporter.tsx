@@ -30,7 +30,7 @@ const FavoriteExporter: React.FC<FavoriteExporterProps> = ({
                         alt="PDF" 
                         width={25} 
                         height={25} 
-                        className="ml-[10px]"
+                        className="w-[25px] h-[25px] ml-[10px]"
                     />
                 </button>
                 <button
@@ -46,7 +46,7 @@ const FavoriteExporter: React.FC<FavoriteExporterProps> = ({
                         alt="CSV" 
                         width={25} 
                         height={25} 
-                        className="ml-[10px]"
+                        className="w-[25px] h-[25px] ml-[10px]"
                     />
                 </button >
                 <button 
@@ -56,13 +56,13 @@ const FavoriteExporter: React.FC<FavoriteExporterProps> = ({
                                     ${isDataEmpty ? 'bg-gray-200 pointer-events-none text-white' : ''}`} 
                         disabled={isDataEmpty}
                 >
-                    DOCX
+                    WORD
                     <Image 
                         src="/images/file-word-solid.svg" 
-                        alt="DOCX" 
+                        alt="WORD" 
                         width={25} 
                         height={25} 
-                        className="ml-[10px]"
+                        className="w-[25px] h-[25px] ml-[10px]"
                     />
                 </button >
             </div>
