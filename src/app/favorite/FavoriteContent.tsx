@@ -181,20 +181,16 @@ const FavoriteContent: React.FC = () => {
             <PDFDocument>
                 <Page size="A4">
                     {data.map(item => (
-                        <View key={item.id} style={{ marginBottom: 10 }}>
-                            <Text style={styles.header}>名稱:</Text><Text style={styles.content}>{item.hosp_name}</Text>
-                            <Text style={styles.header}>電話:</Text><Text style={styles.content}>{item.tel}</Text>
-                            <Text style={styles.header}>地址:</Text><Text style={styles.content}>{item.hosp_addr}</Text>
-                            {item.division && (
-                                <>
-                                    <Text style={styles.header}>科別:</Text><Text style={styles.content}>{item.division}</Text>
-                                </>
-                            )}
-                            {item.cancer_screening && (
-                                <>
-                                    <Text style={styles.header}>癌篩項目:</Text><Text style={styles.content}>{item.cancer_screening}</Text>
-                                </>
-                            )}
+                        <View 
+                            key={item.id} 
+                            style={{ marginTop: 5, marginBottom: 20, marginLeft: 20 }}
+                        >
+                            <Text style={styles.header}>名稱:</Text>
+                            <Text style={styles.content}>{item.hosp_name}</Text>
+                            <Text style={styles.header}>電話:</Text>
+                            <Text style={styles.content}>{item.tel}</Text>
+                            <Text style={styles.header}>地址:</Text>
+                            <Text style={styles.content}>{item.hosp_addr}</Text>
                         </View>
                     ))}
                 </Page>
@@ -222,9 +218,9 @@ const FavoriteContent: React.FC = () => {
 
 
     const exportToCSV = (data: FirebaseFavoriteData[]) => {
-        const headers = "名稱,電話,地址,科別,癌症篩檢項目\n";
+        const headers = "名稱,電話,地址\n";
         const rows = data.map(item =>
-            `"${item.hosp_name}","${item.tel}","${item.hosp_addr}","${item.division || ''}","${item.cancer_screening || ''}"\n`
+            `"${item.hosp_name}","${item.tel}","${item.hosp_addr}"\n`
         ).join('');
         const csvContent = `data:text/csv;charset=utf-8,\uFEFF${headers}${rows}`;
         const encodedUri = encodeURI(csvContent);
@@ -245,12 +241,14 @@ const FavoriteContent: React.FC = () => {
     const exportToDocx = (data: FirebaseFavoriteData[]) => {
         const paragraphs = data.map(item => {
             return new Paragraph({
+                spacing: { after: 240 },  
                 children: [
-                    new TextRun(`名稱: ${item.hosp_name}\n`),
-                    new TextRun(`電話: ${item.tel}\n`),
-                    new TextRun(`地址: ${item.hosp_addr}\n`),
-                    ...(item.division ? [new TextRun(`科別: ${item.division}\n`)] : []),
-                    ...(item.cancer_screening ? [new TextRun(`癌篩項目: ${item.cancer_screening}\n`)] : [])
+                    new TextRun({ text: "名稱:", bold: true }),
+                    new TextRun({ text: `${item.hosp_name}\n`, bold: false }),
+                    new TextRun({ text: "電話:", bold: true }), 
+                    new TextRun({ text: `${item.tel}\n`, bold: false }),
+                    new TextRun({ text: "地址", bold: true }),
+                    new TextRun({ text: `${item.hosp_addr}\n`, bold: false })
                 ]
             });
         });

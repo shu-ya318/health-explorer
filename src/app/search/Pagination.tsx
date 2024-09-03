@@ -1,7 +1,7 @@
-'use client';
-import {useState} from 'react';
-import Image from 'next/image';
+"use client";
 
+import {useState, useEffect} from "react";
+import Image from "next/image";
 
 interface PaginationProps {
   postsPerPage: number;
@@ -10,78 +10,128 @@ interface PaginationProps {
   currentPage: number;
 }
 
-
-const Pagination: React.FC<PaginationProps> = ({ postsPerPage, totalPosts, paginate, currentPage }) => {
-    const pageNumbers: number[] = [];
-    const pageNumberLimit = 8;
-    const [maxPageNumberLimit, setMaxPageNumberLimit] = useState(pageNumberLimit);
+const Pagination: React.FC<PaginationProps> = ({ 
+    postsPerPage, 
+    totalPosts, 
+    paginate, 
+    currentPage 
+}) => {
+    const [pageNumbers, setPageNumbers] = useState<number[]>([]);
+    const [pageNumberLimit, setPageNumberLimit] = useState(8);
     const [minPageNumberLimit, setMinPageNumberLimit] = useState(0);
+    const [maxPageNumberLimit, setMaxPageNumberLimit] = useState(pageNumberLimit);
+
+    useEffect(() => {
+        const updatePageNumberLimit = () => {
+            const width = window.innerWidth;
+            if (width >= 640) {
+                setPageNumberLimit(8);
+            } else if (width <= 639 && width > 479) {
+                setPageNumberLimit(5);
+            } else if (width <= 479 && width > 359) {
+                setPageNumberLimit(2);
+            } else {
+                setPageNumberLimit(1);
+            }
+        };
+    
+        window.addEventListener("resize", updatePageNumberLimit);
+        updatePageNumberLimit(); 
+    
+        return () => {
+            window.removeEventListener("resize", updatePageNumberLimit);
+        };
+    }, []);
+
+    //確保元件首次渲染，會使用更新計算的pageNumbers
+    useEffect(() => {
+        const newPageNumbers = [];
+        for (let i = 1; i <= Math.ceil(totalPosts / postsPerPage); i++) {
+            newPageNumbers.push(i);
+        }
+        setPageNumbers(newPageNumbers);
+        setMaxPageNumberLimit(pageNumberLimit);
+        setMinPageNumberLimit(0);
+    }, [pageNumberLimit, postsPerPage, totalPosts]);
 
 
-    for (let i = 1; i <= Math.ceil(totalPosts / postsPerPage); i++) {
-        pageNumbers.push(i);
-    }
+    const handleFirstPage = () => {
+        paginate(1);
+        setMinPageNumberLimit(0);
+        setMaxPageNumberLimit(pageNumberLimit);
+    };
+
+    const handleLastPage = () => {
+        const lastPageNumber = pageNumbers.length;
+        paginate(lastPageNumber);
+        setMinPageNumberLimit(lastPageNumber - pageNumberLimit);
+        setMaxPageNumberLimit(lastPageNumber);
+    };
 
 
     const handlePrevbtn = () => {
         paginate(currentPage - 1);
 
         if ((currentPage - 1) % pageNumberLimit === 0) {
-            setMaxPageNumberLimit(maxPageNumberLimit - pageNumberLimit);
             setMinPageNumberLimit(minPageNumberLimit - pageNumberLimit);
+            setMaxPageNumberLimit(maxPageNumberLimit - pageNumberLimit);
         }
     };
-
-    const handleFirstPage = () => {
-        paginate(1);
-        setMaxPageNumberLimit(pageNumberLimit);
-        setMinPageNumberLimit(0);
-    };
-
 
     const handleNextbtn = () => {
     paginate(currentPage + 1);
 
     if (currentPage + 1 > maxPageNumberLimit) {
-        setMaxPageNumberLimit(maxPageNumberLimit + pageNumberLimit);
         setMinPageNumberLimit(minPageNumberLimit + pageNumberLimit);
+        setMaxPageNumberLimit(maxPageNumberLimit + pageNumberLimit);
     }
-    };
-
-    const handleLastPage = () => {
-        const lastPageNumber = pageNumbers.length;
-        paginate(lastPageNumber);
-        setMaxPageNumberLimit(lastPageNumber);
-        setMinPageNumberLimit(lastPageNumber - pageNumberLimit);
     };
 
 
     return (
-        <div className="flex xss:flex-row common-col-flex justify-center w-full max-w-[750px] min-h-[40px] mt-[20px] mb-[40px] mx-auto">
-            <div className="w-[88px] flex justify-between h-full">
+        <div className="w-full max-w-[750px] min-h-[40px] flex flex-row justify-center mt-[20px] mb-[40px] mx-auto">
+            <div className="w-[88px] h-full flex justify-between">
                 <button
                     onClick={handleFirstPage}
+                    type="button"
                     disabled={currentPage === 1}
-                    className={`pagination-button p-[10px] ${currentPage === 1 ? 'bg-gray-300' : 'hover:bg-[#5B98BC]'}`}
+                    className={`pagination-button p-[10px] 
+                                ${currentPage === 1 ? 'bg-gray-300' : 'hover:bg-[#5B98BC]'}`}
                 >
-                    <Image src="/images/angles-left-solid.svg" alt="First Page" width={20} height={0} className="w-[20px] h-auto object-cover"/>
+                    <Image 
+                        src="/images/angles-left-solid.svg" 
+                        alt="FirstPage" 
+                        width={20} 
+                        height={20} 
+                        className="w-[20px] h-auto object-cover"
+                    />
                 </button>
                 <button
                     onClick={handlePrevbtn}
+                    type="button"
                     disabled={currentPage === 1}
-                    className={`pagination-button py-[10px]  px-[13px] ${currentPage === 1 ? 'bg-gray-300' : 'hover:bg-[#5B98BC]'}`}
+                    className={`pagination-button py-[10px] px-[13px] 
+                                ${currentPage === 1 ? "bg-gray-300" : "hover:bg-[#5B98BC]"}`}
                 >
-                    <Image src="/images/angle-left-solid.svg" alt="Previous Page" width={12} height={12} className="w-[12px] h-auto object-cover"/>
+                    <Image 
+                        src="/images/angle-left-solid.svg" 
+                        alt="PreviousPage" 
+                        width={12} 
+                        height={12} 
+                        className="w-[12px] h-auto object-cover
+                    "/>
                 </button>
             </div>
-            <div className="sm:w-[500px] xs:w-[250px] w-[120px] h-full flex flex-row flex-wrap justify-start xss:m-auto my-[10px]">
+            <div className="w-full max-w-[500px] h-full flex flex-row justify-center m-auto">
                 {pageNumbers.map(number => {
                     if (number <= maxPageNumberLimit && number > minPageNumberLimit) {
                         return (
-                            <button 
-                                key={number} 
+                            <button  
                                 onClick={() => paginate(number)} 
-                                className={`w-[40px] h-[40px] flex mx-[10px] md:mb-0 mb-[10px] rounded-md ${currentPage === number ? 'bg-[#9FC5DF] text-white' : 'bg-[#e6e6e6] hover:bg-[#9FC5DF]'} `}
+                                type="button"
+                                key={number} 
+                                className={`w-[40px] h-[40px] flex mx-[10px] md:mb-0 mb-[10px] rounded-md 
+                                            ${currentPage === number ? "bg-[#9FC5DF] text-white" : "bg-[#e6e6e6] hover:bg-[#9FC5DF]"} `}
                             >
                                 <div className="text-center m-auto">{number}</div>
                             </button>
@@ -91,25 +141,38 @@ const Pagination: React.FC<PaginationProps> = ({ postsPerPage, totalPosts, pagin
                     }
                 })}
             </div>
-            <div className="w-[88px] flex justify-between h-full">
+            <div className="w-[88px] h-full flex justify-between">
                 <button
                     onClick={handleNextbtn}
+                    type="button"
                     disabled={currentPage === pageNumbers[pageNumbers.length - 1]}
-                    className={`pagination-button py-[10px] px-[13px] ${currentPage === pageNumbers[pageNumbers.length - 1] ? 'bg-gray-300' : 'hover:bg-[#5B98BC]'} `}
+                    className={`pagination-button py-[10px] px-[13px] 
+                                ${currentPage === pageNumbers[pageNumbers.length - 1] ? "bg-gray-300" : "hover:bg-[#5B98BC]"} `}
                 >
-                    <Image src="/images/angle-right-solid.svg" alt="Next Page" width={12} height={12} className="w-[12px] h-auto object-cover"/>
+                    <Image 
+                        src="/images/angle-right-solid.svg" 
+                        alt="NextPage" 
+                        width={12} 
+                        height={12} 
+                        className="w-[12px] h-auto object-cover"
+                    />
                 </button>
                 <button
                     onClick={handleLastPage}
                     disabled={currentPage === pageNumbers[pageNumbers.length - 1]}
-                    className={`pagination-button p-[10px] ${currentPage === pageNumbers[pageNumbers.length - 1] ? 'bg-gray-300' : 'hover:bg-[#5B98BC]'} `}
+                    className={`pagination-button p-[10px] 
+                                ${currentPage === pageNumbers[pageNumbers.length - 1] ? "bg-gray-300" : "hover:bg-[#5B98BC]"} `}
                 >
-                    <Image src="/images/angles-right-solid.svg" alt="Last Page" width={20} height={0} className="w-[20px] h-auto object-cover"/>
+                    <Image 
+                        src="/images/angles-right-solid.svg" 
+                        alt="LastPage" 
+                        width={20} 
+                        height={20} 
+                        className="w-[20px] h-auto object-cover"/>
                 </button>
             </div>
         </div>
     );
-    };
-
+};
 
 export default Pagination;
