@@ -9,6 +9,7 @@ import {
 } from "react";
 
 import { UserType } from "./useAuth"; 
+import { InstitutionInfo } from "../lib/types";
 
 import {db} from "../lib/firebaseConfig";
 import { FirebaseFavoriteData} from "../lib/types";
@@ -19,11 +20,7 @@ import {
   addDoc, 
   deleteDoc, 
   query, 
-  where, 
-  orderBy, 
-  startAfter, 
-  limit, 
-  DocumentSnapshot 
+  where
 } from "firebase/firestore";
 
 interface FavoriteProviderProps {
@@ -47,14 +44,14 @@ const FavoriteContext = createContext<{
   state: FavoriteState;
   dispatch: React.Dispatch<FavoriteAction>;
   fetchFavoriteData: () => Promise<void>;
-  addFavorite: (favoriteItem: FirebaseFavoriteData) => Promise<void>;
-  removeFavorite: (docId: string) => Promise<void>;
+  handleAddFavorite: (user: UserType | null, institution: InstitutionInfo) => Promise<void>;
+  handleRemoveFavorite: (user: UserType | null, docId: string) => Promise<void>;
 }>({
   state: initialState,
   dispatch: () => null,
   fetchFavoriteData:async () => {},
-  addFavorite: async () => {},
-  removeFavorite: async () => {},
+  handleAddFavorite: async () => {},
+  handleRemoveFavorite: async () => {},
 });
 
 const FavoriteReducer = (state: FavoriteState, action: FavoriteAction) => {
@@ -93,24 +90,51 @@ export const FavoriteProvider: React.FC<FavoriteProviderProps> = ({
     fetchFavoriteData();
 }, [fetchFavoriteData]);
 
-  const addFavorite = async (favoriteItem: FirebaseFavoriteData) => {
-      const docRef = await addDoc(collection(db, "favorites"), favoriteItem);
-      dispatch({ type: "ADD_FAVORITE", payload: {  ...favoriteItem, id: docRef.id} });
+//多個元件均完全相同的資料處理及狀態管理邏輯
+const handleAddFavorite = async (user: UserType | null, institution: InstitutionInfo) => {
+  if (!user) return;
+  
+  const favoriteItem: FirebaseFavoriteData = {
+    userId: user.uid,
+    hosp_name: institution.hosp_name,
+    hosp_addr: institution.hosp_addr,
+    tel: institution.tel,
+    imageUrl: institution.imageUrl
   };
 
-  const removeFavorite = async (docId: string) => {
-    try {
-        await deleteDoc(doc(db, "favorites", docId));
-        dispatch({ type: "REMOVE_FAVORITE", payload: docId }); 
-    } catch (error) {
-        console.error("Failed to delete favorite:", error);
-        throw error;
+  try {
+    const docRef = await addDoc(collection(db, "favorites"), favoriteItem);
+    dispatch({ type: "ADD_FAVORITE", payload: { ...favoriteItem, id: docRef.id } });
+  } catch (error) {
+    console.error("Failed to add favorite:", error);
+  }
+};
+
+  const handleRemoveFavorite =  async (user: UserType | null, objectID: string) => {
+    if (!user) return;
+  
+    const q = query(collection(db, "favorites"), where("hosp_name", "==", objectID), where("userId", "==", user.uid));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+        const batch = querySnapshot.docs.map(async (document) => {
+            await deleteDoc(doc(db, "favorites", document.id));
+            return document.id;
+        });
+
+        const deletedDocIds = await Promise.all(batch);
+        deletedDocIds.forEach(docId => {
+          dispatch({ type: "REMOVE_FAVORITE", payload: docId });
+        });
+    } else {
+        console.error("No favorite record found in Firestore or element with matching ID not found");
     }
 };
 
 console.log(state);
+
   return (
-      <FavoriteContext.Provider value={{ state, dispatch, fetchFavoriteData, addFavorite, removeFavorite }}>
+      <FavoriteContext.Provider value={{ state, dispatch, fetchFavoriteData, handleAddFavorite, handleRemoveFavorite }}>
         {children}
       </FavoriteContext.Provider>
   );

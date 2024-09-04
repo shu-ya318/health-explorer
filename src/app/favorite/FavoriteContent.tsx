@@ -47,8 +47,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import RingLoader from "react-spinners/RingLoader";
 
 const FavoriteContent: React.FC = () => {
-    const { uid } = useAuth().user || {}; 
-    const { state, removeFavorite } = useFavorite();
+    const { user } = useAuth();
+    const { state, handleRemoveFavorite } = useFavorite();
 
     const [openLoading, setOpenLoading] = useState<boolean>(true);
     const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
@@ -73,14 +73,14 @@ const FavoriteContent: React.FC = () => {
 
 
     const fetchMoreData = useCallback(async () => {
-        if (! uid || loading || (!lastVisible && !isInitialLoad) || allDataLoaded) return;
+        if (! user?.uid || loading || (!lastVisible && !isInitialLoad) || allDataLoaded) return;
 
         setLoading(true);
 
         try {
             const nextQuery = query(
                 collection(db, "favorites"),
-                where("userId", "==", uid),
+                where("userId", "==", user?.uid),
                 lastVisible ? startAfter(lastVisible) : limit(3),
                 limit(3)
             );
@@ -104,7 +104,7 @@ const FavoriteContent: React.FC = () => {
         } finally{
             setLoading(false);
         }
-    }, [uid,loading, lastVisible, isInitialLoad, allDataLoaded]);
+    }, [user?.uid, loading, lastVisible, isInitialLoad, allDataLoaded]);
 
     useEffect(() => {
         console.log(isInitialLoad);
@@ -136,19 +136,21 @@ const FavoriteContent: React.FC = () => {
         setIsConfirmModalOpen(true);
     };
 
-    const handleConfirmDelete = async () => {
-        if (!selectedId || !uid) return;
+    const handleConfirmDelete = async (hosp_name: string) => {
+        if (!selectedId || !user) return;
     
         try {
-            await removeFavorite(selectedId);
-            //確保即時更新favoriteData，重渲染反映在UI
-            setFavoriteData(prevData => prevData.filter(item => item.id !== selectedId));
+            await handleRemoveFavorite(user, hosp_name);
+            //確保即時更新本元件的state，重渲染反映在UI
+            setFavoriteData(prevData => prevData.filter(item => item.hosp_name !== hosp_name));
+            console.log(favoriteData); 
         } catch (error) {
             console.error(error);
         } finally {
             setIsConfirmModalOpen(false);
         }
     };
+    console.log(favoriteData); 
 
     const handleCloseModal = () => {
         setIsConfirmModalOpen(false);
@@ -156,7 +158,6 @@ const FavoriteContent: React.FC = () => {
     
 
     //匯出前，確保取得所有收藏資料，非僅當前滾動頁面資料
-
     Font.register({
         family: "NotoSansTC",
         fonts: [
@@ -270,7 +271,7 @@ const FavoriteContent: React.FC = () => {
 
     return ( 
         <>   
-            {!uid  ? 
+            {!user? 
                 <HomePage/>
             :( 
                 <>
@@ -289,13 +290,14 @@ const FavoriteContent: React.FC = () => {
                                 exit={{ opacity: 0 }}
                             >
                                 <main className="w-full h-auto common-col-flex justify-center">
-                                    {isConfirmModalOpen && (
-                                        <ConfirmDeleteModal 
-                                            isOpen={isConfirmModalOpen} 
-                                            handleConfirmDelete={handleConfirmDelete} 
-                                            handleCloseModal={handleCloseModal} 
-                                        />
-                                    )}   
+                                {selectedId && (
+                                    <ConfirmDeleteModal 
+                                        isOpen={isConfirmModalOpen} 
+                                        handleConfirmDelete={handleConfirmDelete} 
+                                        handleCloseModal={handleCloseModal}
+                                        hosp_name={favoriteData.find(item => item.id === selectedId)?.hosp_name || ""}
+                                    />
+                                )}
                                     <div className="relative w-full h-auto flex">
                                         <div className="relative w-full h-[360px] flex flex-col "> 
                                             <Image 

@@ -111,7 +111,7 @@ const handleRegisterClick = () => {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-20 w-screen h-[60px] common-col-flex justify-between bg-[#FFFFFF] border border-solid border-[#9FC5DF]">
+      <header className="fixed inset-x-0 top-0 z-30 w-screen h-[60px] common-col-flex justify-between bg-[#FFFFFF] border border-solid border-[#9FC5DF]">
         <ProgressBar /> 
         <div className="relative max-w-[1200px] w-screen lg:w-[90%] md:w-[80%] common-row-flex justify-between mx-auto px-[10px] text-[#1e94b4]">
             <Link 
@@ -186,7 +186,7 @@ const handleRegisterClick = () => {
                     onClick={handleSignInClick}
                     ref={signInButtonRef}
                     type="button" 
-                    className={`flex justify-center w-[52px] h-[35px] ${!isSignInModalVisible ? 'hover:text-[#2D759E] hover:font-semibold' : ''}`}
+                    className="flex justify-center w-[52px] h-[35px] hover:text-[#2D759E] hover:font-semibold"
                   >
                     <span className="m-auto text-[#2598B6] text-center">登入</span>
                   </button>

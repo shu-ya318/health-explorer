@@ -23,7 +23,7 @@ const CancerSearchSection: React.FC<CancerSearchSectionProps> = ({ handleSearchC
   const router = useRouter();
 
   return (
-    <div className="w-full common-col-flex justify-center">
+    <div className="w-full h-auto common-col-flex justify-center">
         <div 
             data-aos="fade-down" 
             className="common-page-layout justify-between xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] xl:p-[20px] py-[20px] mb-0 mt-20 backdrop-blur-[5px]"

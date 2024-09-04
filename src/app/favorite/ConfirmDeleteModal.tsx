@@ -1,12 +1,13 @@
 interface ConfirmModalProps {
   isOpen: boolean;
-  handleConfirmDelete: () => void;
+  hosp_name: string;  
+  handleConfirmDelete: (hosp_name: string) => void;
   handleCloseModal: () => void;
 }
 
-
 export const ConfirmDeleteModal: React.FC<ConfirmModalProps> = ({ 
   isOpen, 
+  hosp_name,
   handleConfirmDelete, 
   handleCloseModal 
 }) => {
@@ -29,7 +30,10 @@ export const ConfirmDeleteModal: React.FC<ConfirmModalProps> = ({
               取消
             </button>
             <button 
-              onClick={handleConfirmDelete}
+              onClick={() => {
+                console.log("Confirm delete button clicked with", hosp_name);
+                handleConfirmDelete(hosp_name);
+              }}
               type="button" 
               className="py-2.5 px-5 text-xs bg-[#19a8e6] text-white rounded-full shadow-xs transition-all duration-500 hover:bg-[#2D759E]"
             >

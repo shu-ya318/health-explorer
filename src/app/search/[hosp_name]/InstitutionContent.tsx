@@ -1,27 +1,16 @@
-//import { useInstitutions } from "../contexts/InstitutionsContext";
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from 'next/navigation'; 
 import Image from "next/image";
 
 import { useAuth } from "../../hooks/useAuth"; 
 import { useFavorite } from "../../hooks/useFavorite"; 
-import { FirebaseFavoriteData, InstitutionInfo } from "../../lib/types";
+import { useInstitution }  from "../../hooks/useInstitution";
 
 import FavoriteButton from "./FavoriteButton";
 import InstitutionMap from "./InstitutionMap";
 import InstitutionCarousel from "./InstitutionCarousel";
 
-import { db } from "../../lib/firebaseConfig";
-import { 
-    collection, 
-    doc, 
-    getDocs, 
-    query, 
-    where, 
-    deleteDoc, 
-    updateDoc, 
-    increment 
-} from "firebase/firestore";
+import { InstitutionInfo } from "../../lib/types";
 import algoliasearch from "algoliasearch/lite";
 
 import { motion, AnimatePresence } from "framer-motion"; 
@@ -35,13 +24,13 @@ const index = searchClient.initIndex("Medical_Institutions");
 
 const InstitutionContent: React.FC = () => {
     const { user } = useAuth();
-    const { state, addFavorite, removeFavorite } = useFavorite();
+    const { state, handleAddFavorite, handleRemoveFavorite} = useFavorite();
+    const { handleIncrement } = useInstitution();
 
     const router = useRouter();
 
     const [openLoading, setOpenLoading] = useState<boolean>(true);
     const [loading,setLoading] = useState<boolean>(false);
-    const [favoriteHover, setFavoriteHover] = useState<Record<string, boolean>>({});
     const [institutionDetails, setInstitutionDetails] = useState<InstitutionInfo| null>(null);
     const [comparableInstitutions, setComparableInstitutions] = useState<InstitutionInfo[]>([]);
     const [carouselIndex, setCarouselIndex] = useState<number>(0);
@@ -53,10 +42,6 @@ const InstitutionContent: React.FC = () => {
     
         return () => clearTimeout(timer);
     }, []);
-
-    useEffect(() => {
-        console.log("updated", favoriteHover);
-    }, [favoriteHover]);
     
     useEffect(() => {
         setLoading(true);
@@ -122,17 +107,6 @@ const InstitutionContent: React.FC = () => {
         }
     }, [institutionDetails]);
 
-    const setFavoriteHoverState = (hosp_name: string, state: boolean) => {
-        setFavoriteHover(prev => {
-            if (prev[hosp_name] === state) {
-                return prev; 
-            }
-            const updated = { ...prev, [hosp_name]: state };
-            console.log(`Setting favorite hover for ${hosp_name} to ${state}`);
-            return updated;
-        });
-    };
-
 
     const displayedInstitutions = useMemo(() => {
         return comparableInstitutions.slice(carouselIndex, carouselIndex + 3);
@@ -150,54 +124,6 @@ const InstitutionContent: React.FC = () => {
     const handlePrev = () => {
         if (carouselIndex > 0) {
             setCarouselIndex(prev => prev - 3);
-        }
-    };
-
-
-    const handleAddClick = async (institution: InstitutionInfo, userId:string) => {
-        if (!user) return;
-
-        const newRecord: FirebaseFavoriteData = {
-            userId: user.uid,
-            hosp_name: institution.hosp_name,
-            hosp_addr: institution.hosp_addr,
-            tel:institution.tel,
-            imageUrl: institution.imageUrl
-        };
-        await addFavorite(newRecord);
-    };
-    const handleRemoveClick = async (objectID:string, userId:string) => {
-        if (!user) return;
-
-        const q = query(collection(db, "favorites"), where("hosp_name", "==", objectID), where("userId", "==", userId));
-        const querySnapshot = await getDocs(q);
-    
-        if (!querySnapshot.empty) {
-            const batch = querySnapshot.docs.map(async (document) => {
-                await deleteDoc(doc(db, "favorites", document.id));
-                return document.id;
-            });
-            const deletedDocIds = await Promise.all(batch);
-    
-            deletedDocIds.forEach(docId => {
-                removeFavorite(docId);
-            });
-        } else {
-            console.error("firestore無此筆收藏紀錄文件或狀態找不到對應id的元素");
-        }
-    };
-
-    const handleIncrement = async (institution: InstitutionInfo) => {
-        const docRef = doc(db, "medicalInstitutions", institution.hosp_name);
-        router.push(`/search/${encodeURIComponent(institution.hosp_name)}`);
-        
-        try {
-            await updateDoc(docRef, {
-                view: increment(1)
-            });
-            
-        } catch (error) {
-            console.error('Failed to increment views:', error);
         }
     };
 
@@ -242,12 +168,10 @@ const InstitutionContent: React.FC = () => {
                                     <FavoriteButton
                                         user={user} 
                                         state={state} 
-                                        setFavoriteHoverState={setFavoriteHoverState}
-                                        handleAddClick={handleAddClick} 
-                                        handleRemoveClick={handleRemoveClick} 
-                                        favoriteHover={favoriteHover}
                                         institutionDetails={institutionDetails}
                                         institutionName={institutionDetails.hosp_name}
+                                        handleAddFavorite={handleAddFavorite} 
+                                        handleRemoveFavorite={handleRemoveFavorite} 
                                     />
                                     <hr className="w-full my-[30px] border border-[#acb8b6]"/>
                                     <h3 className="xs:institutionPage-title-xs institutionPage-title-mobile mb-[30px]">資訊簡介</h3>

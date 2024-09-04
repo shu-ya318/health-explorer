@@ -50,7 +50,7 @@ const FilterDropdowns: React.FC<FilterDropdownsProps> = ({
             </div>
             <div className="relative sm:w-36 w-20">
                 <button
-                    onClick={() => toggleDropdowns('divisions')}
+                    onClick={() => toggleDropdowns("divisions")}
                     type="button"
                     className={`searchPage-label 
                                 ${isOpenDivisions ? "bg-[#2D759E] text-[#ffffff]" : "searchPage-label-notOpened"}`}
@@ -80,10 +80,10 @@ const FilterDropdowns: React.FC<FilterDropdownsProps> = ({
             </div>
             <div className="relative sm:w-36 w-20">
                 <button
-                    onClick={() => toggleDropdowns('districts')}
+                    onClick={() => toggleDropdowns("districts")}
                     type="button"
                     className={`rounded-r-md searchPage-label 
-                                ${isOpenDistricts ? 'bg-[#2D759E] text-[#ffffff]' : 'searchPage-label-notOpened'}`} 
+                                ${isOpenDistricts ? "bg-[#2D759E] text-[#ffffff]" : "searchPage-label-notOpened"}`} 
                 >
                     依地區
                     <Image 

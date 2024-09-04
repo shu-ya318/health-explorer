@@ -11,28 +11,30 @@ import RegisterModal from "../../components/auth/RegisterModal";
 interface FavoriteButtonProps {
     user: UserType | null; 
     state: FavoriteState;
-    setFavoriteHoverState: (hosp_name: string, state: boolean) => void;
-    handleAddClick: (institution: InstitutionInfo, userId:string) => void;
-    handleRemoveClick: (objectID:string, userId:string) => void;
-    favoriteHover: Record<string, boolean>;
     institutionDetails:InstitutionInfo;
     institutionName: string;
+    handleAddFavorite: (user: UserType | null, institution: InstitutionInfo)  => void;
+    handleRemoveFavorite: (user: UserType | null, docId: string)=> void;
 }
 
 const FavoriteButton: React.FC<FavoriteButtonProps> = ({ 
     user,
     state,
-    setFavoriteHoverState,
-    handleAddClick,
-    handleRemoveClick,
-    favoriteHover,
     institutionDetails,
-    institutionName 
+    institutionName,
+    handleAddFavorite,
+    handleRemoveFavorite
 }) => {
     const [isRegisterModalVisible, setIsRegisterModalVisible] = useState<boolean>(false);
     const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
+    const [favoriteHover, setFavoriteHover] = useState<Record<string, boolean>>({});
+    
     const favoriteButtonRef = useRef<HTMLButtonElement>(null);
     const loggedFavoriteButtonRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        console.log("updated:", favoriteHover);
+    }, [favoriteHover]);
 
     useEffect(() => {
         if (!user && favoriteButtonRef.current) {
@@ -42,9 +44,20 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
         }
     }, [user]);
 
+    const setFavoriteHoverState = (hosp_name: string, state: boolean) => {
+        setFavoriteHover(prev => {
+            if (prev[hosp_name] === state) {
+                return prev; 
+            }
+            const updated = { ...prev, [hosp_name]: state };
+            console.log(`Setting favorite hover for ${hosp_name} to ${state}`);
+            return updated;
+        });
+    };
+
     return (
         <>
-            {! user && isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
+            {!user && isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
             {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
             <div className="w-full common-col-flex justify-between">
                 {!user ? (
@@ -74,7 +87,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
                     <>
                         {(() => {
                             const isFavorited = state.favorites.some(item => item.userId === user.uid && item.hosp_name === institutionName);
-                            const handleHeartClick = isFavorited ? () => handleRemoveClick(institutionName, user.uid) : () => handleAddClick(institutionDetails, user.uid);
+                            const handleHeartClick = isFavorited ? () => handleRemoveFavorite(user, institutionName) : () => handleAddFavorite(user, institutionDetails);
                             return (
                                 <button 
                                     ref={loggedFavoriteButtonRef}
