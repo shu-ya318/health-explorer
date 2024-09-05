@@ -23,7 +23,7 @@ const FilterDropdowns: React.FC<FilterDropdownsProps> = ({
 }) => {
 
     return (
-        <div className="mx-w-screen-md h-9 flex flex-row justify-center mb-[20px]">
+        <div className="hidden md:max-w-screen-md md:h-9 md:flex md:flex-row md:justify-center md:mb-[20px]">
             <div className="sm:w-[150px] w-[100px] py-1 bg-2 bg-[#E0E0E0] rounded-l-md text-black text-center text-[16px]">排序:</div>
             <div className="relative sm:w-36 w-20">
                 <button
@@ -41,7 +41,7 @@ const FilterDropdowns: React.FC<FilterDropdownsProps> = ({
                     />
                 </button>
                 {isOpenInstitutions && (
-                    <ul className="lg:searchPage-label-optionsGrid-lg md:searchPage-label-optionsGrid-md xs:searchPage-label-optionsGrid-xs xxs:searchPage-label-optionsGrid-xxs searchPage-label-optionsGrid-mobile">
+                    <ul className="lg:searchPage-label-optionsGrid-lg searchPage-label-optionsGrid">
                         {institutions.map((institution) => (
                             <li 
                                 onClick={() => handleSelectFilter(institution)}
@@ -71,7 +71,7 @@ const FilterDropdowns: React.FC<FilterDropdownsProps> = ({
                     />
                 </button>
                 {isOpenDivisions && (
-                    <ul className="lg:searchPage-label-optionsGrid-lg md:searchPage-label-optionsGrid-md xs:searchPage-label-optionsGrid-xs xxs:searchPage-label-optionsGrid-xxs searchPage-label-optionsGrid-mobile">
+                    <ul className="lg:searchPage-label-optionsGrid-lg searchPage-label-optionsGrid">
                         {divisions.map((division) => (
                             <li 
                                 onClick={() => handleSelectFilter(division)}
@@ -101,7 +101,7 @@ const FilterDropdowns: React.FC<FilterDropdownsProps> = ({
                     />
                 </button>
                 {isOpenDistricts && (
-                    <ul className="lg:searchPage-label-optionsGrid-lg md:searchPage-label-optionsGrid-md xs:searchPage-label-optionsGrid-xs xxs:searchPage-label-optionsGrid-xxs searchPage-label-optionsGrid-mobile">
+                    <ul className="lg:searchPage-label-optionsGrid-lg searchPage-label-optionsGrid">
                         {districts.map((district) => (
                             <li 
                                 onClick={() => handleSelectFilter(district)}

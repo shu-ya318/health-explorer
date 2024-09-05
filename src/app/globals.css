@@ -91,20 +91,11 @@ body {
   .searchPage-label-optionsGrid-lg{
     @apply grid grid-cols-3 gap-2 w-[500px] absolute z-20 bg-[#ffffff] border-2 border-[#2D759E] rounded-md shadow-[0_0_5px_#AABBCC] py-[15px] px-[10px];
   }
-  .searchPage-label-optionsGrid-md{
+  .searchPage-label-optionsGrid{
     @apply grid grid-cols-2 gap-2 w-[305px] absolute z-20 bg-[#ffffff] border-2 border-[#2D759E] rounded-md shadow-[0_0_5px_#AABBCC] py-[15px] px-[10px];
   }
-  .searchPage-label-optionsGrid-xs{
-    @apply grid grid-cols-2 gap-2 w-[185px] absolute z-20 bg-[#ffffff] border-2 border-[#2D759E] rounded-md shadow-[0_0_5px_#AABBCC] py-[15px] px-[10px];
-  }
-  .searchPage-label-optionsGrid-xxs{
-    @apply grid grid-cols-1 gap-2 w-[100px] absolute z-20 bg-[#ffffff] border-2 border-[#2D759E] rounded-md shadow-[0_0_5px_#AABBCC] py-[15px] px-[10px];
-  }
-  .searchPage-label-optionsGrid-mobile{
-    @apply grid grid-cols-1 gap-2 w-[80px] absolute z-20 bg-[#ffffff] border-2 border-[#2D759E] rounded-md shadow-[0_0_5px_#AABBCC] py-[15px] px-[10px];
-  }
   .searchPage-label-option{
-    @apply z-20 hover:bg-[#2D759E] hover:text-[#ffffff] text-center text-[#707070]  border-solid border border-[#e6e6e6] rounded-md  cursor-pointer;
+    @apply z-20 hover:bg-[#2D759E] hover:text-[#ffffff] text-center text-[#707070]  border-solid border border-[#e6e6e6] rounded-md cursor-pointer;
   }
   .common-card{
     @apply text-left overflow-hidden truncate;
