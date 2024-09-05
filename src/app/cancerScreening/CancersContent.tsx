@@ -9,6 +9,8 @@ interface CancersContentProps {
     handleSetAnswer: (value: string | number) => void;
     itemOptions: string[];
     progress: number; 
+    handleFinishClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    loading:boolean;
 }
 const CancersContent: React.FC<CancersContentProps> = ({ 
     id, 
@@ -17,7 +19,9 @@ const CancersContent: React.FC<CancersContentProps> = ({
     handleNextClick, 
     handleSetAnswer, 
     itemOptions, 
-    progress
+    progress,
+    handleFinishClick,
+    loading
 }) => {
     const [imageLoaded, setImageLoaded] = useState<boolean>(false);
     const [inputYear, setInputYear] = useState<string>("");
@@ -117,7 +121,7 @@ const CancersContent: React.FC<CancersContentProps> = ({
                         )}
                         <div className="common-row-flex">
                             <button
-                                onClick={handleNextClick}
+                                onClick={isLast ? handleFinishClick : handleNextClick}
                                 type="button"
                                 className="w-[150px] h-9 mx-auto mb-6 py-4.5 px-2.5 common-button"
                                 style={{ display: showClick ? "block" : "none" }}
@@ -125,6 +129,9 @@ const CancersContent: React.FC<CancersContentProps> = ({
                                 {isLast ? "Finish" : "Next"}
                             </button>
                         </div>
+                        { loading && ( 
+                            <div  className="w-full common-col-flex justify-center">正在提交問卷...</div> 
+                        )}
                     </div>
                 </div>
             </main>

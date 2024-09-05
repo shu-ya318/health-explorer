@@ -1,6 +1,20 @@
 "use client";
-import Image from "next/image";
+
+
 import { useState, useEffect} from "react"; 
+import Image from "next/image";
+import { db } from "../../lib/firebaseConfig";
+import { collection, query, where, getDocs } from "firebase/firestore";
+
+interface cancerScreeningAnswer {
+    birthYear: number;
+    indigenous: number;
+    betelNutUsage: number;
+    gender: number;
+    smoking: number;
+    familyLungCancer: number;
+    familyBreastCancer: number;
+}
 
 const cancers = [
     { filter: "子宮頸癌"},
@@ -12,59 +26,52 @@ const cancers = [
 
 const CancerScreeningResultPage: React.FC = () => {
     const [imageLoaded, setImageLoaded] = useState<boolean>(false);
-    const [answers, setAnswers] = useState<(string | number)[]>([]); 
+    const [answers, setAnswers] = useState<cancerScreeningAnswer[]>([]); 
 
     useEffect(() => {
-        const storedAnswers = localStorage.getItem("answers");
-        if (storedAnswers) {
-            try {
-                const parsedAnswers = JSON.parse(storedAnswers).map((item: string) => {
-                    const parsedItem = parseInt(item, 10);
+        const fetchResults = async () => {
+          const testerId = sessionStorage.getItem("testerId");
 
-                    if (isNaN(parsedItem)) {
-                        throw new Error("the answer contains non-numeric elements.");
-                    }
-                    return parsedItem;
-                });
-                setAnswers(parsedAnswers);
-            } catch (error) {
-                console.error("An error occurred while parsing the stored answers:", error);
-            }
-        } else {
-            console.log("No answers found in local storage.");
-        }
-    }, []);
+          const q = query(collection(db, "cancerScreening"), where("testerId", "==", testerId));
+          const querySnapshot = await getDocs(q);
+          const documents = querySnapshot.docs.map(doc => doc.data() as cancerScreeningAnswer);
+          setAnswers(documents);
+        };
+    
+        fetchResults();
+      }, []);
 
     if (!answers || answers.length === 0) {
         return <p>正在加載答案...</p>; 
     }
 
-    const birthYear = answers[0] as number;
-    const indigenous = answers[1] as number;
-    const gender = answers[2] as number;
-    const betelNutUsage = answers[3] as number;
-    const smoking = answers[4] as number;
-    const familyLungCancer = answers[5] as number;
-    const familyBreastCancer = answers[6] as number;
+    const firstAnswer = answers[0];
+    const birthYear = firstAnswer.birthYear;
+    const indigenous = firstAnswer.indigenous;
+    const gender = firstAnswer.gender;
+    const betelNutUsage = firstAnswer.betelNutUsage;
+    const smoking = firstAnswer.smoking;
+    const familyLungCancer = firstAnswer.familyLungCancer;
+    const familyBreastCancer = firstAnswer.familyBreastCancer;
 
     const noQualification = (birthYear > 96 && betelNutUsage === 3 && smoking === 3) ||
                             (birthYear >= 85 && birthYear <= 96 && indigenous === 2) ||
-                            (birthYear < 40 && gender === 1);
+                            (birthYear < 40 && gender === 2);
     
     const oralCancerQualification = (birthYear >= 85 && birthYear <= 96 && indigenous === 1) ||
                                     (birthYear < 85 && (betelNutUsage === 1 || betelNutUsage === 2)) ||
                                     (birthYear < 85 && (smoking === 1 || smoking === 2));
 
-    const lungCancerQualification = ((birthYear >= 40 && birthYear <= 69 && gender === 2 && familyLungCancer === 1) ||
-                                     (birthYear >= 40 && birthYear <= 64 && gender === 1 && familyLungCancer === 1) ||
+    const lungCancerQualification = ((birthYear >= 40 && birthYear <= 69 && gender === 1 && familyLungCancer === 1) ||
+                                     (birthYear >= 40 && birthYear <= 64 && gender === 2 && familyLungCancer === 1) ||
                                      (birthYear >= 40 && birthYear <= 64 && smoking === 1));
 
     const colorectalCancerQualification = (birthYear >= 40 && birthYear <= 64);
 
-    const cervicalCancerQualification = (birthYear < 85 && gender === 2);
+    const cervicalCancerQualification = (birthYear < 85 && gender === 1);
 
-    const breastCancerQualification = ((birthYear >= 45 && birthYear <= 69 && gender === 2) ||
-                                       (birthYear >= 70 && birthYear <= 74 && gender === 2 && familyBreastCancer === 1));
+    const breastCancerQualification = ((birthYear >= 45 && birthYear <= 69 && gender === 1) ||
+                                       (birthYear >= 70 && birthYear <= 74 && gender === 1 && familyBreastCancer === 1));
 
     const handleSearchClick = (filter: string) => {
         window.open(`/search?filter=${filter}`, "_blank");

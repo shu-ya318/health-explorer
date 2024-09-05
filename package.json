@@ -28,7 +28,9 @@
     "react-dom": "^18",
     "react-instantsearch": "^7.12.4",
     "react-instantsearch-core": "^7.12.4",
-    "react-spinners": "^0.14.1"
+    "react-spinners": "^0.14.1",
+    "uuid": "^10.0.0",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "@types/aos": "^3.0.7",

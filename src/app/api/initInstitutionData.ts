@@ -2,7 +2,7 @@
 
 import { FirebaseInstitutionData } from "../lib/types";
 import { db, storage} from "../lib/firebaseConfig";
-import { collection, doc, writeBatch, getDocs} from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, writeBatch, getDocs} from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 
@@ -415,12 +415,17 @@ async function createFirestoreData(institutionData: FirebaseInstitutionData[]) {
 
 // (三)放到父函式
 export async function initInstitutionData(){
-    const snapshot = await getDocs(collection(db, "medicalInstitutions"));
-    if (snapshot.size > 1) {
+    //另建資料庫來判斷是否初始化，確保效率及最小化讀寫成本
+    const configRef = doc(db, "appConfig", "main");
+    const configSnapshot = await getDoc(configRef);
+
+    if (configSnapshot.exists() && configSnapshot.data().isDataInitialized) {
         console.log("Firestore data is initialized; stop fetching!");
         return;
-    } 
+    }
     
     const institutionData = await fetchAndFormatData(); 
     await createFirestoreData(institutionData);
+
+    await setDoc(configRef, { isDataInitialized: true }, { merge: true });
 }
