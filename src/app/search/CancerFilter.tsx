@@ -1,4 +1,3 @@
-
 interface Cancer {
     filter: string;
     image: string;
@@ -19,7 +18,7 @@ const CancerFilter: React.FC<CancerFilterProps> = ({
             className="absolute inset-x-0 lg:w-full max-w-[760px] w-[95%] md:min-h-[200px] h-auto common-page-layout justify-around md:mb-[60px] mb-[80px] mx-auto px-[20px] common-border border"
         > 
             <div className="mt-[10px] common-title text-[24px]">依癌篩資格搜尋</div>
-            <div className="grid md:grid-cols-5 grid-cols-3 md:gap-x-16 xs:gap-x-20 xss:gap-x-12 gap-x-10">
+            <div className="grid md:grid-cols-5 grid-cols-3 md:gap-x-16 xs:gap-x-20 xxs:gap-x-12 gap-x-10">
                 {cancers.map((cancer, index) => (
                     <button 
                         onClick={() => handleCancerFilter(cancer.filter)}

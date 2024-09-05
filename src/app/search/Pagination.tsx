@@ -96,7 +96,7 @@ const Pagination: React.FC<PaginationProps> = ({
                     type="button"
                     disabled={currentPage === 1}
                     className={`pagination-button p-[10px] 
-                                ${currentPage === 1 ? 'bg-gray-300' : 'hover:bg-[#5B98BC]'}`}
+                                ${currentPage === 1 ? "bg-gray-300" : "hover:bg-[#5B98BC]"}`}
                 >
                     <Image 
                         src="/images/angles-left-solid.svg" 
@@ -118,8 +118,8 @@ const Pagination: React.FC<PaginationProps> = ({
                         alt="PreviousPage" 
                         width={12} 
                         height={12} 
-                        className="w-[12px] h-auto object-cover
-                    "/>
+                        className="w-[12px] h-auto object-cover"
+                    />
                 </button>
             </div>
             <div className="w-full max-w-[500px] h-full flex flex-row justify-center m-auto">

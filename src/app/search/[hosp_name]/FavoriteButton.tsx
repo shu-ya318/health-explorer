@@ -79,7 +79,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
                                 width={40} 
                                 height={40} 
                                 className={`rounded-full p-[2px] mt-[20px] 
-                                            ${favoriteHover[institutionName] ? 'bg-[#FFFFFF]  common-border border  shadow-[0_0_3px_#2D759E]':'border-none shadow-none bg-[#0000004d]' }`}
+                                            ${favoriteHover[institutionName] ? "favorite-button-add":"favorite-button-remove"}`}
                             />
                         </button>
                     </>
@@ -106,7 +106,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
                                         width={36} 
                                         height={36} 
                                         className={`rounded-full p-[2px] mt-[20px] 
-                                                    ${isFavorited || favoriteHover[institutionName] ?'bg-[#FFFFFF]  common-border border shadow-[0_0_3px_#2D759E]':'border-none shadow-none bg-[#0000004d]'}`} 
+                                                    ${isFavorited || favoriteHover[institutionName] ?"favorite-button-add":"favorite-button-remove"}`} 
                                     />
                                 </button>
                             );

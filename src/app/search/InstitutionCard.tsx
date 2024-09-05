@@ -53,10 +53,10 @@ const InstitutionCard: React.FC<InstitutionCardsProps> = ({
         <>
             {!user && isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
             {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
-            <div className="h-[136px] relative lg:fill-two-columns fill-column mb-[15px] border border-gray-300 rounded-sm overflow-hidden bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
+            <div className="relative h-[136px] lg:fill-two-columns fill-column mb-[15px] border border-gray-300 rounded-sm overflow-hidden bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
                     <button 
                         onClick={() => handleIncrement(institution)} 
-                        className="h-full w-full flex"
+                        className="w-full h-full flex"
                     >
                     {institution.imageUrl && (
                         <Image
@@ -71,10 +71,10 @@ const InstitutionCard: React.FC<InstitutionCardsProps> = ({
                         />
                     )}
                     <div className="w-full flex flex-col justify-between p-[15px]">
-                        <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px] common-card pr-[15px] text-[16px] text-[#3E3A39] font-bold">{institution.hosp_name}</div>
-                        <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px] common-card text-[14px] text-[#595959]">{institution.division}</div>
-                        <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px] common-card text-[14px] text-[#595959]">{institution.cancer_screening}</div>
-                        <div className="xl:w-[380px] xs:w-[300px] xss:w-[168px] w-[100px]  h-[30px] common-row-flex">
+                        <div className="xl:w-[380px] xs:w-[300px] xxs:w-[168px] w-[100px] common-card pr-[15px] text-[16px] text-[#3E3A39] font-bold">{institution.hosp_name}</div>
+                        <div className="xl:w-[380px] xs:w-[300px] xxs:w-[168px] w-[100px] common-card text-[14px] text-[#595959]">{institution.division}</div>
+                        <div className="xl:w-[380px] xs:w-[300px] xxs:w-[168px] w-[100px] common-card text-[14px] text-[#595959]">{institution.cancer_screening}</div>
+                        <div className="xl:w-[380px] xs:w-[300px] xxs:w-[168px] w-[100px]  h-[30px] common-row-flex">
                             <Image 
                                 src="/images/eye-regular.svg" 
                                 alt="view" 
@@ -106,7 +106,7 @@ const InstitutionCard: React.FC<InstitutionCardsProps> = ({
                                 width={30} 
                                 height={30} 
                                 className={`w-[30px] h-[30px] rounded-full p-[2px] 
-                                            ${favoriteHover[institution.hosp_name] ? 'favorite-button-add':'favorite-button-remove' }`}
+                                            ${favoriteHover[institution.hosp_name] ? "favorite-button-add":"favorite-button-remove" }`}
                             />
                         </button>
                     </>

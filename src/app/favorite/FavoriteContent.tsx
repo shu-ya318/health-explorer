@@ -53,6 +53,7 @@ const FavoriteContent: React.FC = () => {
     const [openLoading, setOpenLoading] = useState<boolean>(true);
     const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(false);
+    const [imageLoaded, setImageLoaded] = useState<boolean>(false);
     const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
     const [allDataLoaded, setAllDataLoaded] = useState(false);
     const [favoriteData, setFavoriteData] = useState<FirebaseFavoriteData[]>([]);
@@ -299,12 +300,14 @@ const FavoriteContent: React.FC = () => {
                                     />
                                 )}
                                     <div className="relative w-full h-auto flex">
-                                        <div className="relative w-full h-[360px] flex flex-col "> 
+                                        <div className="relative w-full h-[360px] flex flex-col"> 
                                             <Image 
                                                 src="/images/favoritePage_banner.jpg" 
-                                                alt="icon" 
+                                                alt="favoritePage_banner" 
                                                 fill={true} 
                                                 className="w-full h-full object-cover"
+                                                onLoad={() => setImageLoaded(true)}
+                                                style={{backgroundImage: imageLoaded ? "" : "linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)"}}
                                             />
                                             <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-20">
                                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-bold text-[#FFFFFF] text-center sm:text-[56px] xs:text-[48px] text-[37px]">收藏清單</div>  

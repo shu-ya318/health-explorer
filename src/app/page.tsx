@@ -18,7 +18,7 @@ import "animate.css";
 const HomePage: React.FC = () => {
   const router = useRouter();
   const [openLoading, setOpenLoading] = useState<boolean>(true);
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -76,13 +76,13 @@ const HomePage: React.FC = () => {
               onLoad={() => setImageLoaded(true)}
               style={{backgroundImage: imageLoaded ? "" : "linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)"}}
            />
-          <div className="absolute top-[77%] lg:left-[55%] md:left-[57%] sm:left-[61%] xss:left-[60%] left-[65%] -translate-x-[80%] -translate-y-[80%] common-col-flex justify-between">
+          <div className="absolute top-[77%] lg:left-[55%] md:left-[57%] sm:left-[61%] xxs:left-[60%] left-[65%] -translate-x-[80%] -translate-y-[80%] common-col-flex justify-between">
             <div 
               onClick={scrollDown}
               data-aos="fade-up" 
               className="mt-22 cursor-pointer" 
             >
-              <span className="sm:text-[50px] xss:text-[30px] text-[26px] text-[#FFFFFF] text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]">開始探索</span>
+              <span className="sm:text-[50px] xxs:text-[30px] text-[26px] text-[#FFFFFF] text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]">開始探索</span>
               <br/>
               <Image 
                 src="/images/angles-down-solid.svg" 

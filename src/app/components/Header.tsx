@@ -136,7 +136,7 @@ const handleRegisterClick = () => {
             {isLogOutToastVisible && logOutMessage && (
               <div
                 ref={toastRef}  
-                className="z-50 xs:w-full xs:max-w-[160px] max-w-[100px] h-[40px] common-row-flex m-auto px-3 bg-white rounded-xl border border-[#2D759E] shadow-sm gap-4"
+                className="z-50 xs:w-full xs:max-w-[160px] max-w-[110px] h-[40px] common-row-flex m-auto px-3 bg-white rounded-xl border border-[#2D759E] shadow-sm gap-4"
               >
                 <div  className="my-auto text-[#2D759E] text-center xs:text-[14px] text-[12px]">{logOutMessage}</div>
                 <button 
@@ -165,7 +165,8 @@ const handleRegisterClick = () => {
               <button 
                 onClick={toggleMenuBar}
                 type="button"
-                className={`absolute top-[15px] right-[20px] w-[25px] h-[25px] md:hidden menu-button-selector ${isMenuBarVisible ? 'hidden' : 'block'}`}
+                className={`absolute top-[15px] right-[20px] w-[25px] h-[25px] md:hidden menu-button-selector 
+                          ${isMenuBarVisible ? "hidden" : "block"}`}
               >
               <Image 
                 src="/images/bars-solid.svg" 
@@ -175,10 +176,12 @@ const handleRegisterClick = () => {
                 className="w-[25px] h-[25px]"
               />
             </button>
-            <div className={`md:hidden  ${isMenuBarVisible ? 'absolute fixed inset-0 z-40 w-screen h-screen flex bg-black bg-opacity-30' : 'hidden'}`}></div>
+            <div className={`md:hidden  
+                          ${isMenuBarVisible ? "absolute fixed inset-0 z-40 w-screen h-screen flex bg-black bg-opacity-30" : "hidden"}`}></div>
             <div 
               ref={menuDivRef}
-              className={`md:common-row-flex md:justify-between no-underline ${isMenuBarVisible ? 'absolute top-0 right-0 z-50 w-44 h-screen common-col-flex pt-20 bg-[white] shadow-[0_0_3px_#1e94b4]' : 'hidden'}`}
+              className={`md:common-row-flex md:justify-between no-underline 
+                        ${isMenuBarVisible ? "absolute top-0 right-0 z-50 w-44 h-screen common-col-flex pt-20 bg-[white] shadow-[0_0_3px_#1e94b4]" : "hidden"}`}
             >
               {!user ? (
                 <>
@@ -186,7 +189,7 @@ const handleRegisterClick = () => {
                     onClick={handleSignInClick}
                     ref={signInButtonRef}
                     type="button" 
-                    className="flex justify-center w-[52px] h-[35px] hover:text-[#2D759E] hover:font-semibold"
+                    className="flex justify-center w-[52px] h-[35px] lg:hover:text-[#2D759E] lg:hover:font-semibold"
                   >
                     <span className="m-auto text-[#2598B6] text-center">登入</span>
                   </button>
@@ -200,7 +203,7 @@ const handleRegisterClick = () => {
                     onClick={handleRegisterClick}
                     ref={registerButtonRef}
                     type="button" 
-                    className={`flex justify-center w-[52px] h-[35px] ${!isRegisterModalVisible ? 'hover:text-[#2D759E] hover:font-semibold' : ''}`}
+                    className="flex justify-center w-[70px] h-[35px] lg:hover:text-[#2D759E] lg:hover:font-semibold"
                   >
                     <span className="m-auto text-[#2598B6] text-center hover:text-[#2D759E]">註冊</span>
                   </button>
@@ -217,7 +220,7 @@ const handleRegisterClick = () => {
                     onClick={handleLogOut}
                     ref={logOutButtonRef}
                     type="button" 
-                    className="flex justify-center w-[50px] h-[35px] hover:text-[#2D759E] hover:font-semibold"
+                    className="flex justify-center w-[50px] h-[35px] lg:hover:text-[#2D759E] lg:hover:font-semibold"
                   >
                     <span className="m-auto text-[#2598B6] text-center">登出</span>
                   </button>
@@ -227,7 +230,7 @@ const handleRegisterClick = () => {
                   onClick={handleFavoriteClick}
                   ref={myFavoriteButtonRef}
                   type="button" 
-                  className={`flex justify-center w-[70px] h-[35px] ${!isSignInModalVisible ? 'hover:text-[#2D759E] hover:font-semibold' : ''}`}
+                  className="flex justify-center w-[70px] h-[35px] lg:hover:text-[#2D759E] lg:hover:font-semibold"
                 >                  
                 <span className="m-auto text-[#2598B6] text-center">我的收藏</span>
               </button>

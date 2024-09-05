@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import { useState, useEffect} from "react"; 
 
 const cancers = [
@@ -11,6 +11,7 @@ const cancers = [
   ];
 
 const CancerScreeningResultPage: React.FC = () => {
+    const [imageLoaded, setImageLoaded] = useState<boolean>(false);
     const [answers, setAnswers] = useState<(string | number)[]>([]); 
 
     useEffect(() => {
@@ -66,17 +67,23 @@ const CancerScreeningResultPage: React.FC = () => {
                                        (birthYear >= 70 && birthYear <= 74 && gender === 2 && familyBreastCancer === 1));
 
     const handleSearchClick = (filter: string) => {
-        window.open(`/search?filter=${filter}`, '_blank');
+        window.open(`/search?filter=${filter}`, "_blank");
     };                        
 
     return (
         <>
             <main className=" w-full h-auto common-col-flex justify-center bg-[#FCFCFC]">
                 <div className="xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] h-auto common-col-flex my-[150px] mb-[40px] bg-[#FFFFFF] common-border border-2 rounded-lg shadow-[0_0_5px_#AABBCC] text-black"> 
-                    <div 
-                        className=" w-full flex h-[440px] common-bg-image rounded-t-lg" 
-                        style={{ backgroundImage: `url('../images/cancerScreeningResult_banner.jpg')` }}
-                    ></div>
+                    <div className="relative w-full h-[440px]">
+                        <Image 
+                            src="/images/cancerScreeningResult_banner.jpg" 
+                            alt="cancerScreeningResult_banner" 
+                            fill={true}
+                            className="w-full h-full object-cover rounded-t-md"
+                            onLoad={() => setImageLoaded(true)}
+                            style={{backgroundImage: imageLoaded ? "" : "linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)"}}
+                        />
+                    </div>
                     <div className="w-full my-[20px] text-[#1D445D] text-[28px] text-center font-bold">您的檢測結果如下:</div>
                     {noQualification && (
                         <div className="common-col-flex justify-between w-full mx-auto px-[40px] mb-[40px]">  
@@ -87,7 +94,7 @@ const CancerScreeningResultPage: React.FC = () => {
                                 </div>  
                                 <div 
                                     className="w-[140px] h-[140px] mx-auto rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" 
-                                    style={{ backgroundImage: `url('../images/notFound.png')` }}>
+                                    style={{ backgroundImage: `url("../images/notFound.png")` }}>
                                 </div>  
                                 <button
                                     onClick={() => handleSearchClick("醫院")}   
@@ -108,7 +115,7 @@ const CancerScreeningResultPage: React.FC = () => {
                                 </div>  
                                 <div 
                                     className="w-[130px] h-[130px] mx-auto rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" 
-                                    style={{ backgroundImage: `url('../images/oralCancer.png')` }}
+                                    style={{ backgroundImage: `url("../images/oralCancer.png")` }}
                                 ></div>  
                                 <button
                                     onClick={()=>handleSearchClick(cancers[3].filter)}   
@@ -121,13 +128,13 @@ const CancerScreeningResultPage: React.FC = () => {
                         { lungCancerQualification && (
                             <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] xl:py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB] animate-flipUp">
                                  <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
-                                    <div className="text-[18px] ">
+                                    <div className="text-[18px]">
                                         每<strong className="text-[24px] mx-[5px]">2</strong>年可篩檢:</div>
                                     <div className="text-[24px] text-center">肺癌</div>
                                 </div>  
                                 <div 
                                     className="mx-auto w-[130px] h-[130px] rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" 
-                                    style={{ backgroundImage: `url('../images/lungCancer.png')` }}
+                                    style={{ backgroundImage: `url("../images/lungCancer.png")` }}
                                 ></div>  
                                 <button 
                                     onClick={()=>handleSearchClick(cancers[4].filter)}  
@@ -146,7 +153,7 @@ const CancerScreeningResultPage: React.FC = () => {
                                 </div>  
                                 <div 
                                     className="w-[130px] h-[130px] mx-auto rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" 
-                                    style={{ backgroundImage: `url('../images/cervicalCancer.png')` }}
+                                    style={{ backgroundImage: `url("../images/cervicalCancer.png")` }}
                                 ></div>  
                                 <button
                                     onClick={()=>handleSearchClick(cancers[0].filter)}   
@@ -165,7 +172,7 @@ const CancerScreeningResultPage: React.FC = () => {
                                 </div>  
                                 <div 
                                     className="mx-auto w-[130px] h-[130px] rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" 
-                                    style={{ backgroundImage: `url('../images/breastCancer.png')` }}
+                                    style={{ backgroundImage: `url("../images/breastCancer.png")` }}
                                 ></div>  
                                 <button  
                                     className="cancerResult-button shadow-xs"
@@ -184,7 +191,7 @@ const CancerScreeningResultPage: React.FC = () => {
                                 </div>  
                                 <div 
                                     className="mx-auto w-[130px] h-[130px] rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" 
-                                    style={{ backgroundImage: `url('../images/colorectalCancer.png')` }}
+                                    style={{ backgroundImage: `url("../images/colorectalCancer.png")` }}
                                 ></div>  
                                 <button  
                                     onClick={()=>handleSearchClick(cancers[2].filter)}

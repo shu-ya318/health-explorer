@@ -26,7 +26,7 @@ const CancerSearchSection: React.FC<CancerSearchSectionProps> = ({ handleSearchC
     <div className="w-full h-auto common-col-flex justify-center">
         <div 
             data-aos="fade-down" 
-            className="common-page-layout justify-between xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] xl:p-[20px] py-[20px] mb-0 mt-20 backdrop-blur-[5px]"
+            className="xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] common-page-layout justify-between xl:p-[20px] py-[20px] mb-0 mt-20 backdrop-blur-[5px]"
         >
             <div  className="mb-[30px] common-title xs:text-[32px] text-[28px]">癌篩機構搜尋分類</div>
             <div className="grid lg:grid-cols-5 sm:grid-cols-3 xl:gap-20 lg:gap-[29px] md:gap-x-14 sm:gap-y-8 sm:gap-x-3 gap-y-10 gap-x-0">
@@ -36,11 +36,11 @@ const CancerSearchSection: React.FC<CancerSearchSectionProps> = ({ handleSearchC
                 key={index}
                 className="common-col-flex justify-between" 
             >
-                <div className=" w-[160px] h-[160px] p-[4px] overflow-hidden bg-[#FFFFFF] border-[4px] rounded-full common-border">
+                <div className="w-[160px] h-[160px] p-[4px] overflow-hidden bg-[#FFFFFF] border-[4px] rounded-full common-border">
                 <div className="relative transition-all duration-300 hover:scale-110">
                     <Image  
                     src={cancer.image} 
-                    alt="icon" 
+                    alt="cancer" 
                     width={145} 
                     height={145} 
                     className="w-auto h-auto rounded-full object-cover"
@@ -49,7 +49,7 @@ const CancerSearchSection: React.FC<CancerSearchSectionProps> = ({ handleSearchC
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                     <Image  
                         src={cancer.icon} 
-                        alt="icon" 
+                        alt="cancer_icon" 
                         width={80} 
                         height={85} 
                         className="w-auto h-auto object-cover"

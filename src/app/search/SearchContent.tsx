@@ -63,6 +63,7 @@ const SearchContent: React.FC = () => {
     const searchParams = useSearchParams();
     const filterValue = decodeURIComponent(searchParams.get("filter") || "");
 
+    const [imageLoaded, setImageLoaded] = useState<boolean>(false);
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [isOpenInstitutions, setIsOpenInstitutions] = useState<boolean>(false);
     const [isOpenDivisions, setIsOpenDivisions] = useState<boolean>(false);
@@ -193,9 +194,11 @@ const SearchContent: React.FC = () => {
                 <div className="relative w-full h-[400px] flex">
                     <Image 
                         src="/images/searchPage_banner.jpg" 
-                        alt="icon" 
+                        alt="searchPage_banner" 
                         fill={true} 
                         className="w-full h-full object-cover"
+                        onLoad={() => setImageLoaded(true)}
+                        style={{backgroundImage: imageLoaded ? "" : "linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)"}}
                     />
                 </div>
                 <CancerFilter 
@@ -209,7 +212,7 @@ const SearchContent: React.FC = () => {
                     setSearchTerm={setSearchTerm}
                     handleSearch={handleSearch} 
                 />
-                <div className="h-auto w-full flex flex-col items-start">
+                <div className="w-full h-auto flex flex-col items-start">
                     {loading ? (
                         <div className="w-[250px] h-[25px] bg-gray-300 rounded-lg animate-pulse"></div>   
                     ):( 

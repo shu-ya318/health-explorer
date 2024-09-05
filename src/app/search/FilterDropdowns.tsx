@@ -32,7 +32,13 @@ const FilterDropdowns: React.FC<FilterDropdownsProps> = ({
                     className={`searchPage-label ${isOpenInstitutions ? "bg-[#2D759E] text-[#ffffff]" : "searchPage-label-notOpened"}`}
                 >
                     依機構
-                    <Image src="/images/down_small_line.svg" alt="institution" width={18} height={18} className="w-[18px] h-[18px]"/>
+                    <Image 
+                        src="/images/down_small_line.svg" 
+                        alt="institution" 
+                        width={18} 
+                        height={18} 
+                        className="w-[18px] h-[18px]"
+                    />
                 </button>
                 {isOpenInstitutions && (
                     <ul className="lg:searchPage-label-optionsGrid-lg md:searchPage-label-optionsGrid-md xs:searchPage-label-optionsGrid-xs xxs:searchPage-label-optionsGrid-xxs searchPage-label-optionsGrid-mobile">

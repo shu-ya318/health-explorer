@@ -14,7 +14,7 @@ export const ConfirmDeleteModal: React.FC<ConfirmModalProps> = ({
   if (!isOpen) return null;
 
   return (
-      <div className="w-full h-full fixed inset-0 z-50 overflow-y-auto">
+      <div className="fixed inset-0 z-50 w-full h-full overflow-y-auto">
       <div className="common-row-flex justify-center min-h-screen">
         <div className="fixed inset-0 bg-black bg-opacity-30"></div>
         <div className="relative bg-white rounded-2xl py-4 px-5 shadow-lg max-w-lg mx-auto">

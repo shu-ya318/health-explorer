@@ -31,6 +31,7 @@ const InstitutionContent: React.FC = () => {
 
     const [openLoading, setOpenLoading] = useState<boolean>(true);
     const [loading,setLoading] = useState<boolean>(false);
+    const [imageLoaded, setImageLoaded] = useState<boolean>(false);
     const [institutionDetails, setInstitutionDetails] = useState<InstitutionInfo| null>(null);
     const [comparableInstitutions, setComparableInstitutions] = useState<InstitutionInfo[]>([]);
     const [carouselIndex, setCarouselIndex] = useState<number>(0);
@@ -62,6 +63,7 @@ const InstitutionContent: React.FC = () => {
                         tel: result.tel,
                         hosp_addr: result.hosp_addr,
                         division: result.division,
+                        cancer_screening:result.cancer_screening,
                         view: result.view,
                         lat: result.lat,
                         lng: result.lng,
@@ -92,6 +94,7 @@ const InstitutionContent: React.FC = () => {
                         tel: hit.tel || "",
                         hosp_addr: hit.hosp_addr || "",
                         division: hit.division || "",
+                        cancer_screening:hit.cancer_screening || "",
                         view: hit.view || 0,
                         lat: hit.lat || 0,
                         lng: hit.lng || 0,
@@ -147,14 +150,16 @@ const InstitutionContent: React.FC = () => {
                         animate={{ opacity: 1 }} 
                         exit={{ opacity: 0 }}
                     >
-                        <main className="common-col-flex  justify-center w-full h-auto bg-[#FCFCFC]" >
+                        <main className="common-col-flex justify-center w-full h-auto bg-[#FCFCFC]" >
                             <div className="relative w-full h-auto flex">
                                 <div className="relative w-full h-[400px] flex flex-col"> 
                                     <Image  
                                         src="/images/institutionPage_banner.png" 
-                                        alt="icon" 
+                                        alt="institutionPage_banner" 
                                         fill={true} 
                                         className="w-full h-full object-cover"
+                                        onLoad={() => setImageLoaded(true)}
+                                        style={{backgroundImage: imageLoaded ? "" : "linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)"}}
                                     />
                                     <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-5">
                                         <div className="absolute top-[55%] left-1/2 -translate-x-[56%] -translate-y-1/2 min-w-72 text-black text-[#ffffff] font-bold text-[26px] text-center text-shadow-[2px 2px 8px rgba(0,0,0,0.8)] bg-[#FFFFFF] opacity-90 p-[10px] rounded-lg">

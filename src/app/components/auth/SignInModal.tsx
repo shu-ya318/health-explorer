@@ -124,7 +124,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
                                 onClose();
                                 onShowRegister(true);
                             }}
-                            className="text-center text-[18px] text-[#5B98BC] hover:text-[#2D759E] cursor-pointer "
+                            className="text-center text-[18px] text-[#5B98BC] hover:text-[#2D759E] cursor-pointer"
                         >
                             尚無會員?點此註冊
                         </span>

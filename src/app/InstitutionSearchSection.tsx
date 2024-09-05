@@ -26,7 +26,7 @@ const InstitutionSearchSection: React.FC<InstitutionSearchSectionProps> = ({ han
         <div className="w-full common-row-flex justify-center">
             <div  
                 data-aos="fade-up"
-                className="common-page-layout justify-between xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] xl:p-[20px] py-[20px] lg:my-20 my-20 backdrop-blur-[5px]"
+                className="xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] common-page-layout justify-between xl:p-[20px] py-[20px] lg:my-20 my-20 backdrop-blur-[5px]"
             >
                 <div className="mb-[30px] common-title xs:text-[32px] text-[28px]">醫療機構搜尋分類</div>
                 <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 xl:gap-36 lg:gap-20 md:gap-x-52 sm:gap-y-8 sm:gap-x-32 gap-y-10 gap-x-0">
@@ -40,7 +40,7 @@ const InstitutionSearchSection: React.FC<InstitutionSearchSectionProps> = ({ han
                     <div className="relative transition-all duration-300 hover:scale-110">
                         <Image  
                         src={search.image} 
-                        alt="icon" 
+                        alt="search" 
                         width={148} 
                         height={148} 
                         className="w-[148px] h-[148px] rounded-full object-cover"
@@ -49,7 +49,7 @@ const InstitutionSearchSection: React.FC<InstitutionSearchSectionProps> = ({ han
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                         <Image  
                             src={search.icon} 
-                            alt="icon" 
+                            alt="search_icon" 
                             width={75} 
                             height={85} 
                             className="w-[75px] h-[85px] object-contain"
