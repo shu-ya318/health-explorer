@@ -9,7 +9,7 @@ interface CancersContentProps {
     handleSetAnswer: (value: string | number) => void;
     itemOptions: string[];
     progress: number; 
-    handleFinishClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    handleFinishClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => Promise<void>;
     loading:boolean;
 }
 const CancersContent: React.FC<CancersContentProps> = ({ 
@@ -130,7 +130,7 @@ const CancersContent: React.FC<CancersContentProps> = ({
                             </button>
                         </div>
                         { loading && ( 
-                            <div  className="w-full common-col-flex justify-center">正在提交問卷...</div> 
+                            <div className="w-full common-col-flex justify-center">正在提交問卷...</div> 
                         )}
                     </div>
                 </div>

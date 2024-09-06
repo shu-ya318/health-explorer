@@ -35,8 +35,16 @@ const HomePage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    initInstitutionData();
-  }, []); 
+    const loadData = async (): Promise<void> => {
+      try {
+        await initInstitutionData();
+      } catch (error) {
+        console.error("Failed to initialize institution data:", error);
+      }
+    };
+
+    loadData();
+  }, []);
 
   const scrollDown = () => {
     window.scrollTo({

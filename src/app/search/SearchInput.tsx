@@ -1,17 +1,14 @@
-import { useRef } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 
 interface SearchInputProps {
-    searchTerm:string;
-    setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
-    handleSearch: (searchTerm: string) => void;
+    handleSearch: (searchTerm: string) => Promise<void>;
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({ 
-    searchTerm,
-    setSearchTerm,
     handleSearch
 }) => {
+    const [searchTerm, setSearchTerm] = useState<string>("");
     const searchInputRef = useRef<HTMLInputElement>(null);
 
     const deleteSearchInput = () => {

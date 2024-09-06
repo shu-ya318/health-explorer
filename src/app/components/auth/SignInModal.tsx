@@ -30,7 +30,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
         firstInputRef.current?.focus();
     }, []);
 
-    const handleSignIn = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleSignIn = async (event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
         event.preventDefault();
 
         const emailInput = document.getElementById("email-signin") as HTMLInputElement;

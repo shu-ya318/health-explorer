@@ -29,13 +29,17 @@ const CancerScreeningResultPage: React.FC = () => {
     const [answers, setAnswers] = useState<cancerScreeningAnswer[]>([]); 
 
     useEffect(() => {
-        const fetchResults = async () => {
-          const testerId = sessionStorage.getItem("testerId");
-
-          const q = query(collection(db, "cancerScreening"), where("testerId", "==", testerId));
-          const querySnapshot = await getDocs(q);
-          const documents = querySnapshot.docs.map(doc => doc.data() as cancerScreeningAnswer);
-          setAnswers(documents);
+        const fetchResults = async () : Promise<void> => {
+            try {
+                const testerId = sessionStorage.getItem("testerId");
+        
+                const q = query(collection(db, "cancerScreening"), where("testerId", "==", testerId));
+                const querySnapshot = await getDocs(q);
+                const documents = querySnapshot.docs.map(doc => doc.data() as cancerScreeningAnswer);
+                setAnswers(documents);
+            } catch (error) {
+            console.error("Failed to fetch results: ", error);
+            }
         };
     
         fetchResults();

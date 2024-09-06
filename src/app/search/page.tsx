@@ -22,34 +22,6 @@ interface SearchOptions {
     query?: string;
 }
 
-const cancers = [
-    { filter: "子宮頸癌", image: "/images/cervicalCancer.png" },
-    { filter: "乳癌", image: "/images/breastCancer.png" },
-    { filter: "大腸癌", image: "/images/colorectalCancer.png" },
-    { filter: "口腔癌", image: "/images/oralCancer.png" },
-    { filter: "肺癌", image: "/images/lungCancer.png" }
-];
-
-const institutions = [
-    "衛生所", "診所", "醫院"
-];
-
-const divisions = [
-    "婦產科", "牙醫一般科", "耳鼻喉科",
-    "皮膚科", "眼科", "骨科",
-    "精神科", "心理諮商及治療科", "家庭醫學科",
-    "泌尿科", "內科", "外科"
-];
-
-const districts = [
-    "板橋區", "三重區", "中和區", "永和區", "新莊區",
-    "新店區", "樹林區", "鶯歌區", "三峽區", "淡水區",
-    "汐止區", "瑞芳區", "土城區", "蘆洲區", "五股區",
-    "泰山區", "林口區", "深坑區", "石碇區", "坪林區",
-    "三芝區", "石門區", "八里區", "平溪區", "雙溪區",
-    "貢寮區", "金山區", "萬里區", "烏來區"
-];
-
 const searchClient = algoliasearch(
     process.env.NEXT_PUBLIC_ALGOLIA_APP_ID as string, 
     process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY as string
@@ -59,25 +31,24 @@ const index = searchClient.initIndex("Medical_Institutions");
 
 const SearchPage: React.FC = () => {
     const { user } = useAuth();
-    
     const { state, handleAddFavorite, handleRemoveFavorite} = useFavorite(user);
     const { handleIncrement } = useInstitution();
     
     const searchParams = useSearchParams();
     const filterValue = decodeURIComponent(searchParams.get("filter") || "");
 
-    const [imageLoaded, setImageLoaded] = useState<boolean>(false);
-    const [searchTerm, setSearchTerm] = useState<string>("");
     const [isOpenInstitutions, setIsOpenInstitutions] = useState<boolean>(false);
     const [isOpenDivisions, setIsOpenDivisions] = useState<boolean>(false);
     const [isOpenDistricts, setIsOpenDistricts] = useState<boolean>(false);
+
     const [loading,setLoading] = useState<boolean>(true);
+    const [imageLoaded, setImageLoaded] = useState<boolean>(false);
     const [currentData, setCurrentData] = useState<InstitutionInfo[]>([]); 
     const [currentPage, setCurrentPage] = useState<number>(1);
     const postsPerPage = 20;
     
     useEffect(() => {
-        const fetchAndSetData = async () => {
+        const fetchAndSetData = async (): Promise<void> => {
             setLoading(true);
 
             try {
@@ -145,7 +116,7 @@ const SearchPage: React.FC = () => {
     };
 
 
-    const handleCancerFilter = async (cancerType: string) => {
+    const handleCancerFilter = async (cancerType: string): Promise<void> => {
         setLoading(true);
     
         try {
@@ -205,14 +176,11 @@ const SearchPage: React.FC = () => {
                     />
                 </div>
                 <CancerFilter 
-                    cancers={cancers} 
                     handleCancerFilter={handleCancerFilter} 
                 />
             </div>
             <div className="xl:w-full max-w-[1180px] w-[95%] pt-[80px]">
                 <SearchInput
-                    searchTerm={searchTerm}
-                    setSearchTerm={setSearchTerm}
                     handleSearch={handleSearch} 
                 />
                 <div className="w-full h-auto flex flex-col items-start">
@@ -225,9 +193,6 @@ const SearchPage: React.FC = () => {
                     )} 
                     <hr className="w-full my-[20px] border border-solid border-[#E0E0E0]"/>
                     <FilterDropdowns
-                        institutions={institutions}
-                        divisions={divisions}
-                        districts={districts}
                         isOpenInstitutions={isOpenInstitutions}
                         isOpenDivisions={isOpenDivisions}
                         isOpenDistricts={isOpenDistricts}

@@ -26,7 +26,6 @@ const index = searchClient.initIndex("Medical_Institutions");
 
 const InstitutionPage: React.FC = () => {
     const { user } = useAuth();
-
     const { state, handleAddFavorite, handleRemoveFavorite} = useFavorite(user);
     const { handleIncrement } = useInstitution();
 
@@ -48,14 +47,15 @@ const InstitutionPage: React.FC = () => {
     }, []);
     
     useEffect(() => {
-        setLoading(true);
-    
-        const pathSegments = window.location.pathname.split("/");
-        const encodedHospName = pathSegments.pop() || "";
-        const hosp_name = decodeURIComponent(encodedHospName); 
+        const fetchInstitutionData = async (): Promise<void> => {
+            setLoading(true);
+        
+            const pathSegments = window.location.pathname.split("/");
+            const encodedHospName = pathSegments.pop() || "";
+            const hosp_name = decodeURIComponent(encodedHospName); 
 
-        index.search<InstitutionInfo>(hosp_name)
-            .then(({ hits }) => {
+            try {
+                const { hits } = await index.search<InstitutionInfo>(hosp_name);
                 if (hits && hits.length > 0) {
                     const result = hits[0];
                     setInstitutionDetails({
@@ -76,42 +76,51 @@ const InstitutionPage: React.FC = () => {
                 } else {
                     console.error("No data found for:", hosp_name);
                 }
-            }).catch(error => {
+            } catch (error) {
                 console.error("Search failed:", error);
-            });
-            setLoading(false);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchInstitutionData();
     }, []);
     
     useEffect(() => {
-        if (institutionDetails) {
-            setLoading(true);
-            
+        const fetchComparableInstitutions = async (): Promise<void> => {
+          if (!institutionDetails) return;
+    
+          setLoading(true);
+        
+          try {
             const filters = `area:"${institutionDetails.area}"`;
-            index.search<InstitutionInfo>("", { filters })
-                .then(({ hits }) => {
-                    const filteredHits = hits.filter(hit => hit.objectID !== institutionDetails.objectID).map(hit => ({
-                        objectID: hit.objectID,
-                        hosp_name: hit.hosp_name || "",
-                        area: hit.area || "",
-                        path: hit.path || "",
-                        tel: hit.tel || "",
-                        hosp_addr: hit.hosp_addr || "",
-                        division: hit.division || "",
-                        cancer_screening:hit.cancer_screening || "",
-                        view: hit.view || 0,
-                        lat: hit.lat || 0,
-                        lng: hit.lng || 0,
-                        imageUrl: hit.imageUrl || "",
-                        lastmodified: hit.lastmodified || { _operation: "", value: 0 }
-                    }));
-                    setComparableInstitutions(filteredHits);
-                }).catch(error => {
-                    console.error("Search failed for comparable institutions:", error);
-                }).finally(() => {
-                    setLoading(false);
-                });
-        }
-    }, [institutionDetails]);
+            const { hits } = await index.search<InstitutionInfo>("", { filters });
+    
+            const filteredHits = hits.filter(hit => hit.objectID !== institutionDetails.objectID).map(hit => ({
+              objectID: hit.objectID,
+              hosp_name: hit.hosp_name || "",
+              area: hit.area || "",
+              path: hit.path || "",
+              tel: hit.tel || "",
+              hosp_addr: hit.hosp_addr || "",
+              division: hit.division || "",
+              cancer_screening: hit.cancer_screening || "",
+              view: hit.view || 0,
+              lat: hit.lat || 0,
+              lng: hit.lng || 0,
+              imageUrl: hit.imageUrl || "",
+              lastmodified: hit.lastmodified || { _operation: "", value: 0 }
+            }));
+    
+            setComparableInstitutions(filteredHits);
+          } catch (error) {
+            console.error("Search failed for comparable institutions:", error);
+          } finally {
+            setLoading(false);
+          }
+        };
+    
+        fetchComparableInstitutions();
+      }, [institutionDetails]);
 
 
     const displayedInstitutions = useMemo(() => {

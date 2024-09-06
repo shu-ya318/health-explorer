@@ -59,7 +59,6 @@ const FavoritePage: React.FC = () => {
     const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
     const [allDataLoaded, setAllDataLoaded] = useState(false);
     const [favoriteData, setFavoriteData] = useState<FirebaseFavoriteData[]>([]);
-    const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -75,7 +74,7 @@ const FavoritePage: React.FC = () => {
     }, []);
 
 
-    const fetchMoreData = useCallback(async () => {
+    const fetchMoreData = useCallback(async (): Promise<void> => {
         if (! user?.uid || loading || (!lastVisible && !isInitialLoad) || allDataLoaded) return;
 
         setLoading(true);
@@ -139,21 +138,19 @@ const FavoritePage: React.FC = () => {
         setIsConfirmModalOpen(true);
     };
 
-    const handleConfirmDelete = async (hosp_name: string) => {
+    const handleConfirmDelete = async (hosp_name: string): Promise<void> => {
         if (!selectedId || !user) return;
     
         try {
             await handleRemoveFavorite(user, hosp_name);
             //確保即時更新本元件的state，重渲染反映在UI
             setFavoriteData(prevData => prevData.filter(item => item.hosp_name !== hosp_name));
-            console.log(favoriteData); 
         } catch (error) {
             console.error(error);
         } finally {
             setIsConfirmModalOpen(false);
         }
     };
-    console.log(favoriteData); 
 
     const handleCloseModal = () => {
         setIsConfirmModalOpen(false);
@@ -203,7 +200,7 @@ const FavoritePage: React.FC = () => {
         return doc;
     };
 
-    const prepareAndExportToPDF = async () => {
+    const prepareAndExportToPDF = async (): Promise<void> => {
         const allData = state.favorites; 
         const doc = exportToPDF(allData); 
     
@@ -236,7 +233,7 @@ const FavoritePage: React.FC = () => {
         document.body.removeChild(link);
     };
 
-    const prepareAndExportToCSV = async () => {
+    const prepareAndExportToCSV = async (): Promise<void>  => {
         const allData = state.favorites;
         exportToCSV(allData);
     };
@@ -266,7 +263,7 @@ const FavoritePage: React.FC = () => {
         return Packer.toBlob(doc);
     };
 
-    const prepareAndExportToDocx = async () => {
+    const prepareAndExportToDocx = async (): Promise<void> => {
         const allData = state.favorites;
         const blob = await exportToDocx(allData);
         saveAs(blob, "FavoriteData.docx");
@@ -320,8 +317,6 @@ const FavoritePage: React.FC = () => {
                                         <div className="xl:w-full max-w-[1180px] lg:w-[90%] xs:w-[80%] w-[95%] flex md:flex-row flex-col min-h-screen shadow-[0_0_10px_#AABBCC] rounded-lg">
                                             <FavoriteDataDisplay 
                                                 favoriteData={favoriteData}
-                                                loadedImages={loadedImages} 
-                                                setLoadedImages={setLoadedImages} 
                                                 lastElementRef={lastElementRef}
                                                 handleDeleteClick={handleDeleteClick}
                                             />

@@ -6,7 +6,7 @@ interface InstitutionCarouselProps {
     displayedInstitutions: InstitutionInfo[];
     handleNext: () => void;
     handlePrev: () => void;
-    handleIncrement: (institution: InstitutionInfo) => void;
+    handleIncrement: (institution: InstitutionInfo) => Promise<void>;
     isAtStart: boolean;
     isAtEnd: boolean;
 }

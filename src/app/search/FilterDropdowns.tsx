@@ -1,20 +1,34 @@
 import Image from "next/image";
 
 interface FilterDropdownsProps {
-    institutions: string[];
-    divisions: string[];
-    districts: string[];
     isOpenInstitutions: boolean;
     isOpenDivisions: boolean;
     isOpenDistricts: boolean;
     toggleDropdowns: (type: "institutions" | "divisions" | "districts") => void;
-    handleSelectFilter: (value: string) => void;
+    handleSelectFilter: (value: string) => Promise<void>;
 }
 
+const institutions = [
+    "衛生所", "診所", "醫院"
+];
+
+const divisions = [
+    "婦產科", "牙醫一般科", "耳鼻喉科",
+    "皮膚科", "眼科", "骨科",
+    "精神科", "心理諮商及治療科", "家庭醫學科",
+    "泌尿科", "內科", "外科"
+];
+
+const districts = [
+    "板橋區", "三重區", "中和區", "永和區", "新莊區",
+    "新店區", "樹林區", "鶯歌區", "三峽區", "淡水區",
+    "汐止區", "瑞芳區", "土城區", "蘆洲區", "五股區",
+    "泰山區", "林口區", "深坑區", "石碇區", "坪林區",
+    "三芝區", "石門區", "八里區", "平溪區", "雙溪區",
+    "貢寮區", "金山區", "萬里區", "烏來區"
+];
+
 const FilterDropdowns: React.FC<FilterDropdownsProps> = ({ 
-    institutions, 
-    divisions, 
-    districts,
     isOpenInstitutions,
     isOpenDivisions,
     isOpenDistricts,

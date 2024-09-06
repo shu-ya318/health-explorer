@@ -62,7 +62,7 @@ const CancerScreeningPage: React.FC = () => {
         setAnswers(newAnswers);
     };
 
-    const handleFinishClick = async () => {
+    const handleFinishClick = async (): Promise<void> => {
         if ( isLast&& !finished && answers.length === surveyItems.length ) {  //先檢查是最後一題且已作答完畢
             setFinished(true); //避免重複提交
             setLoading(true);

@@ -13,8 +13,8 @@ interface FavoriteButtonProps {
     state: FavoriteState;
     institutionDetails:InstitutionInfo;
     institutionName: string;
-    handleAddFavorite: (user: UserType | null, institution: InstitutionInfo)  => void;
-    handleRemoveFavorite: (user: UserType | null, docId: string)=> void;
+    handleAddFavorite: (user: UserType | null, institution: InstitutionInfo)  => Promise<void>;
+    handleRemoveFavorite: (user: UserType | null, docId: string)=> Promise<void>;
 }
 
 const FavoriteButton: React.FC<FavoriteButtonProps> = ({ 
@@ -65,8 +65,8 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
                         <button 
                             ref={favoriteButtonRef}
                             type="button" 
-                            onMouseEnter={() => {console.log(`Mouse entered for ${institutionName}`); setFavoriteHoverState(institutionName, true)}}
-                            onMouseLeave={() => {console.log(`Mouse left for ${institutionName}`); setFavoriteHoverState(institutionName, false)}} 
+                            onMouseOver={() => {console.log(`Mouse Over for ${institutionName}`); setFavoriteHoverState(institutionName, true)}}
+                            onMouseOut={() => {console.log(`Mouse Out for ${institutionName}`); setFavoriteHoverState(institutionName, false)}} 
                             onClick={() => {
                                 console.log(`Click for ${institutionName}`);
                                 setFavoriteHoverState(institutionName, false);
@@ -92,8 +92,8 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
                                 <button 
                                     ref={loggedFavoriteButtonRef}
                                     type="button" 
-                                    onMouseEnter={() => {console.log(`Mouse entered for ${institutionName}`); setFavoriteHoverState(institutionName, true)}}
-                                    onMouseLeave={() => { console.log(`Mouse left for ${institutionName}`); setFavoriteHoverState(institutionName, false)}} 
+                                    onMouseOver={() => {console.log(`Mouse Over for ${institutionName}`); setFavoriteHoverState(institutionName, true)}}
+                                    onMouseOut={() => { console.log(`Mouse Out for ${institutionName}`); setFavoriteHoverState(institutionName, false)}} 
                                     onClick={() => {
                                         console.log(`Click for ${institutionName}`);
                                         setFavoriteHoverState(institutionName, false);

@@ -25,7 +25,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
         firstInputRef.current?.focus();
     }, []);
 
-    const handleRegister = async (event:React.MouseEvent<HTMLButtonElement>) => {
+    const handleRegister = async (event:React.MouseEvent<HTMLButtonElement>): Promise<void> => {
         event.preventDefault();
 
         const emailInput = document.getElementById("email-register") as HTMLInputElement;

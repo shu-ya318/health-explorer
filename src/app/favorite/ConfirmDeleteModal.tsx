@@ -1,7 +1,7 @@
 interface ConfirmModalProps {
   isOpen: boolean;
   hosp_name: string;  
-  handleConfirmDelete: (hosp_name: string) => void;
+  handleConfirmDelete: (hosp_name: string) => Promise<void>;
   handleCloseModal: () => void;
 }
 

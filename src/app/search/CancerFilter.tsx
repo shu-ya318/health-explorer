@@ -4,12 +4,18 @@ interface Cancer {
 }
 
 interface CancerFilterProps {
-    cancers: Cancer[];
     handleCancerFilter: (filter: string) => void;
 }
 
+const cancers = [
+    { filter: "子宮頸癌", image: "/images/cervicalCancer.png" },
+    { filter: "乳癌", image: "/images/breastCancer.png" },
+    { filter: "大腸癌", image: "/images/colorectalCancer.png" },
+    { filter: "口腔癌", image: "/images/oralCancer.png" },
+    { filter: "肺癌", image: "/images/lungCancer.png" }
+];
+
 const CancerFilter: React.FC<CancerFilterProps> = ({ 
-    cancers, 
     handleCancerFilter 
 }) => {
     return (

@@ -1,24 +1,21 @@
-import { Fragment, useEffect } from "react";
+import { Fragment, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FirebaseFavoriteData } from "../lib/types";
 
 interface FavoriteDataDisplayProps {
     favoriteData: FirebaseFavoriteData[];
-    loadedImages: Record<string, boolean>;
-    setLoadedImages: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
     lastElementRef: React.RefObject<HTMLDivElement>;
     handleDeleteClick: (id: string) => void;
 }
 
 const FavoriteDataDisplay: React.FC<FavoriteDataDisplayProps> = ({ 
     favoriteData, 
-    loadedImages,
-    setLoadedImages,
     lastElementRef,
     handleDeleteClick
 }) => {
     const router = useRouter();
+    const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
     return (
         <> 

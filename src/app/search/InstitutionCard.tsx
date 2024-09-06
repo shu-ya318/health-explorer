@@ -12,9 +12,9 @@ interface InstitutionCardsProps {
     user: UserType | null;
     state: FavoriteState;
     institution: InstitutionInfo;
-    handleIncrement: (institution: InstitutionInfo) => void;
-    handleAddFavorite: (user: UserType | null, institution: InstitutionInfo)  => void;
-    handleRemoveFavorite: (user: UserType | null, docId: string)=> void;
+    handleIncrement: (institution: InstitutionInfo) => Promise<void>;
+    handleAddFavorite: (user: UserType | null, institution: InstitutionInfo)  => Promise<void>;
+    handleRemoveFavorite: (user: UserType | null, docId: string)=> Promise<void>;
 }
 
 const InstitutionCard: React.FC<InstitutionCardsProps> = ({

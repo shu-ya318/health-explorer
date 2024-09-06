@@ -65,7 +65,7 @@ const Header: React.FC = () => {
   };
 
 
-  const handleLogOut = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleLogOut = async (event: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
     logOutButtonRef.current?.blur();
     event.preventDefault();
 
@@ -112,7 +112,7 @@ const handleRegisterClick = () => {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-30 w-screen h-[60px] common-col-flex justify-between bg-[#FFFFFF] border border-solid border-[#9FC5DF]">
-        <ProgressBar /> 
+        <ProgressBar/> 
         <div className="relative max-w-[1200px] w-screen lg:w-[90%] md:w-[80%] common-row-flex justify-between mx-auto px-[10px] text-[#1e94b4]">
             <Link 
               href='/' 
