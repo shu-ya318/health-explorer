@@ -1,12 +1,6 @@
 "use client";
 
-import { 
-  createContext, 
-  useContext, 
-  useEffect,
-  useCallback, 
-  useReducer 
-} from "react";
+import { useEffect, useCallback, useReducer } from "react";
 
 import { UserType } from "./useAuth"; 
 import { InstitutionInfo } from "../lib/types";
@@ -23,10 +17,6 @@ import {
   where
 } from "firebase/firestore";
 
-interface FavoriteProviderProps {
-  children: React.ReactNode;
-  user: UserType | null;
-}
 export interface FavoriteState {
   favorites: FirebaseFavoriteData[];
 }
@@ -35,24 +25,9 @@ type FavoriteAction =
   | { type: "ADD_FAVORITE"; payload: FirebaseFavoriteData } 
   | { type: "REMOVE_FAVORITE"; payload: string }; 
 
-
 const initialState: FavoriteState = {
   favorites: [],
 };
-
-const FavoriteContext = createContext<{
-  state: FavoriteState;
-  dispatch: React.Dispatch<FavoriteAction>;
-  fetchFavoriteData: () => Promise<void>;
-  handleAddFavorite: (user: UserType | null, institution: InstitutionInfo) => Promise<void>;
-  handleRemoveFavorite: (user: UserType | null, docId: string) => Promise<void>;
-}>({
-  state: initialState,
-  dispatch: () => null,
-  fetchFavoriteData:async () => {},
-  handleAddFavorite: async () => {},
-  handleRemoveFavorite: async () => {},
-});
 
 const FavoriteReducer = (state: FavoriteState, action: FavoriteAction) => {
   switch (action.type) {
@@ -67,10 +42,7 @@ const FavoriteReducer = (state: FavoriteState, action: FavoriteAction) => {
   }
 };
 
-export const FavoriteProvider: React.FC<FavoriteProviderProps> = ({ 
-  children, 
-  user 
-}) => {
+function useFavorite(user: UserType | null) {
   const [state, dispatch] = useReducer(FavoriteReducer, initialState);
 
   const fetchFavoriteData = useCallback(async () => {
@@ -131,13 +103,7 @@ const handleAddFavorite = async (user: UserType | null, institution: Institution
     }
 };
 
-console.log(state);
-
-  return (
-      <FavoriteContext.Provider value={{ state, dispatch, fetchFavoriteData, handleAddFavorite, handleRemoveFavorite }}>
-        {children}
-      </FavoriteContext.Provider>
-  );
+  return { state, dispatch, fetchFavoriteData, handleAddFavorite, handleRemoveFavorite };
 }
 
-export const useFavorite = () => useContext(FavoriteContext);
+export default useFavorite;
