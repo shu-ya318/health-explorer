@@ -1,21 +1,112 @@
-import { Fragment, useState } from "react";
+import { 
+    Fragment,
+    useState, 
+    useEffect,
+    useCallback, 
+    useRef
+} from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+
+import { UserType } from "../hooks/useAuth"; 
+
+import { db } from "../lib/firebaseConfig";
+import { 
+    collection
+    , query
+    , where
+    , startAfter
+    , limit
+    , getDocs
+    , DocumentSnapshot
+} from "firebase/firestore";
 import { FirebaseFavoriteData } from "../lib/types";
 
 interface FavoriteDataDisplayProps {
+    user: UserType | null;
     favoriteData: FirebaseFavoriteData[];
-    lastElementRef: React.RefObject<HTMLDivElement>;
+    setFavoriteData: React.Dispatch<React.SetStateAction<FirebaseFavoriteData[]>>; 
     handleDeleteClick: (id: string) => void;
 }
 
 const FavoriteDataDisplay: React.FC<FavoriteDataDisplayProps> = ({ 
-    favoriteData, 
-    lastElementRef,
+    user,
+    favoriteData,
+    setFavoriteData,
     handleDeleteClick
 }) => {
     const router = useRouter();
+
+    const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
+    const [allDataLoaded, setAllDataLoaded] = useState(false);
     const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+    
+    const observer = useRef<IntersectionObserver>(null);
+    const lastElementRef = useRef<HTMLDivElement>(null);
+
+    const fetchMoreData = useCallback(async (): Promise<void> => {
+        console.log("Attempting to fetch data", { userId: user?.uid, loading, lastVisible, isInitialLoad, allDataLoaded });
+    
+        if (!user?.uid || loading || (!lastVisible && !isInitialLoad) || allDataLoaded) {
+            console.log("Fetch aborted", { reason: !user?.uid ? 'No user' : loading ? 'Currently loading' : (!lastVisible && !isInitialLoad) ? 'No more data and not initial load' : 'All data loaded' });
+            return;
+        }
+    
+        setLoading(true);
+    
+        try {
+            const constraints = [
+                where("userId", "==", user.uid),
+                lastVisible ? startAfter(lastVisible) : limit(3),
+                limit(3)
+            ];
+            const nextQuery = query(collection(db, "favorites"), ...constraints);
+            const documentSnapshots = await getDocs(nextQuery);
+    
+            if (documentSnapshots.docs.length > 0) {
+                const newData = documentSnapshots.docs.map(doc => ({ ...doc.data() as FirebaseFavoriteData, id: doc.id }));
+                setFavoriteData(prev => {
+                    console.log("Updating favoriteData:", prev, newData);
+                    return [...prev, ...newData];
+                });
+                setLastVisible(documentSnapshots.docs[documentSnapshots.docs.length - 1]);
+            } else {
+                setAllDataLoaded(true);
+                console.log("All data has been loaded, no more fetches.");
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setLoading(false);
+            console.log("Fetch completed or failed, loading set to false.");
+        }
+    }, [user?.uid, loading, lastVisible, isInitialLoad, allDataLoaded, setFavoriteData]);
+
+    useEffect(() => {
+        console.log(isInitialLoad);
+        if (isInitialLoad) {
+          fetchMoreData();
+          setIsInitialLoad(false);
+        }
+    
+        const observer = new IntersectionObserver(entries => {
+          if (entries[0].isIntersecting && !loading && lastVisible && !allDataLoaded) {
+            console.log("IntersectionObserver - Triggered");
+            fetchMoreData();
+          }
+        }, { threshold: 1.0 });
+    
+        if (lastElementRef.current) {
+            observer.observe(lastElementRef.current);
+        }
+
+        return () => {
+            console.log("Cleanup: lastVisible", lastVisible);
+            observer.disconnect();
+        };
+    }, [lastVisible, loading, fetchMoreData, isInitialLoad, allDataLoaded]);
 
     return (
         <> 

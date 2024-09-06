@@ -3,10 +3,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { useInstitution }  from "../hooks/useInstitution";
-
-import { useAuth } from "../hooks/useAuth";
-import useFavorite from "../hooks/useFavorite";
 
 import CancerFilter from "./CancerFilter";
 import SearchInput from "./SearchInput";
@@ -30,10 +26,6 @@ const searchClient = algoliasearch(
 const index = searchClient.initIndex("Medical_Institutions");
 
 const SearchPage: React.FC = () => {
-    const { user } = useAuth();
-    const { state, handleAddFavorite, handleRemoveFavorite} = useFavorite(user);
-    const { handleIncrement } = useInstitution();
-    
     const searchParams = useSearchParams();
     const filterValue = decodeURIComponent(searchParams.get("filter") || "");
 
@@ -235,12 +227,7 @@ const SearchPage: React.FC = () => {
                                 currentPosts.map((institution) => (
                                     <InstitutionCard
                                         key={institution.hosp_name} 
-                                        user={user}
-                                        state={state}
                                         institution={institution}
-                                        handleAddFavorite={handleAddFavorite} 
-                                        handleRemoveFavorite={handleRemoveFavorite} 
-                                        handleIncrement={handleIncrement}
                                     />
                             ))
                         )}

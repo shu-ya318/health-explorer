@@ -2,9 +2,8 @@
 
 import { FirebaseInstitutionData } from "../lib/types";
 import { db, storage} from "../lib/firebaseConfig";
-import { doc, getDoc, setDoc, collection, writeBatch, getDocs} from "firebase/firestore";
+import { doc, getDoc, setDoc, writeBatch } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
 
 interface ApiDataItem {
     hosp_name?: string;

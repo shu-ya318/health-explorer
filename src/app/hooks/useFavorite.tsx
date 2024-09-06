@@ -45,7 +45,7 @@ const FavoriteReducer = (state: FavoriteState, action: FavoriteAction) => {
 function useFavorite(user: UserType | null) {
   const [state, dispatch] = useReducer(FavoriteReducer, initialState);
 
-  const fetchFavoriteData = useCallback(async () => {
+  const fetchFavoriteData = useCallback(async (): Promise<void> => {
       if (!user) return;
 
       const q = query(collection(db, "favorites"), where("userId", "==", user.uid));
@@ -63,7 +63,7 @@ function useFavorite(user: UserType | null) {
 }, [fetchFavoriteData]);
 
 //多個元件均完全相同的資料處理及狀態管理邏輯
-const handleAddFavorite = async (user: UserType | null, institution: InstitutionInfo) => {
+const handleAddFavorite = async (user: UserType | null, institution: InstitutionInfo): Promise<void>=> {
   if (!user) return;
   
   const favoriteItem: FirebaseFavoriteData = {
@@ -82,7 +82,7 @@ const handleAddFavorite = async (user: UserType | null, institution: Institution
   }
 };
 
-  const handleRemoveFavorite =  async (user: UserType | null, objectID: string) => {
+  const handleRemoveFavorite =  async (user: UserType | null, objectID: string): Promise<void> => {
     if (!user) return;
   
     const q = query(collection(db, "favorites"), where("hosp_name", "==", objectID), where("userId", "==", user.uid));

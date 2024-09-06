@@ -1,12 +1,14 @@
 import { useState } from "react";
 import Image from "next/image";
+
+import { useInstitution }  from "../../hooks/useInstitution";
+
 import { InstitutionInfo } from "../../lib/types";
 
 interface InstitutionCarouselProps {
     displayedInstitutions: InstitutionInfo[];
     handleNext: () => void;
     handlePrev: () => void;
-    handleIncrement: (institution: InstitutionInfo) => Promise<void>;
     isAtStart: boolean;
     isAtEnd: boolean;
 }
@@ -15,10 +17,10 @@ const InstitutionCarousel: React.FC<InstitutionCarouselProps> = ({
     displayedInstitutions, 
     handleNext, 
     handlePrev, 
-    handleIncrement, 
     isAtStart, 
     isAtEnd 
 }) => {
+    const { handleIncrement } = useInstitution();
     const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
     return (

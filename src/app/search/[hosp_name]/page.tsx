@@ -4,10 +4,6 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from 'next/navigation'; 
 import Image from "next/image";
 
-import { useAuth } from "../../hooks/useAuth";
-import useFavorite from "../../hooks/useFavorite";
-import { useInstitution }  from "../../hooks/useInstitution";
-
 import FavoriteButton from "./FavoriteButton";
 import InstitutionMap from "./InstitutionMap";
 import InstitutionCarousel from "./InstitutionCarousel";
@@ -25,10 +21,6 @@ const searchClient = algoliasearch(
 const index = searchClient.initIndex("Medical_Institutions");
 
 const InstitutionPage: React.FC = () => {
-    const { user } = useAuth();
-    const { state, handleAddFavorite, handleRemoveFavorite} = useFavorite(user);
-    const { handleIncrement } = useInstitution();
-
     const router = useRouter();
 
     const [openLoading, setOpenLoading] = useState<boolean>(true);
@@ -183,12 +175,8 @@ const InstitutionPage: React.FC = () => {
                             <div className="common-col-flex xl:w-full max-w-[1180px] w-[95%] mt-[100px] my-[50px] bg-[#ffffff] common-border border-2 shadow-[0_0_5px_#AABBCC]"> 
                                 <div className="w-full xs:px-[30px] px-[10px]">
                                     <FavoriteButton
-                                        user={user} 
-                                        state={state} 
                                         institutionDetails={institutionDetails}
                                         institutionName={institutionDetails.hosp_name}
-                                        handleAddFavorite={handleAddFavorite} 
-                                        handleRemoveFavorite={handleRemoveFavorite} 
                                     />
                                     <hr className="w-full my-[30px] border border-[#acb8b6]"/>
                                     <h3 className="xs:institutionPage-title-xs institutionPage-title-mobile mb-[30px]">資訊簡介</h3>
@@ -231,7 +219,6 @@ const InstitutionPage: React.FC = () => {
                                             displayedInstitutions={displayedInstitutions}
                                             handleNext={handleNext}
                                             handlePrev={handlePrev}
-                                            handleIncrement={handleIncrement}
                                             isAtStart={isAtStart}
                                             isAtEnd={isAtEnd}
                                         />

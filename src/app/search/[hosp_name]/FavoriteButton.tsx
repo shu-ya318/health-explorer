@@ -1,30 +1,26 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
-import { FavoriteState } from "../../hooks/useFavorite";
-import { UserType } from "../../hooks/useAuth"; 
-import { InstitutionInfo } from "../../lib/types";
+import { useAuth } from "../../hooks/useAuth";
+import useFavorite from "../../hooks/useFavorite";
 
 import SignInModal from "../../components/auth/SignInModal";
 import RegisterModal from "../../components/auth/RegisterModal";
 
+import { InstitutionInfo } from "../../lib/types";
+
 interface FavoriteButtonProps {
-    user: UserType | null; 
-    state: FavoriteState;
     institutionDetails:InstitutionInfo;
     institutionName: string;
-    handleAddFavorite: (user: UserType | null, institution: InstitutionInfo)  => Promise<void>;
-    handleRemoveFavorite: (user: UserType | null, docId: string)=> Promise<void>;
 }
 
 const FavoriteButton: React.FC<FavoriteButtonProps> = ({ 
-    user,
-    state,
     institutionDetails,
     institutionName,
-    handleAddFavorite,
-    handleRemoveFavorite
 }) => {
+    const { user } = useAuth();
+    const { state, handleAddFavorite, handleRemoveFavorite} = useFavorite(user);
+
     const [isRegisterModalVisible, setIsRegisterModalVisible] = useState<boolean>(false);
     const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
     const [favoriteHover, setFavoriteHover] = useState<Record<string, boolean>>({});

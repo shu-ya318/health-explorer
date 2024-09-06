@@ -1,8 +1,3 @@
-interface Cancer {
-    filter: string;
-    image: string;
-}
-
 interface CancerFilterProps {
     handleCancerFilter: (filter: string) => void;
 }
