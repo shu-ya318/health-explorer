@@ -83,7 +83,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
                     <>
                         {(() => {
                             const isFavorited = state.favorites.some(item => item.userId === user.uid && item.hosp_name === institutionName);
-                            const handleHeartClick = isFavorited ? () => handleRemoveFavorite(user, institutionName) : () => handleAddFavorite(user, institutionDetails);
+                            const handleFavoriteClick = isFavorited ? () => handleRemoveFavorite(user, institutionName) : () => handleAddFavorite(user, institutionDetails);
                             return (
                                 <button 
                                     ref={loggedFavoriteButtonRef}
@@ -93,7 +93,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
                                     onClick={() => {
                                         console.log(`Click for ${institutionName}`);
                                         setFavoriteHoverState(institutionName, false);
-                                        handleHeartClick();
+                                        handleFavoriteClick();
                                     }}
                                 >
                                     <Image 

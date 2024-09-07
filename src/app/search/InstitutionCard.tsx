@@ -108,7 +108,7 @@ const InstitutionCard: React.FC<InstitutionCardsProps> = ({
                     <>
                         {(() => {
                             const isFavorited = (institution: InstitutionInfo) => state.favorites.some(item => item.userId ===  user.uid && item.hosp_name === institution.hosp_name);
-                            const handleHeartClick = isFavorited(institution) ? () => handleRemoveFavorite(user, institution.hosp_name) : () => handleAddFavorite(user, institution);
+                            const handleFavoriteClick = isFavorited(institution) ? () => handleRemoveFavorite(user, institution.hosp_name) : () => handleAddFavorite(user, institution);
 
                             return (
                                 <button
@@ -117,7 +117,7 @@ const InstitutionCard: React.FC<InstitutionCardsProps> = ({
                                     onClick={() => {
                                         console.log(`Click for ${institution.hosp_name}`);
                                         setFavoriteHoverState(institution.hosp_name, false);
-                                        handleHeartClick();
+                                        handleFavoriteClick();
                                     }}
                                     ref={loggedFavoriteButtonRef}
                                     type="button" 
