@@ -9,6 +9,8 @@ interface CancersContentProps {
     handleSetAnswer: (value: string | number) => void;
     itemOptions: string[];
     progress: number; 
+    handleFinishClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => Promise<void>;
+    loading:boolean;
 }
 const CancersContent: React.FC<CancersContentProps> = ({ 
     id, 
@@ -17,9 +19,12 @@ const CancersContent: React.FC<CancersContentProps> = ({
     handleNextClick, 
     handleSetAnswer, 
     itemOptions, 
-    progress
+    progress,
+    handleFinishClick,
+    loading
 }) => {
-    const [inputYear, setInputYear] = useState("");
+    const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+    const [inputYear, setInputYear] = useState<string>("");
     const [showClick, setShowClick] = useState<boolean>(false);
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
@@ -71,17 +76,23 @@ const CancersContent: React.FC<CancersContentProps> = ({
         <>
             <main className="w-full h-auto common-col-flex justify-center bg-[#FCFCFC]">
                 <div className="xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] common-col-flex h-[870px] my-[150px] mb-[40px] mt-[100px] bg-[#FFFFFF] common-border border-2 rounded-lg shadow-[0_0_5px_#AABBCC] text-black">
-                    <div
-                        className="w-full h-[400px] bg-cover bg-center aspect-square"
-                        style={{backgroundImage: `url("images/cancerScreeningForm_banner.jpg")`}}
-                    ></div>
+                    <div className="relative w-full h-[400px]">
+                        <Image 
+                            src="/images/cancerScreeningForm_banner.jpg" 
+                            alt="cancerScreeningForm_banner" 
+                            fill={true}
+                            className="w-full h-full object-cover rounded-t-md"
+                            onLoad={() => setImageLoaded(true)}
+                            style={{backgroundImage: imageLoaded ? "" : "linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)"}}
+                        />
+                    </div>
                     <div className="md:w-[90%] xs:w-[85%] w-[78%] h-[40px] common-row-flex justify-between my-[20px]">
                         <div className="flex w-full bg-[#e9ecef] rounded-lg">
                             <div
                                 className="relative h-[30px] bg-gradient-to-r from-cyan-500 to-blue-500 rounded-l-lg"
                                 style={{ width: `${progress}%` }}
                             >
-                                <div className="text-[18px] text-center text-white font-bold">{Math.round(progress)}%</div>
+                                <div className="pl-[10px] text-[18px] text-center text-white font-bold">{Math.round(progress)}%</div>
                                 <Image
                                     src="/images/pen.png"
                                     alt="progress"
@@ -110,7 +121,7 @@ const CancersContent: React.FC<CancersContentProps> = ({
                         )}
                         <div className="common-row-flex">
                             <button
-                                onClick={handleNextClick}
+                                onClick={isLast ? handleFinishClick : handleNextClick}
                                 type="button"
                                 className="w-[150px] h-9 mx-auto mb-6 py-4.5 px-2.5 common-button"
                                 style={{ display: showClick ? "block" : "none" }}
@@ -118,6 +129,9 @@ const CancersContent: React.FC<CancersContentProps> = ({
                                 {isLast ? "Finish" : "Next"}
                             </button>
                         </div>
+                        { loading && ( 
+                            <div className="w-full common-col-flex justify-center">正在提交問卷...</div> 
+                        )}
                     </div>
                 </div>
             </main>

@@ -1,6 +1,5 @@
 "use client";
 
-// import { InstitutionsProvider} from './contexts/InstitutionsContext';
 import { AuthProvider } from "./hooks/useAuth";
 import Header from "./components/Header";
 import Footer from "./components/Footer";

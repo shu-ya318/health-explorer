@@ -21,7 +21,7 @@ const InstitutionMap: React.FC<GoogleMapProps> = ({
 
     return(
         <>
-            <div  className="w-full md:h-[450px] sm:h-[400px] xs:h-[350px] h-[300px] flex flex-col "> 
+            <div  className="w-full md:h-[450px] sm:h-[400px] xs:h-[350px] h-[300px] flex flex-col"> 
                 <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
                 {!apiIsLoaded && (
                     <Map

@@ -14,7 +14,7 @@ const config: Config = {
       'md':'768px',
       'sm':'640px',
       'xs':'480px',
-      'xss':'360px',
+      'xxs':'360px',
     },
     extend: {
     //版面

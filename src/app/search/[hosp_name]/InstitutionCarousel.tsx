@@ -1,12 +1,14 @@
 import { useState } from "react";
 import Image from "next/image";
+
+import { useInstitution }  from "../../hooks/useInstitution";
+
 import { InstitutionInfo } from "../../lib/types";
 
 interface InstitutionCarouselProps {
     displayedInstitutions: InstitutionInfo[];
     handleNext: () => void;
     handlePrev: () => void;
-    handleIncrement: (institution: InstitutionInfo) => void;
     isAtStart: boolean;
     isAtEnd: boolean;
 }
@@ -15,10 +17,10 @@ const InstitutionCarousel: React.FC<InstitutionCarouselProps> = ({
     displayedInstitutions, 
     handleNext, 
     handlePrev, 
-    handleIncrement, 
     isAtStart, 
     isAtEnd 
 }) => {
+    const { handleIncrement } = useInstitution();
     const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
     return (
@@ -30,8 +32,8 @@ const InstitutionCarousel: React.FC<InstitutionCarouselProps> = ({
                     type="button" 
                     id="left-arrow"
                     disabled={isAtStart}
-                    className={`common-row-flex justify-center w-9 h-full 
-                                ${isAtStart ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`w-9 h-full common-row-flex justify-center  
+                                ${isAtStart ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                     <Image 
                         src="/images/left_arrow.png" 
@@ -44,7 +46,7 @@ const InstitutionCarousel: React.FC<InstitutionCarouselProps> = ({
                     {displayedInstitutions.map(institution => (   
                         <div  
                             key={institution.hosp_name} 
-                            className="relative xs:w-full xs:h-[136px] w-full h-[300px] fill-column mb-[15px] border border-gray-300 rounded-sm overflow-hidden bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]"
+                            className="relative w-full xs:w-full xs:h-[136px]h-[300px] fill-column mb-[15px] border border-gray-300 rounded-sm overflow-hidden bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]"
                         >
                             <button 
                                 onClick={() => handleIncrement(institution)} 
@@ -58,7 +60,7 @@ const InstitutionCarousel: React.FC<InstitutionCarouselProps> = ({
                                         width={170} 
                                         height={170} 
                                         onLoad={() => setLoadedImages(prev => ({...prev, [institution.imageUrl]: true}))}
-                                        style={loadedImages[institution.imageUrl] ? {} : {backgroundImage: 'linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)'}}
+                                        style={loadedImages[institution.imageUrl] ? {} : {backgroundImage: "linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)"}}
                                         className="xs:w-[170px] xs:h-[170px] w-[300px] h-[150px] common-bg-image"
                                     />
                                 )}
@@ -74,7 +76,7 @@ const InstitutionCarousel: React.FC<InstitutionCarouselProps> = ({
                                             height={20} 
                                             className="w-[20px] h-[20px]"
                                         />
-                                        <span className="ml-[5px]  text-[14px] text-[#707070]">{institution.view}</span>
+                                        <span className="ml-[5px] text-[14px] text-[#707070]">{institution.view}</span>
                                     </div>
                                 </div>
                             </button>
@@ -86,7 +88,8 @@ const InstitutionCarousel: React.FC<InstitutionCarouselProps> = ({
                     id="right-arrow"
                     onClick={handleNext}
                     disabled={isAtEnd}
-                    className={`w-9 h-full common-row-flex justify-center ${isAtEnd ? "opacity-50 cursor-not-allowed" : ""}`}
+                    className={`w-9 h-full common-row-flex justify-center 
+                                ${isAtEnd ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                     <Image 
                         src="/images/right_arrow.png" 

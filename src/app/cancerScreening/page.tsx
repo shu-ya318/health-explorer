@@ -1,9 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation"; 
 
 import CancersContent  from "./CancersContent";
+
+import { db } from "../lib/firebaseConfig";
+import { collection, doc, setDoc } from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
 
 interface SurveyItem {
     id: string;
@@ -14,11 +18,11 @@ interface SurveyItem {
 const surveyItems: SurveyItem[] = [
     { id: "1", title: "1.您的出生民國年份?", itemOptions: [] },
     { id: "2", title: "2.您是否為原住民?", itemOptions: ["是", "否"] },
-    { id: "3", title: "3.您的性別?", itemOptions: ["男性", "女性"] },
+    { id: "3", title: "3.您的性別?", itemOptions: ["女性", "男性"] },
     { id: "4", title: "4.您是否有嚼檳榔的習慣?", itemOptions: ["目前已戒掉", "有", "無"] },
     { id: "5", title: "5.您是否有抽菸的習慣?", itemOptions: ["1天抽1包以上", "1天只抽幾支", "無"] },
     { id: "6", title: "6.您是否有肺癌家族史(父母、子女、兄弟姊妹曾罹患肺癌)?", itemOptions: ["有", "無"] },
-    { id: "7", title: "7.您是否有乳癌家族史(父母、子女、兄弟姊妹曾罹患乳癌)?", itemOptions: ["有", "無", "非女性"] }
+    { id: "7", title: "7.您是否有乳癌家族史(父母、子女、兄弟姊妹曾罹患乳癌)?", itemOptions: ["有", "無"] }
 ];
 
 const CancerScreeningPage: React.FC = () => {
@@ -26,30 +30,21 @@ const CancerScreeningPage: React.FC = () => {
 
     const [groupNum, setGroupNum] = useState<number>(1);
     const [isLast, setIsLast] = useState<boolean>(false);
-    const [answers, setAnswers] = useState<(string | number)[]>([]); 
     const [finished, setFinished] = useState<boolean>(false);
+    const [answers, setAnswers] = useState<(string | number)[]>([]); 
     const [progress, setProgress] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(false);
 
-    useEffect(()=>{
-        if (finished && answers.length === surveyItems.length) {
-            localStorage.setItem("answers", JSON.stringify(answers));
-            router.push("/cancerScreening/result");
-        }
-    },[finished, router, answers]);
-    
     const handleNextClick = (event: React.MouseEvent) => {
         event.preventDefault();
 
         setGroupNum(prevGroupNum => {
-            let newGroupNum = prevGroupNum + 1;
+            let newGroupNum = prevGroupNum + 1; //前往下題
     
             if (surveyItems.length === newGroupNum) {
-                setIsLast(true);
-            }
-            if (isLast) {
-                setFinished(true);
-                return prevGroupNum;
-            }
+                setIsLast(true);               //顯示最後一題(尚未切換finish狀態)
+            } 
+    
             return newGroupNum;
         });
 
@@ -67,6 +62,37 @@ const CancerScreeningPage: React.FC = () => {
         setAnswers(newAnswers);
     };
 
+    const handleFinishClick = async (): Promise<void> => {
+        if ( isLast&& !finished && answers.length === surveyItems.length ) {  //先檢查是最後一題且已作答完畢
+            setFinished(true); //避免重複提交
+            setLoading(true);
+        
+            const testerId = uuidv4();
+            sessionStorage.setItem("testerId", testerId);
+
+            try {
+                const docData = {
+                    testerId: testerId,
+                    birthYear: answers[0],
+                    indigenous: answers[1],
+                    gender: answers[2],
+                    betelNutUsage: answers[3],
+                    smoking: answers[4],
+                    familyLungCancer: answers[5],
+                    familyBreastCancer: answers[6],
+                };
+                const newDocRef = doc(collection(db, "cancerScreening"));
+                await setDoc(newDocRef, docData);
+                router.push("/cancerScreening/result");
+            } catch (error) {
+                console.error("Error writing document: ", error);
+                setFinished(false);  //若提交錯誤，允許重點擊再次提交
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
+
     return (     
         <>  
             <CancersContent 
@@ -75,7 +101,9 @@ const CancerScreeningPage: React.FC = () => {
                 handleSetAnswer={handleSetAnswer} 
                 progress={progress}  
                 isLast={isLast}
+                loading={loading}
                 {...surveyItems[groupNum - 1]}
+                handleFinishClick={handleFinishClick}
             />
         </>
     )

@@ -1,16 +1,16 @@
-
-interface Cancer {
-    filter: string;
-    image: string;
-}
-
 interface CancerFilterProps {
-    cancers: Cancer[];
     handleCancerFilter: (filter: string) => void;
 }
 
+const cancers = [
+    { filter: "子宮頸癌", image: "/images/cervicalCancer.png" },
+    { filter: "乳癌", image: "/images/breastCancer.png" },
+    { filter: "大腸癌", image: "/images/colorectalCancer.png" },
+    { filter: "口腔癌", image: "/images/oralCancer.png" },
+    { filter: "肺癌", image: "/images/lungCancer.png" }
+];
+
 const CancerFilter: React.FC<CancerFilterProps> = ({ 
-    cancers, 
     handleCancerFilter 
 }) => {
     return (
@@ -19,7 +19,7 @@ const CancerFilter: React.FC<CancerFilterProps> = ({
             className="absolute inset-x-0 lg:w-full max-w-[760px] w-[95%] md:min-h-[200px] h-auto common-page-layout justify-around md:mb-[60px] mb-[80px] mx-auto px-[20px] common-border border"
         > 
             <div className="mt-[10px] common-title text-[24px]">依癌篩資格搜尋</div>
-            <div className="grid md:grid-cols-5 grid-cols-3 md:gap-x-16 xs:gap-x-20 xss:gap-x-12 gap-x-10">
+            <div className="grid md:grid-cols-5 grid-cols-3 md:gap-x-16 xs:gap-x-20 xxs:gap-x-12 gap-x-10">
                 {cancers.map((cancer, index) => (
                     <button 
                         onClick={() => handleCancerFilter(cancer.filter)}

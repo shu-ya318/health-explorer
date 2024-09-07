@@ -66,7 +66,7 @@ export const AuthProvider = ({
     return () => unsubscribe();
   }, []);  
 
-  const register = async (email: string, password: string) => {
+  const register = async (email: string, password: string): Promise<void> => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
     } catch (error) {
@@ -76,7 +76,7 @@ export const AuthProvider = ({
     }
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string): Promise<void> => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
@@ -86,7 +86,7 @@ export const AuthProvider = ({
     }
   };
 
-  const logOut = async () => {
+  const logOut = async (): Promise<void> => {
     try {
       await signOut(auth);
       setUser(null);

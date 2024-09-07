@@ -2,16 +2,13 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 
 interface SearchInputProps {
-    searchTerm:string;
-    setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
-    handleSearch: (searchTerm: string) => void;
+    handleSearch: (searchTerm: string) => Promise<void>;
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({ 
-    searchTerm,
-    setSearchTerm,
     handleSearch
 }) => {
+    const [searchTerm, setSearchTerm] = useState<string>("");
     const searchInputRef = useRef<HTMLInputElement>(null);
 
     const deleteSearchInput = () => {
@@ -24,7 +21,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
     return (
         <div className="w-full h-10 mt-[60px] mb-[30px]"> 
             <div className="max-w-[760px] w-full h-full flex mx-auto"> 
-                <div className="flex relative w-full h-full">
+                <div className="relative w-full h-full flex">
                     <input
                         className="h-full flex-grow px-4 text-[18px] font-bold text-gray-500 common-border border shadow-[0_0_3px_#AABBCC] rounded-l-md"
                         type="text"

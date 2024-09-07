@@ -7,6 +7,8 @@ import Image from "next/image";
 import CancerSearchSection from "./CancerSearchSection";
 import InstitutionSearchSection from "./InstitutionSearchSection";
 
+import { initInstitutionData } from "./api/initInstitutionData";
+
 import { motion, AnimatePresence } from "framer-motion"; 
 import PuffLoader from "react-spinners/PuffLoader";
 import AOS from "aos";
@@ -16,6 +18,7 @@ import "animate.css";
 const HomePage: React.FC = () => {
   const router = useRouter();
   const [openLoading, setOpenLoading] = useState<boolean>(true);
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -31,6 +34,17 @@ const HomePage: React.FC = () => {
     });
   }, []);
 
+  useEffect(() => {
+    const loadData = async (): Promise<void> => {
+      try {
+        await initInstitutionData();
+      } catch (error) {
+        console.error("Failed to initialize institution data:", error);
+      }
+    };
+
+    loadData();
+  }, []);
 
   const scrollDown = () => {
     window.scrollTo({
@@ -61,14 +75,22 @@ const HomePage: React.FC = () => {
         animate={{ opacity: 1 }} 
         exit={{ opacity: 0 }}
       >
-        <div className="relative w-full h-[750px] common-bg-image bg-[url('/images/homeBanner.png')]">
-          <div className="absolute top-[77%] lg:left-[55%] md:left-[57%] sm:left-[61%] xss:left-[60%] left-[65%] -translate-x-[80%] -translate-y-[80%] common-col-flex justify-between">
+        <div className="relative w-full h-[750px]">
+          <Image 
+              src="/images/homeBanner.png" 
+              alt="homeBanner" 
+              fill={true}
+              className="w-full h-full object-cover"
+              onLoad={() => setImageLoaded(true)}
+              style={{backgroundImage: imageLoaded ? "" : "linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)"}}
+           />
+          <div className="absolute top-[77%] lg:left-[55%] md:left-[57%] sm:left-[61%] xxs:left-[60%] left-[65%] -translate-x-[80%] -translate-y-[80%] common-col-flex justify-between">
             <div 
               onClick={scrollDown}
               data-aos="fade-up" 
               className="mt-22 cursor-pointer" 
             >
-              <span className="sm:text-[50px] xss:text-[30px] text-[26px] text-[#FFFFFF] text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]">開始探索</span>
+              <span className="sm:text-[50px] xxs:text-[30px] text-[26px] text-[#FFFFFF] text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]">開始探索</span>
               <br/>
               <Image 
                 src="/images/angles-down-solid.svg" 

@@ -1,19 +1,20 @@
 interface ConfirmModalProps {
   isOpen: boolean;
-  handleConfirmDelete: () => void;
+  hosp_name: string;  
+  handleConfirmDelete: (hosp_name: string) => Promise<void>;
   handleCloseModal: () => void;
 }
 
-
 export const ConfirmDeleteModal: React.FC<ConfirmModalProps> = ({ 
   isOpen, 
+  hosp_name,
   handleConfirmDelete, 
   handleCloseModal 
 }) => {
   if (!isOpen) return null;
 
   return (
-      <div className="w-full h-full fixed inset-0 z-50 overflow-y-auto">
+      <div className="fixed inset-0 z-50 w-full h-full overflow-y-auto">
       <div className="common-row-flex justify-center min-h-screen">
         <div className="fixed inset-0 bg-black bg-opacity-30"></div>
         <div className="relative bg-white rounded-2xl py-4 px-5 shadow-lg max-w-lg mx-auto">
@@ -29,7 +30,10 @@ export const ConfirmDeleteModal: React.FC<ConfirmModalProps> = ({
               取消
             </button>
             <button 
-              onClick={handleConfirmDelete}
+              onClick={() => {
+                console.log("Confirm delete button clicked with", hosp_name);
+                handleConfirmDelete(hosp_name);
+              }}
               type="button" 
               className="py-2.5 px-5 text-xs bg-[#19a8e6] text-white rounded-full shadow-xs transition-all duration-500 hover:bg-[#2D759E]"
             >
