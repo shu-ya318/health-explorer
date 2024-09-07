@@ -45,22 +45,23 @@ const FavoriteReducer = (state: FavoriteState, action: FavoriteAction) => {
 function useFavorite(user: UserType | null) {
   const [state, dispatch] = useReducer(FavoriteReducer, initialState);
 
+  //避免使用useEffect直接調用而引發無限迴圈風險
   const fetchFavoriteData = useCallback(async (): Promise<void> => {
-      if (!user) return;
+    if (!user) return;
 
-      const q = query(collection(db, "favorites"), where("userId", "==", user.uid));
-      const querySnapshot = await getDocs(q);
-      const data = querySnapshot.docs.map(doc => ({
-        ...doc.data() as FirebaseFavoriteData,
-        id: doc.id
-      }));
+    const q = query(collection(db, "favorites"), where("userId", "==", user.uid));
+    const querySnapshot = await getDocs(q);
+    const data = querySnapshot.docs.map(doc => ({
+      ...doc.data() as FirebaseFavoriteData,
+      id: doc.id
+    }));
 
-      dispatch({ type: "SET_FAVORITES", payload: data });
-  }, [user]);
-  
+    dispatch({ type: "SET_FAVORITES", payload: data });
+}, [user]);
+
   useEffect(() => {
     fetchFavoriteData();
-}, [fetchFavoriteData]);
+  }, [fetchFavoriteData]);
 
 //多個元件均完全相同的資料處理及狀態管理邏輯
 const handleAddFavorite = async (user: UserType | null, institution: InstitutionInfo): Promise<void>=> {
