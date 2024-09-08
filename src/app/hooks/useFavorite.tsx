@@ -23,7 +23,7 @@ export interface FavoriteState {
 type FavoriteAction =
   | { type: "SET_FAVORITES"; payload: FirebaseFavoriteData[] }
   | { type: "ADD_FAVORITE"; payload: FirebaseFavoriteData } 
-  | { type: "REMOVE_FAVORITE"; payload: string }; 
+  | { type: "DELETE_FAVORITE"; payload: string }; 
 
 const initialState: FavoriteState = {
   favorites: [],
@@ -35,7 +35,7 @@ const FavoriteReducer = (state: FavoriteState, action: FavoriteAction) => {
           return { ...state, favorites: action.payload };
       case "ADD_FAVORITE":
           return { ...state, favorites: [...state.favorites, action.payload] };
-      case "REMOVE_FAVORITE":
+      case "DELETE_FAVORITE":
           return { ...state, favorites: state.favorites.filter(item => item.id !== action.payload) };
       default:
           return state;
@@ -97,7 +97,7 @@ const handleAddFavorite = async (user: UserType | null, institution: Institution
 
         const deletedDocIds = await Promise.all(batch);
         deletedDocIds.forEach(docId => {
-          dispatch({ type: "REMOVE_FAVORITE", payload: docId });
+          dispatch({ type: "DELETE_FAVORITE", payload: docId });
         });
     } else {
         console.error("No favorite record found in Firestore or element with matching ID not found");
