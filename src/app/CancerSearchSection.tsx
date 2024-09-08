@@ -66,7 +66,7 @@ const CancerSearchSection: React.FC<CancerSearchSectionProps> = ({ handleSearchC
                 type="button"  
                 className="w-52 h-11 common-button mt-[30px] mb-5 py-4.5 px-2.5" 
             >
-                立即查詢資格
+                立即檢測資格
             </button>
         </div>
     </div>
