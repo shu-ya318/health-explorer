@@ -97,7 +97,7 @@ const CancerScreeningResultPage: React.FC = () => {
                     <div className="w-full my-[20px] text-[#1D445D] text-[28px] text-center font-bold">您的檢測結果如下:</div>
                     {noQualification && (
                         <div className="common-col-flex justify-between w-full mx-auto px-[40px] mb-[40px]">  
-                            <div className="w-[200px] h-[330px] flex flex-col py-[10px] justify-around rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB] animate-flip">
+                            <div className="w-[200px] h-[330px] flex flex-col py-[10px] justify-around rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB]">
                                     <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
                                     <div className="text-[18px]">很抱歉...</div>
                                     <div className="text-[24px]">您尚無免費資格</div>
@@ -117,7 +117,7 @@ const CancerScreeningResultPage: React.FC = () => {
                     )}
                     <div className="w-full common-row-flex flex-wrap justify-center mx-auto px-[40px] mb-[40px]">  
                         { oralCancerQualification && (
-                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB] animate-flipUp">
+                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB]">
                                  <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
                                  <div className="text-[18px]">
                                     每<strong className="text-[24px] mx-[5px]">2</strong>年可篩檢:</div>
@@ -136,7 +136,7 @@ const CancerScreeningResultPage: React.FC = () => {
                             </div>  
                         )}
                         { lungCancerQualification && (
-                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] xl:py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB] animate-flipUp">
+                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] xl:py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB]">
                                  <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
                                     <div className="text-[18px]">
                                         每<strong className="text-[24px] mx-[5px]">2</strong>年可篩檢:</div>
@@ -155,7 +155,7 @@ const CancerScreeningResultPage: React.FC = () => {
                             </div>  
                         )}
                         { cervicalCancerQualification && (
-                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB] animate-flipUp">
+                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB]">
                                  <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
                                  <div className="text-[18px]">
                                     每<strong className="text-[24px] mx-[5px]">1</strong>年可篩檢:</div>
@@ -174,7 +174,7 @@ const CancerScreeningResultPage: React.FC = () => {
                             </div>  
                         )}
                         { breastCancerQualification && (
-                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB] animate-flipUp">
+                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB]">
                                  <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
                                     <div className="text-[18px]  ">
                                         每<strong className="text-[24px] mx-[5px]">2</strong>年可篩檢:</div>
@@ -193,7 +193,7 @@ const CancerScreeningResultPage: React.FC = () => {
                             </div>  
                         )}
                         { colorectalCancerQualification && (
-                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB] animate-flipUp">
+                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB]">
                                  <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
                                     <div className="text-[18px]">
                                         每<strong className="text-[24px] mx-[5px]">2</strong>年可篩檢:</div>

@@ -90,12 +90,12 @@ const Pagination: React.FC<PaginationProps> = ({
 
     return (
         <div className="w-full max-w-[750px] min-h-[40px] flex flex-row justify-center mt-[20px] mb-[40px] mx-auto">
-            <div className="w-[88px] h-full flex justify-between">
+            <div className="md:w-[88px] sm:w-[78px] xs:w-[78px] w-[90px] h-[40px] flex justify-between">
                 <button
                     onClick={handleFirstPage}
                     type="button"
                     disabled={currentPage === 1}
-                    className={`pagination-button p-[10px] 
+                    className={`pagination-button md:w-[40px] xs:w-[33px] w-[40px] h-full p-[10px]
                                 ${currentPage === 1 ? "bg-gray-300" : "hover:bg-[#5B98BC]"}`}
                 >
                     <Image 
@@ -110,7 +110,7 @@ const Pagination: React.FC<PaginationProps> = ({
                     onClick={handlePrevbtn}
                     type="button"
                     disabled={currentPage === 1}
-                    className={`pagination-button py-[10px] px-[13px] 
+                    className={`pagination-button md:w-[40px] xs:w-[33px] w-[40px] h-full py-[10px] md:px-[13px] px-[12px] 
                                 ${currentPage === 1 ? "bg-gray-300" : "hover:bg-[#5B98BC]"}`}
                 >
                     <Image 
@@ -122,7 +122,7 @@ const Pagination: React.FC<PaginationProps> = ({
                     />
                 </button>
             </div>
-            <div className="w-full max-w-[500px] h-full flex flex-row justify-center m-auto">
+            <div className="md:w-full md:max-w-[500px] max-w-[430px] h-full flex flex-row justify-center m-auto">
                 {pageNumbers.map(number => {
                     if (number <= maxPageNumberLimit && number > minPageNumberLimit) {
                         return (
@@ -130,7 +130,7 @@ const Pagination: React.FC<PaginationProps> = ({
                                 onClick={() => paginate(number)} 
                                 type="button"
                                 key={number} 
-                                className={`w-[40px] h-[40px] flex mx-[10px] md:mb-0 mb-[10px] rounded-md 
+                                className={`md:w-[40px] xs:w-[33px] w-[40px] h-[40px] flex mx-[10px] md:mb-0 mb-[10px] rounded-md 
                                             ${currentPage === number ? "bg-[#9FC5DF] text-white" : "bg-[#e6e6e6] hover:bg-[#9FC5DF]"} `}
                             >
                                 <div className="text-center m-auto">{number}</div>
@@ -141,13 +141,13 @@ const Pagination: React.FC<PaginationProps> = ({
                     }
                 })}
             </div>
-            <div className="w-[88px] h-full flex justify-between">
+            <div className="md:w-[88px] sm:w-[78px] xs:w-[78px] w-[90px] h-[40px] flex justify-between">
                 <button
                     onClick={handleNextbtn}
                     type="button"
                     disabled={currentPage === pageNumbers[pageNumbers.length - 1]}
-                    className={`pagination-button py-[10px] px-[13px] 
-                                ${currentPage === pageNumbers[pageNumbers.length - 1] ? "bg-gray-300" : "hover:bg-[#5B98BC]"} `}
+                    className={`pagination-button md:w-[40px] xs:w-[33px] w-[40px] h-full py-[10px] md:px-[13px] px-[12px]
+                            ${currentPage === pageNumbers[pageNumbers.length - 1] ? "bg-gray-300" : "hover:bg-[#5B98BC]"} `}
                 >
                     <Image 
                         src="/images/angle-right-solid.svg" 
@@ -160,7 +160,7 @@ const Pagination: React.FC<PaginationProps> = ({
                 <button
                     onClick={handleLastPage}
                     disabled={currentPage === pageNumbers[pageNumbers.length - 1]}
-                    className={`pagination-button p-[10px] 
+                    className={`pagination-button md:w-[40px] xs:w-[33px] w-[40px] h-full p-[10px] 
                                 ${currentPage === pageNumbers[pageNumbers.length - 1] ? "bg-gray-300" : "hover:bg-[#5B98BC]"} `}
                 >
                     <Image 

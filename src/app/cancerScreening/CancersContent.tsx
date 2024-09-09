@@ -108,7 +108,7 @@ const CancersContent: React.FC<CancersContentProps> = ({
                         {id === "1" && (
                             <input
                                 type="text"
-                                placeholder="請輸入出生民國年份"
+                                placeholder="如:民國61年則輸入61"
                                 className="lg:w-[20%] md:w-[38%] xs:w-[45%] w-[55%] min-w-[157px] h-[35px] mt-[50px] mb-[75px] border-2 common-border rounded-lg"
                                 value={inputYear}
                                 onChange={handleYearInput}

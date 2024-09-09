@@ -26,17 +26,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/search/page.js"
-    ],
-    "/search/[hosp_name]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/search/[hosp_name]/page.js"
-    ],
-    "/favorite/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/favorite/page.css",
-      "static/chunks/app/favorite/page.js"
     ]
   }
 }
