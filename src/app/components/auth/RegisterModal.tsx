@@ -61,7 +61,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
             onClick={onClose} 
             className="fixed inset-0 z-50 common-row-flex justify-center bg-black bg-opacity-30" 
         >
-            <div 
+            <form  
                 onClick={event => event.stopPropagation()}
                 className="max-w-[900px] md:w-[92%] w-[85%] h-[490px] flex mx-auto rounded-lg shadow-lg" 
             >
@@ -86,7 +86,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                         </label>
                         <input 
                             ref={firstInputRef} 
-                            type="email" 
+                            type="email"
+                            autoComplete="email"  
                             placeholder="請輸入Email" 
                             id="email-register"
                             className="w-full h-9 md:px-3.5 px-[5px] bg-[#FFFFFF] leading-5 md:text-base text-[14px] text-gray-600 font-medium border-none focus:outline-none focus:border-[#36B2D7]"
@@ -100,7 +101,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                             密碼:
                         </label>
                         <input 
-                            type="password" 
+                            type="password"
+                            autoComplete="current-password" 
                             placeholder="請輸入6個字元以上密碼" 
                             id="password-register"
                             className="w-full h-9 md:px-3.5 px-[5px] bg-[#FFFFFF] leading-5 md:text-base text-[14px] text-gray-600 font-medium border-none focus:outline-none focus:border-[#36B2D7]"
@@ -128,7 +130,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                         <div className="w-full common-col-flex justify-center mt-[30px] text-lg text-red-500 font-bold">{registerMessage}</div>
                     )}
                 </div>
-            </div>
+            </form >
         </div>
     )
 };

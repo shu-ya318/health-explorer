@@ -20,7 +20,7 @@ const surveyItems: SurveyItem[] = [
     { id: "2", title: "2.您是否為原住民?", itemOptions: ["是", "否"] },
     { id: "3", title: "3.您的性別?", itemOptions: ["女性", "男性"] },
     { id: "4", title: "4.您是否有嚼檳榔的習慣?", itemOptions: ["目前已戒掉", "有", "無"] },
-    { id: "5", title: "5.您是否有抽菸的習慣?", itemOptions: ["1天抽1包以上", "1天只抽幾支", "無"] },
+    { id: "5", title: "5.您是否有抽菸的習慣?", itemOptions: ["1天抽20支以上", "1天最多抽10幾支", "無"] },
     { id: "6", title: "6.您是否有肺癌家族史(父母、子女、兄弟姊妹曾罹患肺癌)?", itemOptions: ["有", "無"] },
     { id: "7", title: "7.您是否有乳癌家族史(父母、子女、兄弟姊妹曾罹患乳癌)?", itemOptions: ["有", "無"] }
 ];
@@ -82,7 +82,7 @@ const CancerScreeningPage: React.FC = () => {
                     familyBreastCancer: answers[6],
                 };
                 const newDocRef = doc(collection(db, "cancerScreening"));
-                await setDoc(newDocRef, docData);
+                await setDoc(newDocRef, docData);   //寫入時，選中第一個選項則值為1
                 router.push("/cancerScreening/result");
             } catch (error) {
                 console.error("Error writing document: ", error);

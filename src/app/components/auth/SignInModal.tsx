@@ -62,7 +62,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
             onClick={onClose}
             className="fixed inset-0 z-50 common-row-flex justify-center bg-black bg-opacity-30" 
         >
-            <div 
+            <form 
                 onClick={event => event.stopPropagation()}
                 className="max-w-[900px] md:w-[92%] w-[85%] h-[490px] flex rounded-lg shadow-lg" 
             >
@@ -87,7 +87,8 @@ const SignInModal: React.FC<SignInModalProps> = ({
                         </label>
                         <input 
                             ref={firstInputRef} 
-                            type="email" 
+                            type="email"
+                            autoComplete="email" 
                             placeholder="請輸入Email" 
                             id="email-signin"
                             className="w-full h-9 md:px-3.5 px-[5px] bg-[#FFFFFF] leading-5 md:text-base text-[13px] text-gray-600 font-medium border-none focus:outline-none focus:border-[#36B2D7]"
@@ -105,7 +106,8 @@ const SignInModal: React.FC<SignInModalProps> = ({
                         <input 
                             onChange={(event) => setPassword(event.target.value)} 
                             value={password}
-                            type="password" 
+                            type="password"
+                            autoComplete="current-password" 
                             placeholder="請輸入密碼" 
                             id="password-signin"
                             className="w-full h-9 md:px-3.5 px-[5px] bg-[#FFFFFF] leading-5 md:text-base text-[13px] text-gray-600 font-medium border-none focus:outline-none focus:border-[#36B2D7]"
@@ -133,7 +135,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
                         <div className="w-full common-col-flex justify-center mt-[30px] text-lg text-red-500 font-bold">{signInMessage}</div>
                     )}
                 </div>
-            </div>
+            </form>
         </div>
     )
 

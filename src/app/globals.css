@@ -61,7 +61,7 @@ body {
     @apply bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_3px_#2D759E];
   }
   .pagination-button{
-    @apply border-solid border border-[#5B98BC] rounded-md w-[40px];
+    @apply border-solid border border-[#5B98BC] rounded-md;
   }
   .cancerResult-button {
     @apply w-[140px] mt-[30px] mx-auto py-1.5 px-3 font-bold bg-black text-white rounded-full transition-all duration-300 hover:scale-110 hover:bg-[#4F4F4F];
