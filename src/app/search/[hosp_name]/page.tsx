@@ -33,7 +33,7 @@ const InstitutionPage: React.FC = () => {
     useEffect(() => {
         const timer = setTimeout(() => {
           setOpenLoading(false);
-        }, 1500);
+        }, 3000);
     
         return () => clearTimeout(timer);
     }, []);
