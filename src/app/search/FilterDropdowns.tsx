@@ -37,13 +37,15 @@ const FilterDropdowns: React.FC<FilterDropdownsProps> = ({
 }) => {
 
     return (
-        <div className="hidden md:max-w-screen-md md:h-9 md:flex md:flex-row md:justify-center md:mb-[20px]">
-            <div className="sm:w-[150px] w-[100px] py-1 bg-2 bg-[#E0E0E0] rounded-l-md text-black text-center text-[16px]">排序:</div>
-            <div className="relative sm:w-36 w-20">
+        <div className="hidden md:max-w-screen-md md:h-9 md:common-row-flex md:justify-center md:mb-[20px]">
+            <div className="w-[150px] h-full flex bg-2 bg-[#E0E0E0] rounded-l-md text-black text-center text-[16px]">
+                <div className="m-auto">排序:</div>
+            </div>
+            <div className="relative w-[144px] h-full">
                 <button
                     onClick={() => toggleDropdowns("institutions")}
                     type="button"
-                    className={`searchPage-label ${isOpenInstitutions ? "bg-[#2D759E] text-[#ffffff]" : "searchPage-label-notOpened"}`}
+                    className={`searchPage-label box-border ${isOpenInstitutions ? "bg-[#2D759E] text-[#ffffff]" : "searchPage-label-notOpened"}`}
                 >
                     依機構
                     <Image 
@@ -68,7 +70,7 @@ const FilterDropdowns: React.FC<FilterDropdownsProps> = ({
                     </ul>
                 )}
             </div>
-            <div className="relative sm:w-36 w-20">
+            <div className="relative w-[144px] h-full">
                 <button
                     onClick={() => toggleDropdowns("divisions")}
                     type="button"
@@ -98,7 +100,7 @@ const FilterDropdowns: React.FC<FilterDropdownsProps> = ({
                     </ul>
                 )}
             </div>
-            <div className="relative sm:w-36 w-20">
+            <div className="relative w-[144px] h-full">
                 <button
                     onClick={() => toggleDropdowns("districts")}
                     type="button"

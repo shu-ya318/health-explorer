@@ -82,7 +82,7 @@ const CancerScreeningPage: React.FC = () => {
                     familyBreastCancer: answers[6],
                 };
                 const newDocRef = doc(collection(db, "cancerScreening"));
-                await setDoc(newDocRef, docData);
+                await setDoc(newDocRef, docData);   //寫入時，選中第一個選項則值為1
                 router.push("/cancerScreening/result");
             } catch (error) {
                 console.error("Error writing document: ", error);

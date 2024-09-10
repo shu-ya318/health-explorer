@@ -57,24 +57,30 @@ const CancerScreeningResultPage: React.FC = () => {
     const familyLungCancer = firstAnswer.familyLungCancer;
     const familyBreastCancer = firstAnswer.familyBreastCancer;
 
-    const noQualification = (birthYear > 96 && betelNutUsage === 3 && smoking === 3) ||
-                            (birthYear >= 85 && birthYear <= 96 && indigenous === 2) ||
-                            (birthYear < 40 && gender === 2);
+    /*無資格者:未滿18歲、滿18~29歲非原住民 、滿18~29歲原住民且未嚼檳榔及未吸菸、滿30~49歲男性且未嚼檳榔及未吸菸、滿75歲以上男性*/
+    const noQualification = (birthYear > 95 ) ||
+                            (birthYear >= 84 && birthYear <= 95 && indigenous === 2) ||
+                            (birthYear >= 84 && birthYear <= 95 && indigenous === 1 && betelNutUsage === 3 && smoking === 3) ||
+                            (birthYear >= 64 && birthYear <= 83 && gender === 2 && betelNutUsage === 3 && smoking === 3) ||
+                            (birthYear <= 38 && gender === 2);
     
-    const oralCancerQualification = (birthYear >= 85 && birthYear <= 96 && indigenous === 1) ||
-                                    (birthYear < 85 && (betelNutUsage === 1 || betelNutUsage === 2)) ||
-                                    (birthYear < 85 && (smoking === 1 || smoking === 2));
+    /*口腔癌篩:滿18歲以上有嚼過檳榔或有吸菸的原住民、滿30歲以上有嚼過檳榔或有吸菸*/ 
+    const oralCancerQualification = (birthYear <= 95 && indigenous === 1 && (betelNutUsage !== 3 || smoking !== 3))||
+                                    (birthYear <= 83 && (betelNutUsage !== 3 || smoking !== 3));
 
-    const lungCancerQualification = ((birthYear >= 40 && birthYear <= 69 && gender === 1 && familyLungCancer === 1) ||
-                                     (birthYear >= 40 && birthYear <= 64 && gender === 2 && familyLungCancer === 1) ||
-                                     (birthYear >= 40 && birthYear <= 64 && smoking === 1));
+    /*肺癌篩: 滿45~49歲女性且有肺癌家族史 、滿50~74歲且有肺癌史或有吸菸者*/
+    const lungCancerQualification = (birthYear >= 64 && birthYear <= 68 && gender === 1 && familyLungCancer === 1) ||
+                                    (birthYear >= 39 && birthYear <= 63 && (familyLungCancer === 1 || smoking !== 3));
 
-    const colorectalCancerQualification = (birthYear >= 40 && birthYear <= 64);
+    /*大腸癌篩:滿50~74歲*/
+    const colorectalCancerQualification = (birthYear >= 39 && birthYear <= 63);
 
-    const cervicalCancerQualification = (birthYear < 85 && gender === 1);
+    /*子宮頸癌篩:滿30歲以上女性*/
+    const cervicalCancerQualification = (birthYear <= 83 && gender === 1);
 
-    const breastCancerQualification = ((birthYear >= 45 && birthYear <= 69 && gender === 1) ||
-                                       (birthYear >= 70 && birthYear <= 74 && gender === 1 && familyBreastCancer === 1));
+    /*乳癌篩:滿40~44歲且二等血親內有乳癌史的女性、滿45~69歲女性*/
+    const breastCancerQualification = ((birthYear >= 44 && birthYear <= 68 && gender === 1) ||
+                                       (birthYear >= 69 && birthYear <= 73 && gender === 1 && familyBreastCancer === 1));
 
     const handleSearchClick = (filter: string) => {
         window.open(`/search?filter=${filter}`, "_blank");
@@ -97,7 +103,7 @@ const CancerScreeningResultPage: React.FC = () => {
                     <div className="w-full my-[20px] text-[#1D445D] text-[28px] text-center font-bold">您的檢測結果如下:</div>
                     {noQualification && (
                         <div className="common-col-flex justify-between w-full mx-auto px-[40px] mb-[40px]">  
-                            <div className="w-[200px] h-[330px] flex flex-col py-[10px] justify-around rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB]">
+                            <div className="w-[200px] h-[330px] flex flex-col py-[10px] justify-around rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB] animate-flipUp">
                                     <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
                                     <div className="text-[18px]">很抱歉...</div>
                                     <div className="text-[24px]">您尚無免費資格</div>
@@ -117,7 +123,7 @@ const CancerScreeningResultPage: React.FC = () => {
                     )}
                     <div className="w-full common-row-flex flex-wrap justify-center mx-auto px-[40px] mb-[40px]">  
                         { oralCancerQualification && (
-                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB]">
+                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB] animate-flipUp">
                                  <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
                                  <div className="text-[18px]">
                                     每<strong className="text-[24px] mx-[5px]">2</strong>年可篩檢:</div>
@@ -136,7 +142,7 @@ const CancerScreeningResultPage: React.FC = () => {
                             </div>  
                         )}
                         { lungCancerQualification && (
-                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] xl:py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB]">
+                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] xl:py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB] animate-flipUp">
                                  <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
                                     <div className="text-[18px]">
                                         每<strong className="text-[24px] mx-[5px]">2</strong>年可篩檢:</div>
@@ -155,7 +161,7 @@ const CancerScreeningResultPage: React.FC = () => {
                             </div>  
                         )}
                         { cervicalCancerQualification && (
-                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB]">
+                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB] animate-flipUp">
                                  <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
                                  <div className="text-[18px]">
                                     每<strong className="text-[24px] mx-[5px]">1</strong>年可篩檢:</div>
@@ -174,7 +180,7 @@ const CancerScreeningResultPage: React.FC = () => {
                             </div>  
                         )}
                         { breastCancerQualification && (
-                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB]">
+                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB] animate-flipUp">
                                  <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
                                     <div className="text-[18px]  ">
                                         每<strong className="text-[24px] mx-[5px]">2</strong>年可篩檢:</div>
@@ -193,7 +199,7 @@ const CancerScreeningResultPage: React.FC = () => {
                             </div>  
                         )}
                         { colorectalCancerQualification && (
-                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB]">
+                            <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB] animate-flipUp">
                                  <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
                                     <div className="text-[18px]">
                                         每<strong className="text-[24px] mx-[5px]">2</strong>年可篩檢:</div>

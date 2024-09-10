@@ -17,15 +17,20 @@ const SearchInput: React.FC<SearchInputProps> = ({
             searchInputRef.current.focus();
         }
     };
+
+    const handleSearchClick = () => {
+        if (!searchTerm.trim()) return;
+        handleSearch(searchTerm);
+    };
   
     return (
         <div className="w-full h-10 mt-[60px] mb-[30px]"> 
             <div className="max-w-[760px] w-full h-full flex mx-auto"> 
                 <div className="relative w-full h-full flex">
                     <input
-                        className="h-full flex-grow px-4 text-[18px] font-bold text-gray-500 common-border border shadow-[0_0_3px_#AABBCC] rounded-l-md"
+                        className="h-full flex-grow px-4 xs:text-[18px] text-[14px] font-bold text-gray-500 common-border border shadow-[0_0_3px_#AABBCC] rounded-l-md"
                         type="text"
-                        placeholder="請輸入關鍵字搜尋"
+                        placeholder="請輸入關鍵字才能搜尋"
                         ref={searchInputRef}
                         value={searchTerm} 
                         onChange={event => setSearchTerm(event.target.value)}
@@ -45,12 +50,12 @@ const SearchInput: React.FC<SearchInputProps> = ({
                     </button>                               
                 </div>
                 <button
-                    onClick={() => handleSearch(searchTerm)}
+                    onClick={handleSearchClick}
                     type="button" 
                     className="w-32 h-full common-row-flex justify-center flex-grow bg-[#2D759E] hover:bg-[#5B98BC] rounded-r-md text-white font-bold xs:text-[18px] text-[0px]"
                 >
                     <Image 
-                        className="w-auto h-auto mr-[7px]" 
+                        className="xs:w-auto w-[30%] h-auto xs:mr-[7px]" 
                         src="/images/search.png" 
                         alt="search" 
                         width={30} 

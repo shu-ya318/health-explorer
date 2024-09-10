@@ -23,25 +23,10 @@ const InstitutionCard: React.FC<InstitutionCardsProps> = ({
     const [isRegisterModalVisible, setIsRegisterModalVisible] = useState<boolean>(false);
     const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);    
     const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
-    const [favoriteHover, setFavoriteHover] = useState<Record<string, boolean>>({});
 
     const favoriteButtonRef = useRef<HTMLButtonElement>(null);
     const loggedFavoriteButtonRef = useRef<HTMLButtonElement>(null);
     
-    useEffect(() => {
-        console.log("updated:", favoriteHover);
-    }, [favoriteHover]);
-
-    const setFavoriteHoverState = (hosp_name: string, state: boolean) => {
-        setFavoriteHover(prev => {
-            if (prev[hosp_name] === state) {
-                return prev; 
-            }
-            const updated = { ...prev, [hosp_name]: state };
-            console.log(`Setting favorite hover for ${hosp_name} to ${state}`);
-            return updated;
-        });
-    };
 
     return (
         <>
@@ -83,24 +68,17 @@ const InstitutionCard: React.FC<InstitutionCardsProps> = ({
                 {!user ? (
                     <>
                         <button
-                            onMouseEnter={() => {console.log(`Mouse entered for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, true)}}
-                            onMouseLeave={() => { console.log(`Mouse left for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, false)}}
-                            onClick={() => {
-                                console.log(`Click for ${institution.hosp_name}`);
-                                setFavoriteHoverState(institution.hosp_name, false);
-                                setIsSignInModalVisible(true);
-                            }} 
+                            onClick={() => setIsSignInModalVisible(true)}
                             ref={favoriteButtonRef}
                             type="button"  
                             className="absolute top-[5px] left-[130px] z-10"
                         >
                             <Image 
-                                src={favoriteHover[institution.hosp_name] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
+                                src="/images/diamond_white.png"
                                 alt="favorite" 
                                 width={30} 
                                 height={30} 
-                                className={`w-[30px] h-[30px] rounded-full p-[2px] 
-                                            ${favoriteHover[institution.hosp_name] ? "favorite-button-add":"favorite-button-remove" }`}
+                                className="w-[30px] h-[30px] p-[2px] rounded-full favorite-button-remove"
                             />
                         </button>
                     </>
@@ -112,24 +90,18 @@ const InstitutionCard: React.FC<InstitutionCardsProps> = ({
 
                             return (
                                 <button
-                                    onMouseEnter={() => {console.log(`Mouse entered for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, true)}}
-                                    onMouseLeave={() => { console.log(`Mouse left for ${institution.hosp_name}`); setFavoriteHoverState(institution.hosp_name, false)}}
-                                    onClick={() => {
-                                        console.log(`Click for ${institution.hosp_name}`);
-                                        setFavoriteHoverState(institution.hosp_name, false);
-                                        handleFavoriteClick();
-                                    }}
+                                    onClick={() => {handleFavoriteClick()}}
                                     ref={loggedFavoriteButtonRef}
                                     type="button" 
                                     className="absolute top-[5px] left-[130px] z-10" 
                                 >
                                     <Image 
-                                        src={isFavorited(institution) || favoriteHover[institution.hosp_name] ? "/images/diamond_selected.png" : "/images/diamond_white.png"}
+                                        src={isFavorited(institution) ? "/images/diamond_selected.png" : "/images/diamond_white.png"}
                                         alt="favorite" 
                                         width={30} 
                                         height={30} 
                                         className={`w-[30px] h-[30px] rounded-full p-[2px] 
-                                                    ${isFavorited(institution) || favoriteHover[institution.hosp_name] ? "favorite-button-add":"favorite-button-remove"}`}
+                                                    ${isFavorited(institution) ? "favorite-button-add":"favorite-button-remove"}`}
 
                                     />
                                 </button>

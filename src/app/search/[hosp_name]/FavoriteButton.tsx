@@ -23,14 +23,9 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
 
     const [isRegisterModalVisible, setIsRegisterModalVisible] = useState<boolean>(false);
     const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
-    const [favoriteHover, setFavoriteHover] = useState<Record<string, boolean>>({});
     
     const favoriteButtonRef = useRef<HTMLButtonElement>(null);
     const loggedFavoriteButtonRef = useRef<HTMLButtonElement>(null);
-
-    useEffect(() => {
-        console.log("updated:", favoriteHover);
-    }, [favoriteHover]);
 
     useEffect(() => {
         if (!user && favoriteButtonRef.current) {
@@ -40,17 +35,6 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
         }
     }, [user]);
 
-    const setFavoriteHoverState = (hosp_name: string, state: boolean) => {
-        setFavoriteHover(prev => {
-            if (prev[hosp_name] === state) {
-                return prev; 
-            }
-            const updated = { ...prev, [hosp_name]: state };
-            console.log(`Setting favorite hover for ${hosp_name} to ${state}`);
-            return updated;
-        });
-    };
-
     return (
         <>
             {!user && isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
@@ -58,24 +42,17 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
             <div className="w-full common-col-flex justify-between">
                 {!user ? (
                     <>
-                        <button 
+                        <button
+                            onClick={() => {setIsSignInModalVisible(true)}} 
                             ref={favoriteButtonRef}
-                            type="button" 
-                            onMouseOver={() => {console.log(`Mouse Over for ${institutionName}`); setFavoriteHoverState(institutionName, true)}}
-                            onMouseOut={() => {console.log(`Mouse Out for ${institutionName}`); setFavoriteHoverState(institutionName, false)}} 
-                            onClick={() => {
-                                console.log(`Click for ${institutionName}`);
-                                setFavoriteHoverState(institutionName, false);
-                                setIsSignInModalVisible(true);
-                            }}
+                            type="button"
                         >
                             <Image 
-                                src={favoriteHover[institutionName] ? "/images/diamond_selected.png" : "/images/diamond_white.png"} 
+                                src="/images/diamond_white.png" 
                                 alt="favorite" 
                                 width={40} 
                                 height={40} 
-                                className={`rounded-full p-[2px] mt-[20px] 
-                                            ${favoriteHover[institutionName] ? "favorite-button-add":"favorite-button-remove"}`}
+                                className="mt-[20px] p-[2px] rounded-full favorite-button-remove"
                             />
                         </button>
                     </>
@@ -86,23 +63,17 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
                             const handleFavoriteClick = isFavorited ? () => handleRemoveFavorite(user, institutionName) : () => handleAddFavorite(user, institutionDetails);
                             return (
                                 <button 
+                                    onClick={() => {handleFavoriteClick()}}
                                     ref={loggedFavoriteButtonRef}
-                                    type="button" 
-                                    onMouseOver={() => {console.log(`Mouse Over for ${institutionName}`); setFavoriteHoverState(institutionName, true)}}
-                                    onMouseOut={() => { console.log(`Mouse Out for ${institutionName}`); setFavoriteHoverState(institutionName, false)}} 
-                                    onClick={() => {
-                                        console.log(`Click for ${institutionName}`);
-                                        setFavoriteHoverState(institutionName, false);
-                                        handleFavoriteClick();
-                                    }}
+                                    type="button"
                                 >
                                     <Image 
-                                        src={isFavorited || favoriteHover[institutionName]? "/images/diamond_selected.png" : "/images/diamond_white.png"}  
+                                        src={isFavorited ? "/images/diamond_selected.png" : "/images/diamond_white.png"}  
                                         alt="favorite"
-                                        width={36} 
-                                        height={36} 
+                                        width={40} 
+                                        height={40} 
                                         className={`rounded-full p-[2px] mt-[20px] 
-                                                    ${isFavorited || favoriteHover[institutionName] ?"favorite-button-add":"favorite-button-remove"}`} 
+                                                    ${isFavorited ?"favorite-button-add":"favorite-button-remove"}`} 
                                     />
                                 </button>
                             );

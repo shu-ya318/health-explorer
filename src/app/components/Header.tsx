@@ -113,10 +113,10 @@ const handleRegisterClick = () => {
     <>
       <header className="fixed inset-x-0 top-0 z-30 w-screen h-[60px] common-col-flex justify-between bg-[#FFFFFF] border border-solid border-[#9FC5DF]">
         <ProgressBar/> 
-        <div className="relative max-w-[1200px] w-screen lg:w-[90%] md:w-[80%] common-row-flex justify-between mx-auto px-[10px] text-[#1e94b4]">
+        <div className="relative max-w-[1200px] w-screen lg:w-[90%] md:w-[80%] common-row-flex justify-between m-auto px-[10px] text-[#1e94b4]">
             <Link 
               href='/' 
-              className="relative common-row-flex mt-2 no-underline font-bold cursor-pointer animate__animated animate__backInLeft animate__slow"
+              className="relative common-row-flex no-underline font-bold cursor-pointer animate__animated animate__backInLeft animate__slow"
             >
                 <Image 
                   src="/images/LOGO.png" 

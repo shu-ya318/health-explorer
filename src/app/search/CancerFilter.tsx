@@ -18,7 +18,7 @@ const CancerFilter: React.FC<CancerFilterProps> = ({
             style={{ bottom: "-165px" }} 
             className="absolute inset-x-0 lg:w-full max-w-[760px] w-[95%] md:min-h-[200px] h-auto common-page-layout justify-around md:mb-[60px] mb-[80px] mx-auto xs:px-[20px] px-0 common-border border"
         > 
-            <div className="mt-[10px] common-title text-[24px]">依癌篩資格搜尋</div>
+            <div className="mt-[10px] common-title xs:text-[24px] text-[20px]">依癌篩資格搜尋</div>
             <div className="grid md:grid-cols-5 grid-cols-3 md:gap-x-16 xs:gap-x-20 xxs:gap-x-12 gap-x-10">
                 {cancers.map((cancer, index) => (
                     <button 

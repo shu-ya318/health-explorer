@@ -182,23 +182,23 @@ const InstitutionPage: React.FC = () => {
                                     <h3 className="xs:institutionPage-title-xs institutionPage-title-mobile mb-[30px]">資訊簡介</h3>
                                     <div className="w-full h-full flex flex-col sm:justify-around justify-center text-black sm:text-xl">
                                         <div className="w-full flex mb-[25px]">
-                                            <span className="w-[90px] font-bold ">電話</span>
+                                            <span className="w-[90px] flex-shrink-0 font-bold ">電話</span>
                                             <span>{institutionDetails.tel}</span>
                                         </div>
                                         <div className="w-full flex mb-[25px]">
-                                            <span className="w-[90px] font-bold">行政區</span>
+                                            <span className="w-[90px] flex-shrink-0 font-bold">行政區</span>
                                             <span>{institutionDetails.area}</span>
                                         </div>
                                         <div className="w-full flex mb-[25px]">
-                                            <span className="w-[90px] font-bold">地址</span>
+                                            <span className="w-[90px] flex-shrink-0 font-bold">地址</span>
                                             <span>{institutionDetails.hosp_addr}</span>
                                         </div>
                                         <div className="w-full flex mb-[25px]">
-                                            <span className="w-[90px] font-bold">科別</span>
+                                            <span className="w-[90px] flex-shrink-0 font-bold">科別</span>
                                             <span>{institutionDetails.division}</span>
                                         </div>
                                         <div className="w-full flex mb-[25px]">
-                                            <span className="w-[90px] font-bold">癌症篩檢</span>
+                                            <span className="w-[90px] flex-shrink-0 font-bold">癌症篩檢</span>
                                             <span>{institutionDetails.cancer_screening}</span>
                                         </div>
                                     </div>
