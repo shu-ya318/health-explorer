@@ -1,9 +1,15 @@
 "use client";
 
-import { useState, useEffect} from "react"; 
+import { useState, useEffect } from "react"; 
 import Image from "next/image";
+
 import { db } from "../../lib/firebaseConfig";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { 
+    collection, 
+    query, 
+    where, 
+    getDocs 
+} from "firebase/firestore";
 
 interface cancerScreeningAnswer {
     birthYear: number;
@@ -88,7 +94,7 @@ const CancerScreeningResultPage: React.FC = () => {
 
     return (
         <>
-            <main className=" w-full h-auto common-col-flex justify-center bg-[#FCFCFC]">
+            <main className="w-full h-auto common-col-flex justify-center bg-[#FCFCFC]">
                 <div className="xl:w-full max-w-[1180px] lg:w-[90%] w-[80%] h-auto common-col-flex my-[150px] mb-[40px] bg-[#FFFFFF] common-border border-2 rounded-lg shadow-[0_0_5px_#AABBCC] text-black"> 
                     <div className="relative w-full h-[440px]">
                         <Image 
@@ -121,7 +127,7 @@ const CancerScreeningResultPage: React.FC = () => {
                             </div>  
                         </div>
                     )}
-                    <div className="w-full common-row-flex flex-wrap justify-center mx-auto px-[40px] mb-[40px]">  
+                    <section className="w-full common-row-flex flex-wrap justify-center mx-auto px-[40px] mb-[40px]">  
                         { oralCancerQualification && (
                             <div className="w-[200px] h-[330px] flex flex-col justify-around mr-[10px] md:mb-[10px] mb-[15px] py-[10px] rounded-lg bg-gradient-to-b from-[#50A7C2] to-[#B7F8DB] animate-flipUp">
                                  <div className="flex flex-col pl-[10px] mb-[10px] text-left text-[#FFFFFF] font-bold">
@@ -130,7 +136,7 @@ const CancerScreeningResultPage: React.FC = () => {
                                  <div className="text-[24px] text-center">口腔癌</div>
                                 </div>  
                                 <div 
-                                    className="w-[130px] h-[130px] mx-auto rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" 
+                                    className="w-[130px] h-[130px] mx-auto rounded-lg bg-[#F0FFFF] bg-no-repeat bg-contain bg-center" 
                                     style={{ backgroundImage: `url("../images/oralCancer.png")` }}
                                 ></div>  
                                 <button
@@ -149,7 +155,7 @@ const CancerScreeningResultPage: React.FC = () => {
                                     <div className="text-[24px] text-center">肺癌</div>
                                 </div>  
                                 <div 
-                                    className="mx-auto w-[130px] h-[130px] rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" 
+                                    className="mx-auto w-[130px] h-[130px] rounded-lg bg-[#F0FFFF] bg-no-repeat bg-contain bg-center" 
                                     style={{ backgroundImage: `url("../images/lungCancer.png")` }}
                                 ></div>  
                                 <button 
@@ -168,7 +174,7 @@ const CancerScreeningResultPage: React.FC = () => {
                                  <div className="text-[24px] text-center">子宮頸癌</div>
                                 </div>  
                                 <div 
-                                    className="w-[130px] h-[130px] mx-auto rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" 
+                                    className="w-[130px] h-[130px] mx-auto rounded-lg bg-[#F0FFFF] bg-no-repeat bg-contain bg-center" 
                                     style={{ backgroundImage: `url("../images/cervicalCancer.png")` }}
                                 ></div>  
                                 <button
@@ -187,7 +193,7 @@ const CancerScreeningResultPage: React.FC = () => {
                                     <div className="text-[24px] text-center">乳癌</div>
                                 </div>  
                                 <div 
-                                    className="mx-auto w-[130px] h-[130px] rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" 
+                                    className="mx-auto w-[130px] h-[130px] rounded-lg bg-[#F0FFFF] bg-no-repeat bg-contain bg-center" 
                                     style={{ backgroundImage: `url("../images/breastCancer.png")` }}
                                 ></div>  
                                 <button  
@@ -206,7 +212,7 @@ const CancerScreeningResultPage: React.FC = () => {
                                     <div className="text-[24px] text-center">大腸癌</div>
                                 </div>  
                                 <div 
-                                    className="mx-auto w-[130px] h-[130px] rounded-lg bg-[#f0ffff] bg-no-repeat bg-contain bg-center" 
+                                    className="mx-auto w-[130px] h-[130px] rounded-lg bg-[#F0FFFF] bg-no-repeat bg-contain bg-center" 
                                     style={{ backgroundImage: `url("../images/colorectalCancer.png")` }}
                                 ></div>  
                                 <button  
@@ -217,7 +223,7 @@ const CancerScreeningResultPage: React.FC = () => {
                                 </button>
                             </div>  
                         )}
-                    </div>
+                    </section>
                 </div>
             </main>
         </>

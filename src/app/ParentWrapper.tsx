@@ -1,6 +1,7 @@
 "use client";
 
 import { AuthProvider } from "./hooks/useAuth";
+
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -20,7 +21,7 @@ export default function ParentProvider({
             <InstantSearch searchClient={searchClient} indexName="Medical_Institutions">
                 <>
                     <Header/>
-                    {children}
+                        {children}
                     <Footer/>
                 </>
             </InstantSearch>

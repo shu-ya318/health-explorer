@@ -59,7 +59,7 @@ const HomePage: React.FC = () => {
 
   if (openLoading) {
     return (
-      <div className="common-row-flex justify-center h-screen bg-[#1e94b4]">
+      <div className="common-row-flex justify-center h-screen bg-[#1E94B4]">
         <PuffLoader 
           size="300px" 
           color="#FFFFFF"
@@ -75,14 +75,14 @@ const HomePage: React.FC = () => {
         animate={{ opacity: 1 }} 
         exit={{ opacity: 0 }}
       >
-        <div className="relative w-full h-[750px]">
+        <section className="relative w-full h-[750px]">
           <Image 
-              src="/images/homeBanner.png" 
-              alt="homeBanner" 
-              fill={true}
-              className="w-full h-full object-cover"
-              onLoad={() => setImageLoaded(true)}
-              style={{backgroundImage: imageLoaded ? "" : "linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)"}}
+            src="/images/homeBanner.png" 
+            alt="homeBanner" 
+            fill={true}
+            className="w-full h-full object-cover"
+            onLoad={() => setImageLoaded(true)}
+            style={{backgroundImage: imageLoaded ? "" : "linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)"}}
            />
           <div className="absolute top-[77%] lg:left-[55%] md:left-[57%] sm:left-[61%] xxs:left-[60%] left-[65%] -translate-x-[80%] -translate-y-[80%] common-col-flex justify-between">
             <div 
@@ -101,15 +101,15 @@ const HomePage: React.FC = () => {
               />
             </div>
           </div>
-        </div>
-        <div className="w-full h-auto flex flex-col bg-gradient-to-b from-[#FFFFFF] via-[#C3D8EA] to-[#77ACCC]">
+        </section>
+        <section className="w-full h-auto flex flex-col bg-gradient-to-b from-[#FFFFFF] via-[#C3D8EA] to-[#77ACCC]">
           <CancerSearchSection 
             handleSearchClick={handleSearchClick} 
           />
           <InstitutionSearchSection 
             handleSearchClick={handleSearchClick} 
           />
-        </div>
+        </section>
       </motion.div>
     </AnimatePresence>
   )

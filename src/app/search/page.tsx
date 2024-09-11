@@ -11,6 +11,7 @@ import InstitutionCard from "./InstitutionCard";
 import Pagination from "./Pagination";
 
 import { InstitutionInfo } from "../lib/types";
+
 import algoliasearch from "algoliasearch";
 
 interface SearchOptions {
@@ -171,11 +172,11 @@ const SearchPage: React.FC = () => {
                     handleCancerFilter={handleCancerFilter} 
                 />
             </div>
-            <div className="xl:w-full max-w-[1180px] w-[95%] pt-[80px]">
+            <section className="xl:w-full max-w-[1180px] w-[95%] pt-[80px]">
                 <SearchInput
                     handleSearch={handleSearch} 
                 />
-                <div className="w-full h-auto flex flex-col items-start">
+                <section className="w-full h-auto flex flex-col items-start">
                     {loading ? (
                         <div className="w-[250px] h-[25px] bg-gray-300 rounded-lg animate-pulse"></div>   
                     ):( 
@@ -191,7 +192,7 @@ const SearchPage: React.FC = () => {
                         handleSelectFilter={handleSelectFilter}
                         toggleDropdowns={toggleDropdowns}
                     />
-                    <div className="w-full h-auto grid lg:grid-cols-2 grid-cols-1 lg:gap-x-[1%] gap-0 justify-center items-start m-auto box-border">
+                    <section className="w-full h-auto grid lg:grid-cols-2 grid-cols-1 lg:gap-x-[1%] gap-0 justify-center items-start m-auto box-border">
                         {loading ? (
                             Array.from({ length: postsPerPage-12 }, (_, index) => ( 
                                     <div 
@@ -231,7 +232,7 @@ const SearchPage: React.FC = () => {
                                     />
                             ))
                         )}
-                    </div>
+                    </section>
                     {loading ? (
                         <div className="w-[90%] h-[40px] my-[20px] mx-auto bg-gray-300 rounded-lg animate-pulse"></div>
                     ):( 
@@ -242,8 +243,8 @@ const SearchPage: React.FC = () => {
                             currentPage={currentPage}
                         />
                     )}
-                </div>
-            </div>
+                </section>
+            </section>
         </main>
     );
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect} from "react"; 
+import { useState, useRef, useEffect } from "react"; 
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -113,9 +113,9 @@ const handleRegisterClick = () => {
     <>
       <header className="fixed inset-x-0 top-0 z-30 w-screen h-[60px] common-col-flex justify-between bg-[#FFFFFF] border border-solid border-[#9FC5DF]">
         <ProgressBar/> 
-        <div className="relative max-w-[1200px] w-screen lg:w-[90%] md:w-[80%] common-row-flex justify-between m-auto px-[10px] text-[#1e94b4]">
+        <section className="relative max-w-[1200px] w-screen lg:w-[90%] md:w-[80%] common-row-flex justify-between m-auto px-[10px] text-[#1E94B4]">
             <Link 
-              href='/' 
+              href="/" 
               className="relative common-row-flex no-underline font-bold cursor-pointer animate__animated animate__backInLeft animate__slow"
             >
                 <Image 
@@ -126,7 +126,7 @@ const handleRegisterClick = () => {
                   className="relative z-0 w-[45px] h-[45px] mr-2 object-cover"
                 />
                 <div className="absolute top-0 left-0  z-10 w-full h-full opacity-0 bg-white transition-opacity duration-300 hover:opacity-40"></div>
-                <div className="common-col-flex  mr-[5px] hover:text-[#9FC5DF]">
+                <div className="common-col-flex mr-[5px] hover:text-[#9FC5DF]">
                   <ruby className="text-[20px] text-center">
                     健康探索者 
                     <rt className="text-[14px]">HealthExplorer</rt>
@@ -134,7 +134,7 @@ const handleRegisterClick = () => {
                 </div>
             </Link>
             {isLogOutToastVisible && logOutMessage && (
-              <div
+              <section
                 ref={toastRef}  
                 className="z-50 xs:w-full xs:max-w-[160px] max-w-[110px] h-[40px] common-row-flex m-auto px-3 bg-white rounded-xl border border-[#2D759E] shadow-sm gap-4"
               >
@@ -160,9 +160,9 @@ const handleRegisterClick = () => {
                     />
                   </svg>
                 </button>
-              </div>
+              </section>
             )}
-              <button 
+            <button 
                 onClick={toggleMenuBar}
                 type="button"
                 className={`absolute top-[15px] right-[20px] w-[25px] h-[25px] md:hidden menu-button-selector 
@@ -235,7 +235,7 @@ const handleRegisterClick = () => {
                 <span className="m-auto text-[#2598B6] text-center">我的收藏</span>
               </button>
             </div>
-        </div>
+        </section>
       </header>
     </>
   );

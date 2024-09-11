@@ -1,17 +1,17 @@
 "use client";
 
 import { 
-    createContext,
-    useContext, 
-    useState,
-    useEffect
+  createContext,
+  useContext, 
+  useState,
+  useEffect
 } from "react";
 import {
-    onAuthStateChanged,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
-    AuthError
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  AuthError
 } from "firebase/auth";
 import { auth } from "../lib/firebaseConfig";
 

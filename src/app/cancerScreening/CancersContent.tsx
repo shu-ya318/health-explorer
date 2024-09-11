@@ -86,8 +86,8 @@ const CancersContent: React.FC<CancersContentProps> = ({
                             style={{backgroundImage: imageLoaded ? "" : "linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)"}}
                         />
                     </div>
-                    <div className="md:w-[90%] xs:w-[85%] w-[78%] h-[40px] common-row-flex justify-between my-[20px]">
-                        <div className="flex w-full bg-[#e9ecef] rounded-lg">
+                    <section className="md:w-[90%] xs:w-[85%] w-[78%] h-[40px] common-row-flex justify-between my-[20px]">
+                        <div className="flex w-full bg-[#E9ECEf] rounded-lg">
                             <div
                                 className="relative h-[30px] bg-gradient-to-r from-cyan-500 to-blue-500 rounded-l-lg"
                                 style={{ width: `${progress}%` }}
@@ -102,8 +102,8 @@ const CancersContent: React.FC<CancersContentProps> = ({
                                 />
                             </div>
                         </div>
-                    </div>
-                    <div className="w-full common-col-flex justify-center mx-auto mb-[20px] md:px-[60px] px-0 text-[#1D445D]">
+                    </section>
+                    <section className="w-full common-col-flex justify-center mx-auto mb-[20px] md:px-[60px] px-0 text-[#1D445D]">
                         <h2 className="md:w-full w-[80%] mb-[25px] mt-[10px] lg:text-2xl sm:text-[22px] text-[18px] text-center font-bold">{title}</h2>
                         {id === "1" && (
                             <input
@@ -132,7 +132,7 @@ const CancersContent: React.FC<CancersContentProps> = ({
                         { loading && ( 
                             <div className="w-full common-col-flex justify-center">正在提交問卷...</div> 
                         )}
-                    </div>
+                    </section>
                 </div>
             </main>
         </>

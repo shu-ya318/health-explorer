@@ -1,13 +1,14 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 
 import { useAuth } from "../hooks/useAuth";
 import useFavorite from "../hooks/useFavorite";
 import { useInstitution }  from "../hooks/useInstitution";
-import { InstitutionInfo } from "../lib/types";
 
 import SignInModal from "../components/auth/SignInModal";
 import RegisterModal from "../components/auth/RegisterModal";
+
+import { InstitutionInfo } from "../lib/types";
 
 interface InstitutionCardsProps {
     institution: InstitutionInfo;
@@ -32,9 +33,10 @@ const InstitutionCard: React.FC<InstitutionCardsProps> = ({
         <>
             {!user && isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
             {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
-            <div className="relative h-[136px] lg:fill-two-columns fill-column mb-[15px] border border-gray-300 rounded-sm overflow-hidden bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
+            <section className="relative h-[136px] lg:fill-two-columns fill-column mb-[15px] border border-gray-300 rounded-sm overflow-hidden bg-[#FFFFFF] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]">
                     <button 
-                        onClick={() => handleIncrement(institution)} 
+                        onClick={() => handleIncrement(institution)}
+                        type="button" 
                         className="w-full h-full flex"
                     >
                     {institution.imageUrl && (
@@ -49,7 +51,7 @@ const InstitutionCard: React.FC<InstitutionCardsProps> = ({
                             style={loadedImages[institution.imageUrl] ? {} : {backgroundImage: "linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)"}}
                         />
                     )}
-                    <div className="w-full flex flex-col justify-between p-[15px]">
+                    <section className="w-full flex flex-col justify-between p-[15px]">
                         <div className="xl:w-[380px] xs:w-[300px] xxs:w-[168px] w-[100px] common-card pr-[15px] text-[16px] text-[#3E3A39] font-bold">{institution.hosp_name}</div>
                         <div className="xl:w-[380px] xs:w-[300px] xxs:w-[168px] w-[100px] common-card text-[14px] text-[#595959]">{institution.division}</div>
                         <div className="xl:w-[380px] xs:w-[300px] xxs:w-[168px] w-[100px] common-card text-[14px] text-[#595959]">{institution.cancer_screening}</div>
@@ -63,7 +65,7 @@ const InstitutionCard: React.FC<InstitutionCardsProps> = ({
                             />
                             <span className="ml-[5px] text-[14px] text-[#707070]">{institution.view}</span>
                         </div>
-                    </div>
+                    </section>
                 </button>
                 {!user ? (
                     <>
@@ -109,8 +111,7 @@ const InstitutionCard: React.FC<InstitutionCardsProps> = ({
                         })()}
                     </>
                 )}
-            </div>
-           
+            </section>
         </>
     );
 };

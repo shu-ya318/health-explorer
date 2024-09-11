@@ -45,7 +45,8 @@ const FilterDropdowns: React.FC<FilterDropdownsProps> = ({
                 <button
                     onClick={() => toggleDropdowns("institutions")}
                     type="button"
-                    className={`searchPage-label box-border ${isOpenInstitutions ? "bg-[#2D759E] text-[#ffffff]" : "searchPage-label-notOpened"}`}
+                    className={`searchPage-label box-border 
+                                ${isOpenInstitutions ? "bg-[#2D759E] text-[#ffffff]" : "searchPage-label-notOpened"}`}
                 >
                     依機構
                     <Image 

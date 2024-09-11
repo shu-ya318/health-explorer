@@ -1,11 +1,8 @@
-import { 
-    useState, 
-    useRef, 
-    useEffect
-} from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 
-import { useAuth } from "../../hooks/useAuth";         
+import { useAuth } from "../../hooks/useAuth";    
+     
 import { AuthError }from "firebase/auth";
 
 interface RegisterModalProps {
@@ -18,6 +15,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     onShowSignIn
 }) => {
     const { register } = useAuth();
+
     const [registerMessage, setRegisterMessage] = useState<string | null>(null);
     const firstInputRef = useRef<HTMLInputElement>(null);
 
@@ -65,7 +63,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 onClick={event => event.stopPropagation()}
                 className="max-w-[900px] md:w-[92%] w-[85%] h-[490px] flex mx-auto rounded-lg shadow-lg" 
             >
-                <div className="w-1/2 sm:common-col-flex hidden justify-center p-7 rounded-l-lg bg-[#4b96af] backdrop-blur-sm">
+                <div className="w-1/2 sm:common-col-flex hidden justify-center p-7 rounded-l-lg bg-[#4B96AF] backdrop-blur-sm">
                     <div className="md:w-[300px] md:h-[300px] sm:w-[250px] sm:h-[250px] mb-2.5 common-bg-image bg-[url('/images/LOGO.png')]"></div>
                     <div className="mt-4 text-white text-3xl font-bold">健康探索者</div>
                 </div>
