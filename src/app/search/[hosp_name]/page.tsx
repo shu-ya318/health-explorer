@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from "next/navigation"; 
 import Image from "next/image";
 
 import FavoriteButton from "./FavoriteButton";
@@ -166,19 +166,19 @@ const InstitutionPage: React.FC = () => {
                                         style={{backgroundImage: imageLoaded ? "" : "linear-gradient(to top, #F0F0F0, #C3D8EA, #77ACCC)"}}
                                     />
                                     <div className="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-5">
-                                        <div className="absolute top-[55%] left-1/2 -translate-x-[56%] -translate-y-1/2 min-w-72 text-black text-[#ffffff] font-bold text-[26px] text-center text-shadow-[2px 2px 8px rgba(0,0,0,0.8)] bg-[#FFFFFF] opacity-90 p-[10px] rounded-lg">
+                                        <div className="absolute top-[55%] left-1/2 -translate-x-[56%] -translate-y-1/2 min-w-72 text-black text-[#FFFFFF] font-bold text-[26px] text-center text-shadow-[2px 2px 8px rgba(0,0,0,0.8)] bg-[#FFFFFF] opacity-90 p-[10px] rounded-lg">
                                             {institutionDetails.hosp_name}
                                         </div>  
                                     </div>
                                 </div>  
                             </div>
-                            <div className="common-col-flex xl:w-full max-w-[1180px] w-[95%] mt-[100px] my-[50px] bg-[#ffffff] common-border border-2 shadow-[0_0_5px_#AABBCC]"> 
+                            <section className="common-col-flex xl:w-full max-w-[1180px] w-[95%] mt-[100px] my-[50px] bg-[#FFFFFF] common-border border-2 shadow-[0_0_5px_#AABBCC]"> 
                                 <div className="w-full xs:px-[30px] px-[10px]">
                                     <FavoriteButton
                                         institutionDetails={institutionDetails}
                                         institutionName={institutionDetails.hosp_name}
                                     />
-                                    <hr className="w-full my-[30px] border border-[#acb8b6]"/>
+                                    <hr className="w-full my-[30px] border border-[#ACB8B6]"/>
                                     <h3 className="xs:institutionPage-title-xs institutionPage-title-mobile mb-[30px]">資訊簡介</h3>
                                     <div className="w-full h-full flex flex-col sm:justify-around justify-center text-black sm:text-xl">
                                         <div className="w-full flex mb-[25px]">
@@ -202,7 +202,7 @@ const InstitutionPage: React.FC = () => {
                                             <span>{institutionDetails.cancer_screening}</span>
                                         </div>
                                     </div>
-                                    <hr className="w-full border border-[#acb8b6] my-[30px]"/>
+                                    <hr className="w-full border border-[#ACB8B6] my-[30px]"/>
                                     <h3 className="xs:institutionPage-title-xs institutionPage-title-mobile  mb-[30px] mt-[5px]">地圖實景</h3>
                                     {loading ? (
                                         <div className="w-[90%] h-[450px] my-[40px] bg-gray-300 rounded-lg animate-pulse"></div>
@@ -211,7 +211,7 @@ const InstitutionPage: React.FC = () => {
                                             institutionDetails={institutionDetails}
                                         />
                                     )}
-                                    <hr className="w-full my-[30px] border-solid border border-[#acb8b6]"/>
+                                    <hr className="w-full my-[30px] border-solid border border-[#ACB8B6]"/>
                                     {loading ? (
                                         <div className="w-[80%] h-[360px] my-[40px] bg-gray-300 rounded-lg animate-pulse"></div>   
                                     ) : (
@@ -233,7 +233,7 @@ const InstitutionPage: React.FC = () => {
                                         </button>
                                     </div>
                                 </div>
-                            </div>
+                            </section>
                         </main>
                     </motion.div>
                 </AnimatePresence>

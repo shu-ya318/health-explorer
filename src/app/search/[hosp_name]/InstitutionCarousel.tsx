@@ -24,7 +24,7 @@ const InstitutionCarousel: React.FC<InstitutionCarouselProps> = ({
     const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
     return (
-        <div className="w-full">
+        <section className="w-full">
             <h3 className="xs:institutionPage-title-xs institutionPage-title-mobile my-[10px]">您可能也想比較...</h3>
             <div className="relative w-full common-row-flex justify-between mt-[50px]">
                 <button
@@ -42,11 +42,11 @@ const InstitutionCarousel: React.FC<InstitutionCarouselProps> = ({
                         height={46} 
                     />
                 </button>
-                <div className="md:w-[80%] xs:w-[95%] w-[70%] h-auto grid grid-cols-1 lg:gap-x-[1%] gap-0 justify-center items-start m-auto box-border">
+                <section className="md:w-[80%] xs:w-[95%] w-[70%] h-auto grid grid-cols-1 lg:gap-x-[1%] gap-0 justify-center items-start m-auto box-border">
                     {displayedInstitutions.map(institution => (   
                         <div  
                             key={institution.hosp_name} 
-                            className="relative w-full xs:w-full xs:h-[136px]h-[300px] fill-column mb-[15px] border border-gray-300 rounded-sm overflow-hidden bg-[#ffffff] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]"
+                            className="relative w-full xs:w-full xs:h-[136px] h-[300px] fill-column mb-[15px] border border-gray-300 rounded-sm overflow-hidden bg-[#FFFFFF] shadow-[0_0_3px_#AABBCC] hover:shadow-[0_0_10px_#AABBCC]"
                         >
                             <button 
                                 onClick={() => handleIncrement(institution)} 
@@ -82,7 +82,7 @@ const InstitutionCarousel: React.FC<InstitutionCarouselProps> = ({
                             </button>
                         </div>
                     ))}
-                </div>   
+                </section>   
                 <button
                     type="button" 
                     id="right-arrow"
@@ -99,7 +99,7 @@ const InstitutionCarousel: React.FC<InstitutionCarouselProps> = ({
                     />
                 </button>
             </div>
-        </div>
+        </section>
     );
 };
 

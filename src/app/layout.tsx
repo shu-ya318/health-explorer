@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { Noto_Sans_TC } from "next/font/google";
+
 import "./globals.css";
-import ParentProvider from './ParentWrapper'; 
+
+import ParentProvider from "./ParentWrapper"; 
 
 const notoSans = Noto_Sans_TC({
-  subsets: ['latin'],
-  display: 'swap',
+  subsets: ["latin"],
+  display: "swap",
 })
 
 export const metadata: Metadata = {
@@ -13,6 +15,7 @@ export const metadata: Metadata = {
   description: "Let's save health together!",
 };
 
+//語言改成繁體中文，避免瀏覽器預設詢問是否中翻
 export default function RootLayout({
   children,
 }: Readonly<{

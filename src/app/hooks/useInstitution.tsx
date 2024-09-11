@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+
 import { db } from "../lib/firebaseConfig";
 import { doc, updateDoc, increment } from "firebase/firestore"; 
 

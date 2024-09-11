@@ -47,10 +47,7 @@ const FavoriteDataDisplay: React.FC<FavoriteDataDisplayProps> = ({
     const lastElementRef = useRef<HTMLDivElement>(null);
 
     const fetchMoreData = useCallback(async (): Promise<void> => {
-        console.log("Attempting to fetch data", { userId: user?.uid, loading, lastVisible, isInitialLoad, allDataLoaded });
-    
         if (!user?.uid || loading || (!lastVisible && !isInitialLoad) || allDataLoaded) {
-            console.log("Fetch aborted", { reason: !user?.uid ? 'No user' : loading ? 'Currently loading' : (!lastVisible && !isInitialLoad) ? 'No more data and not initial load' : 'All data loaded' });
             return;
         }
     
@@ -68,24 +65,20 @@ const FavoriteDataDisplay: React.FC<FavoriteDataDisplayProps> = ({
             if (documentSnapshots.docs.length > 0) {
                 const newData = documentSnapshots.docs.map(doc => ({ ...doc.data() as FirebaseFavoriteData, id: doc.id }));
                 setFavoriteData(prev => {
-                    console.log("Updating favoriteData:", prev, newData);
                     return [...prev, ...newData];
                 });
                 setLastVisible(documentSnapshots.docs[documentSnapshots.docs.length - 1]);
             } else {
                 setAllDataLoaded(true);
-                console.log("All data has been loaded, no more fetches.");
             }
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {
             setLoading(false);
-            console.log("Fetch completed or failed, loading set to false.");
         }
     }, [user?.uid, loading, lastVisible, isInitialLoad, allDataLoaded, setFavoriteData]);
 
     useEffect(() => {
-        console.log(isInitialLoad);
         if (isInitialLoad) {
           fetchMoreData();
           setIsInitialLoad(false);
@@ -93,7 +86,6 @@ const FavoriteDataDisplay: React.FC<FavoriteDataDisplayProps> = ({
     
         const observer = new IntersectionObserver(entries => {
           if (entries[0].isIntersecting && !loading && lastVisible && !allDataLoaded) {
-            console.log("IntersectionObserver - Triggered");
             fetchMoreData();
           }
         }, { threshold: 1.0 });
@@ -103,14 +95,13 @@ const FavoriteDataDisplay: React.FC<FavoriteDataDisplayProps> = ({
         }
 
         return () => {
-            console.log("Cleanup: lastVisible", lastVisible);
             observer.disconnect();
         };
     }, [lastVisible, loading, fetchMoreData, isInitialLoad, allDataLoaded]);
 
     return (
         <> 
-            <div className="lg:w-[75%] md:w-[65%] w-full common-col-flex lg:justify-start justify-center py-7 xxs:px-8 bg-[#FFFFFF] backdrop-blur-md md:rounded-l-lg md:rounded-r-none rounded-t-lg">
+            <section className="lg:w-[75%] md:w-[65%] w-full common-col-flex lg:justify-start justify-center py-7 xxs:px-8 bg-[#FFFFFF] backdrop-blur-md md:rounded-l-lg md:rounded-r-none rounded-t-lg">
                 {favoriteData.length === 0 ? (
                     <>
                         <div className="text-2xl text-gray-600 text-center md:my-auto mb-[60px] pt-[30px]">尚無收藏機構</div>
@@ -181,12 +172,12 @@ const FavoriteDataDisplay: React.FC<FavoriteDataDisplayProps> = ({
                                 )}
                             </div>
                         </div>
-                        <hr className="w-full my-5 border border-solid border-[#e8e8e8]"/>
+                        <hr className="w-full my-5 border border-solid border-[#E8E8E8]"/>
                     </Fragment>
                     ))
                 )}
                 <div ref={lastElementRef}></div>
-            </div>
+            </section>
         </>
     );
 }

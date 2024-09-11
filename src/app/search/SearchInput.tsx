@@ -24,7 +24,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
     };
   
     return (
-        <div className="w-full h-10 mt-[60px] mb-[30px]"> 
+        <section className="w-full h-10 mt-[60px] mb-[30px]"> 
             <div className="max-w-[760px] w-full h-full flex mx-auto"> 
                 <div className="relative w-full h-full flex">
                     <input
@@ -38,7 +38,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
                     <button
                         onClick={deleteSearchInput} 
                         type="button"
-                        className="absolute top-2 right-10 z-10 hover:scale-110"
+                        className="absolute top-3 right-10 z-10 hover:scale-110"
                     >
                         <Image 
                             src="/images/xmark-solid.svg" 
@@ -64,7 +64,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
                     搜尋
                 </button>
             </div>
-        </div>
+        </section>
     );
 };
 

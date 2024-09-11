@@ -1,6 +1,4 @@
-"use client";
-
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 interface PaginationProps {
@@ -89,8 +87,8 @@ const Pagination: React.FC<PaginationProps> = ({
 
 
     return (
-        <div className="w-full max-w-[750px] min-h-[40px] flex flex-row justify-center mt-[20px] mb-[40px] mx-auto">
-            <div className="md:w-[88px] sm:w-[78px] xs:w-[78px] w-[90px] h-[40px] flex justify-between">
+        <section className="w-full max-w-[750px] min-h-[40px] flex flex-row justify-center mt-[20px] mb-[40px] mx-auto">
+            <section className="md:w-[88px] sm:w-[78px] xs:w-[78px] w-[90px] h-[40px] flex justify-between">
                 <button
                     onClick={handleFirstPage}
                     type="button"
@@ -121,8 +119,8 @@ const Pagination: React.FC<PaginationProps> = ({
                         className="w-[12px] h-auto object-cover"
                     />
                 </button>
-            </div>
-            <div className="md:w-full md:max-w-[500px] max-w-[430px] h-full flex flex-row justify-center m-auto">
+            </section>
+            <section className="md:w-full md:max-w-[500px] max-w-[430px] h-full flex flex-row justify-center m-auto">
                 {pageNumbers.map(number => {
                     if (number <= maxPageNumberLimit && number > minPageNumberLimit) {
                         return (
@@ -131,7 +129,7 @@ const Pagination: React.FC<PaginationProps> = ({
                                 type="button"
                                 key={number} 
                                 className={`md:w-[40px] xs:w-[33px] w-[40px] h-[40px] flex mx-[10px] md:mb-0 mb-[10px] rounded-md 
-                                            ${currentPage === number ? "bg-[#9FC5DF] text-white" : "bg-[#e6e6e6] hover:bg-[#9FC5DF]"} `}
+                                            ${currentPage === number ? "bg-[#9FC5DF] text-white" : "bg-[#E6E6E6] hover:bg-[#9FC5DF]"} `}
                             >
                                 <div className="text-center m-auto">{number}</div>
                             </button>
@@ -140,8 +138,8 @@ const Pagination: React.FC<PaginationProps> = ({
                         return null;
                     }
                 })}
-            </div>
-            <div className="md:w-[88px] sm:w-[78px] xs:w-[78px] w-[90px] h-[40px] flex justify-between">
+            </section>
+            <section className="md:w-[88px] sm:w-[78px] xs:w-[78px] w-[90px] h-[40px] flex justify-between">
                 <button
                     onClick={handleNextbtn}
                     type="button"
@@ -159,6 +157,7 @@ const Pagination: React.FC<PaginationProps> = ({
                 </button>
                 <button
                     onClick={handleLastPage}
+                    type="button"
                     disabled={currentPage === pageNumbers[pageNumbers.length - 1]}
                     className={`pagination-button md:w-[40px] xs:w-[33px] w-[40px] h-full p-[10px] 
                                 ${currentPage === pageNumbers[pageNumbers.length - 1] ? "bg-gray-300" : "hover:bg-[#5B98BC]"} `}
@@ -170,8 +169,8 @@ const Pagination: React.FC<PaginationProps> = ({
                         height={20} 
                         className="w-[20px] h-auto object-cover"/>
                 </button>
-            </div>
-        </div>
+            </section>
+        </section>
     );
 };
 

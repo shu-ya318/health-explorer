@@ -86,7 +86,7 @@ body {
     @apply flex justify-around items-center w-full h-full py-1 border border-[#E0E0E0] text-[16px] text-center;
   }
   .searchPage-label-notOpened{
-    @apply bg-[#FCFCFC] hover:bg-[#2D759E] hover:text-[#ffffff] text-[#707070];
+    @apply bg-[#FCFCFC] hover:bg-[#2D759E] hover:text-[#FFFFFF] text-[#707070];
   }
   .searchPage-label-optionsGrid-lg{
     @apply grid grid-cols-3 gap-2 w-[500px] absolute z-20 bg-[#ffffff] border-2 border-[#2D759E] rounded-md shadow-[0_0_5px_#AABBCC] py-[15px] px-[10px];
@@ -95,7 +95,7 @@ body {
     @apply grid grid-cols-2 gap-2 w-[305px] absolute z-20 bg-[#ffffff] border-2 border-[#2D759E] rounded-md shadow-[0_0_5px_#AABBCC] py-[15px] px-[10px];
   }
   .searchPage-label-option{
-    @apply z-20 hover:bg-[#2D759E] hover:text-[#ffffff] text-center text-[#707070]  border-solid border border-[#e6e6e6] rounded-md cursor-pointer;
+    @apply z-20 hover:bg-[#2D759E] hover:text-[#FFFFFF] text-center text-[#707070]  border-solid border border-[#E6E6E6] rounded-md cursor-pointer;
   }
   .common-card{
     @apply text-left overflow-hidden truncate;

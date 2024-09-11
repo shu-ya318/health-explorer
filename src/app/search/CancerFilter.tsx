@@ -14,7 +14,7 @@ const CancerFilter: React.FC<CancerFilterProps> = ({
     handleCancerFilter 
 }) => {
     return (
-        <div 
+        <section 
             style={{ bottom: "-165px" }} 
             className="absolute inset-x-0 lg:w-full max-w-[760px] w-[95%] md:min-h-[200px] h-auto common-page-layout justify-around md:mb-[60px] mb-[80px] mx-auto xs:px-[20px] px-0 common-border border"
         > 
@@ -35,7 +35,7 @@ const CancerFilter: React.FC<CancerFilterProps> = ({
                     </button>
                 ))}
             </div>
-        </div>
+        </section>
     );
 };
 

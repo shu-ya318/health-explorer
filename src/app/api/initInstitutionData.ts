@@ -1,8 +1,13 @@
 "use client";
 
 import { FirebaseInstitutionData } from "../lib/types";
-import { db, storage} from "../lib/firebaseConfig";
-import { doc, getDoc, setDoc, writeBatch } from "firebase/firestore";
+import { db, storage } from "../lib/firebaseConfig";
+import { 
+    doc, 
+    getDoc, 
+    setDoc, 
+    writeBatch 
+} from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 interface ApiDataItem {
@@ -260,6 +265,7 @@ function addManualFields(item: FirebaseInstitutionData, apiKey: string): Firebas
 
 function formatAddress(address: string): string {
     const numberPos = address.indexOf("號");
+
     if (numberPos !== -1) {
         let basePart = address.substring(0, numberPos + 1);
         const lastComma = basePart.lastIndexOf("、");
@@ -274,12 +280,13 @@ function formatAddress(address: string): string {
     return address;
 }
 async function fetchGeocode(item: FirebaseInstitutionData): Promise<FirebaseInstitutionData> {
-    const formattedAddress = formatAddress(item.hosp_addr).replace(/,/g, "").replace(/\s/g, '%20');
+    const formattedAddress = formatAddress(item.hosp_addr).replace(/,/g, "").replace(/\s/g, "%20");
     const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${formattedAddress}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
     const response = await fetch(geocodeUrl);
     if (!response.ok) {
         throw new Error(`Geocode API call failed with status: ${response.status}`);
     }
+
     const data = await response.json();
     if (data.results.length > 0) {
         item.lat = data.results[0].geometry.location.lat;
@@ -287,17 +294,20 @@ async function fetchGeocode(item: FirebaseInstitutionData): Promise<FirebaseInst
     } else {
         throw new Error("No geocode results found for the address");
     }
+
     return item;
 }
 async function fetchStaticMapImage(item: FirebaseInstitutionData): Promise<FirebaseInstitutionData> {
-    const formattedAddress = formatAddress(item.hosp_addr).replace(/,/g, '').replace(/\s/g, '%20');
+    const formattedAddress = formatAddress(item.hosp_addr).replace(/,/g, "").replace(/\s/g, "%20");
     const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${formattedAddress}&zoom=15&size=250x200&maptype=roadmap&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`;
     const imageResponse = await fetch(staticMapUrl);
     const imageBlob = await imageResponse.blob();
     const imageRef = ref(storage, "institutionImages/" + item.hosp_name);
+
     await uploadBytes(imageRef, imageBlob);
     const mapUrl = await getDownloadURL(imageRef);
     item.imageUrl = mapUrl;
+
     return item; 
 }
 
@@ -325,6 +335,7 @@ async function fetchAndFormatData(): Promise<FirebaseInstitutionData[]> {
         if (result.status === "fulfilled") {
             result.value.forEach((item: FirebaseInstitutionData) => {
                 const existingEntry = institutionData.find(entry => entry.hosp_name === item.hosp_name);
+    
                 if (["子宮頸癌", "大腸癌", "口腔癌", "乳癌"].includes(apiUrls[index].key)) {
                     if (existingEntry) {
                         existingEntry.cancer_screening = existingEntry.cancer_screening ? `${existingEntry.cancer_screening}, ${apiUrls[index].key}` : apiUrls[index].key;
@@ -346,6 +357,7 @@ async function fetchAndFormatData(): Promise<FirebaseInstitutionData[]> {
 
     cervicalCancerData.forEach(item => {
         const existingEntry = institutionData.find(entry => entry.hosp_name === item.hosp_name);
+    
         if (existingEntry) {
             existingEntry.cancer_screening = existingEntry.cancer_screening ? `${existingEntry.cancer_screening}, 肺癌` : "肺癌";
         } else {
@@ -390,6 +402,7 @@ async function throttlePromises(funcs: ApiFunction[], limit: number, delay: numb
         const task = funcs.shift()!;
         const promise = Promise.resolve().then(() => task());
         result.push(promise);
+    
         const execute = promise.then(() => new Promise<void>(resolve => setTimeout(resolve, delay)))
             .finally(() => executing.splice(executing.indexOf(execute), 1));
         executing.push(execute);

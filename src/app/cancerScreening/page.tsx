@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation"; 
 
-import CancersContent  from "./CancersContent";
+import CancersContent from "./CancersContent";
 
 import { db } from "../lib/firebaseConfig";
 import { collection, doc, setDoc } from "firebase/firestore";

@@ -19,7 +19,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
     institutionName,
 }) => {
     const { user } = useAuth();
-    const { state, handleAddFavorite, handleRemoveFavorite} = useFavorite(user);
+    const { state, handleAddFavorite, handleRemoveFavorite } = useFavorite(user);
 
     const [isRegisterModalVisible, setIsRegisterModalVisible] = useState<boolean>(false);
     const [isSignInModalVisible, setIsSignInModalVisible] = useState<boolean>(false);
@@ -39,7 +39,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
         <>
             {!user && isSignInModalVisible && <SignInModal onClose={() => setIsSignInModalVisible(false)} onShowRegister={() => setIsRegisterModalVisible(true)} />}
             {isRegisterModalVisible && <RegisterModal onClose={() => setIsRegisterModalVisible(false)} onShowSignIn={() => setIsSignInModalVisible(true)} />}
-            <div className="w-full common-col-flex justify-between">
+            <section className="w-full common-col-flex justify-between">
                 {!user ? (
                     <>
                         <button
@@ -80,7 +80,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
                         })()}
                     </>
                 )}
-            </div>
+            </section>
         </>
     );
 };

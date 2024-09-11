@@ -3,10 +3,10 @@
 import { useEffect, useCallback, useReducer } from "react";
 
 import { UserType } from "./useAuth"; 
-import { InstitutionInfo } from "../lib/types";
 
-import {db} from "../lib/firebaseConfig";
-import { FirebaseFavoriteData} from "../lib/types";
+import { InstitutionInfo } from "../lib/types";
+import { db } from "../lib/firebaseConfig";
+import { FirebaseFavoriteData } from "../lib/types";
 import { 
   collection, 
   doc, 
