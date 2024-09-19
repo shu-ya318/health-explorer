@@ -4,12 +4,12 @@
 
 Website: <https://health-explorer-virid.vercel.app/>
 
-<img src="public/images/README/homePage.png" alt="HomePage" width="800px" height="700px">
+<img src="public/images/README/homePage.jpg" alt="HomePage" width="800px" height="700px">
 
 
 # Technology Stack
 
-<img src="public/images/README/TechnologyStack.png" alt="Technology Stack" width="800px">
+<img src="public/images/README/TechnologyStack.jpg" alt="Technology Stack" width="800px">
 
 ##  Frontend
 
@@ -31,12 +31,15 @@ Website: <https://health-explorer-virid.vercel.app/>
 - **Tailwind CSS**
 
 
-## Backend
+##  Cloud Services
 
 - **Firebase**：
 	- Authentication
 	- Cloud Firestore
 	- Storage
+
+- **Algolia**：	
+	Quickly conduct filter searches.
 
 
 ## Third-party 
@@ -50,10 +53,9 @@ Website: <https://health-explorer-virid.vercel.app/>
 - **APIs**: 
 	- NTPC Open Data: Receive a list of 19 medical institutions from various divisions and cancer screening types.
 	- Google Maps API: Obtain the latitude and longitude of all medical institutions, along with static and dynamic maps.
-	- Algolia: Quickly conduct filter searches.
 
     due to the mass of data and inconsistency in formats, Integrate data while employing multiple throttle functions to ensure no data loss.
-	<img src="public/images/README/fetchAndFormatData.png" alt="fetchAndFormat_data" width="800px">
+	<img src="public/images/README/fetchAndFormatData.jpg" alt="fetchAndFormat_data" width="800px">
 
 
 ##  Others
@@ -65,9 +67,9 @@ Website: <https://health-explorer-virid.vercel.app/>
 
 ## Component Structure
 
-<img src="public/images/README/ComponentStructure1.png" alt="Component Structure_global" width="800px">
+<img src="public/images/README/ComponentStructure1.jpg" alt="Component Structure_global" width="800px">
 
-<img src="public/images/README/ComponentStructure2.png" alt="Component Structure_page" width="800px">
+<img src="public/images/README/ComponentStructure2.jpg" alt="Component Structure_page" width="800px">
 
 ##  Feactures
 
