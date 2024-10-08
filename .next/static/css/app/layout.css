@@ -1533,11 +1533,11 @@ video {
 .top-1\/2 {
   top: 50%;
 }
-.top-2 {
-  top: 0.5rem;
-}
 .top-2\.5 {
   top: 0.625rem;
+}
+.top-3 {
+  top: 0.75rem;
 }
 .top-\[-15px\] {
   top: -15px;
@@ -1557,8 +1557,8 @@ video {
 .top-\[7px\] {
   top: 7px;
 }
-.top-3 {
-  top: 0.75rem;
+.right-4 {
+  right: 1rem;
 }
 .z-0 {
   z-index: 0;
@@ -3251,10 +3251,6 @@ video {
 }
 @media (min-width: 480px) {
 
-  .xs\:top-2 {
-    top: 0.5rem;
-  }
-
   .xs\:mr-\[7px\] {
     margin-right: 7px;
   }
@@ -3867,7 +3863,7 @@ video {
     font-size: 1rem;
     line-height: 1.5rem;
   }
-}  
+}
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -3892,14 +3888,6 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
-
-/*無法解決<Image/>寬高比例報錯問題
-@layer base {
-  img {
-      width: auto;
-      height: auto;
-  }
-}*/
 
 /*!**********************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[3]!./node_modules/animate.css/animate.css ***!
