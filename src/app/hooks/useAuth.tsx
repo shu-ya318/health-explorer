@@ -1,21 +1,16 @@
 "use client";
 
-import { 
-  createContext,
-  useContext, 
-  useState,
-  useEffect
-} from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  AuthError
+  AuthError,
 } from "firebase/auth";
 import { auth } from "../lib/firebaseConfig";
 
-//只使用user的部分屬性值
+//  只使用user的部分屬性值
 export interface UserType {
   uid: string;
   email: string | null;
@@ -41,11 +36,7 @@ const AuthContext = createContext<AuthContextType>({
   },
 });
 
-export const AuthProvider = ({ 
-  children 
-}: { 
-  children: React.ReactNode 
-}) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -54,8 +45,8 @@ export const AuthProvider = ({
       if (user) {
         setUser({
           uid: user.uid,
-          email: user.email
-        })
+          email: user.email,
+        });
       } else {
         setUser(null);
       }
@@ -64,7 +55,7 @@ export const AuthProvider = ({
     });
 
     return () => unsubscribe();
-  }, []);  
+  }, []);
 
   const register = async (email: string, password: string): Promise<void> => {
     try {
@@ -102,6 +93,6 @@ export const AuthProvider = ({
       {loading ? null : children}
     </AuthContext.Provider>
   );
-}
+};
 
 export const useAuth = () => useContext(AuthContext);

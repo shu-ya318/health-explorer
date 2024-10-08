@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@tailwind screens;  
+@tailwind screens;
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -27,24 +27,16 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-/*無法解決<Image/>寬高比例報錯問題
-@layer base {
-  img {
-      width: auto;
-      height: auto;
-  }
-}*/
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
   /*整體各頁面版型*/
-   .common-page-layout{
+  .common-page-layout {
     @apply flex flex-col items-center bg-[#FCFCFC] rounded-lg shadow-[0_0_5px_#AABBCC];
   }
   /*版面容器:不含留白*/
-  .common-row-flex {   
+  .common-row-flex {
     @apply flex items-center;
   }
   .common-col-flex {
@@ -54,57 +46,56 @@ body {
   .common-button {
     @apply rounded-lg bg-[#5B98BC]  hover:bg-[#2D759E] font-bold text-white text-center text-[20px] transition-all duration-300 hover:scale-110;
   }
-  .favorite-button-remove{
+  .favorite-button-remove {
     @apply border-none shadow-none bg-[#0000004d];
   }
-  .favorite-button-add{
+  .favorite-button-add {
     @apply bg-[#FFFFFF]  border-solid border  border-[#2D759E] shadow-[0_0_3px_#2D759E];
   }
-  .pagination-button{
+  .pagination-button {
     @apply border-solid border border-[#5B98BC] rounded-md;
   }
   .cancerResult-button {
     @apply w-[140px] mt-[30px] mx-auto py-1.5 px-3 font-bold bg-black text-white rounded-full transition-all duration-300 hover:scale-110 hover:bg-[#4F4F4F];
   }
-          /*圖:不含來源、寬高*/
+  /*圖:不含來源、寬高*/
   .common-bg-image {
     @apply bg-cover bg-center bg-no-repeat;
-  } 
-          /*邊框:不含大小*/
-  .common-border{
+  }
+  /*邊框:不含大小*/
+  .common-border {
     @apply border-solid border-[#2D759E];
-  }  
-          /*字:不含大小、邊距*/
-  .common-title{
+  }
+  /*字:不含大小、邊距*/
+  .common-title {
     @apply text-center font-bold text-[#2D759E];
   }
   /*頁面重複*/
-  .homePage-subtitle{
+  .homePage-subtitle {
     @apply w-full mt-[15px] text-[24px] text-[#252525] hover:text-[#2D759E] text-center font-bold;
   }
-  .searchPage-label{
+  .searchPage-label {
     @apply flex justify-around items-center w-full h-full py-1 border border-[#E0E0E0] text-[16px] text-center;
   }
-  .searchPage-label-notOpened{
+  .searchPage-label-notOpened {
     @apply bg-[#FCFCFC] hover:bg-[#2D759E] hover:text-[#FFFFFF] text-[#707070];
   }
-  .searchPage-label-optionsGrid-lg{
+  .searchPage-label-optionsGrid-lg {
     @apply grid grid-cols-3 gap-2 w-[500px] absolute z-20 bg-[#ffffff] border-2 border-[#2D759E] rounded-md shadow-[0_0_5px_#AABBCC] py-[15px] px-[10px];
   }
-  .searchPage-label-optionsGrid{
+  .searchPage-label-optionsGrid {
     @apply grid grid-cols-2 gap-2 w-[305px] absolute z-20 bg-[#ffffff] border-2 border-[#2D759E] rounded-md shadow-[0_0_5px_#AABBCC] py-[15px] px-[10px];
   }
-  .searchPage-label-option{
+  .searchPage-label-option {
     @apply z-20 hover:bg-[#2D759E] hover:text-[#FFFFFF] text-center text-[#707070]  border-solid border border-[#E6E6E6] rounded-md cursor-pointer;
   }
-  .common-card{
+  .common-card {
     @apply text-left overflow-hidden truncate;
   }
-  .institutionPage-title-xs{
+  .institutionPage-title-xs {
     @apply text-2xl text-black underline decoration-[#2D759E] decoration-4 font-bold;
   }
-  .institutionPage-title-mobile{
+  .institutionPage-title-mobile {
     @apply text-[20px] text-black underline decoration-[#2D759E] decoration-4 font-bold;
   }
-
 }
