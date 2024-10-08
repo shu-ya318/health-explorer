@@ -1,4 +1,4 @@
-# 健康探索者 Health Explorer
+# Health Explorer (健康探索者)
 
 **Health Explorer** is a website that provides flexible search capabilities for medical institutions across New Taipei City and facilitates eligibility checks for cancer screenings.
 
@@ -7,7 +7,7 @@ Website: <https://health-explorer-virid.vercel.app/>
 - Test account : test1@healthExplorer.com<br/>
 - Test password : healthExplorer
 
-<img src="public/images/README/homePage.jpg" alt="HomePage" width="800px" height="700px">
+<img src="public/images/README/homePage.jpg" alt="HomePage" width="720px" height="600px">
 
 # Technology Stack
 
@@ -32,6 +32,7 @@ Website: <https://health-explorer-virid.vercel.app/>
 - **Next.js**：App Router, static resources optimization
 - **TypeScript**
 - **Tailwind CSS**
+- **AJAX**
 
 ## Cloud Services
 
@@ -42,7 +43,7 @@ Website: <https://health-explorer-virid.vercel.app/>
   - Storage
 
 - **Algolia**：
-  quickly conducts filter searches.
+  quickly conducts filter searches
 
 ## Third-party
 
@@ -112,6 +113,6 @@ Website: <https://health-explorer-virid.vercel.app/>
 
 ## Contact
 
-- **Email**: funghi0983524367@gmail.com
+- **Email**: shuyaHsieh318@gmail.com
 - **Cake**: https://www.cake.me/funghi0983524367
-- **Linkedin**: https://www.linkedin.com/in/%E6%B7%91%E9%9B%85-%E8%AC%9D-9906772b1/https://www.linkedin.com/in/%E6%B7%91%E9%9B%85-%E8%AC%9D-9906772b1/
+- **Linkedin**: https://www.linkedin.com/in/%E6%B7%91%E9%9B%85-%E8%AC%9D-9906772b1/
