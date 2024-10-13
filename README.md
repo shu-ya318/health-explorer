@@ -61,6 +61,7 @@ Website: <https://health-explorer-virid.vercel.app/>
   - Google Maps API: obtains the latitude and longitude of all medical institutions, along with static and dynamic maps.
 
     Due to the vast amount of data and format inconsistencies, data is integrated using multiple throttle functions to ensure no loss occurs.
+
     <img src="public/images/README/fetchAndFormatData.jpg" alt="fetchAndFormat_data" width="720px">
 
 ## Others
@@ -68,6 +69,7 @@ Website: <https://health-explorer-virid.vercel.app/>
 - **Vercel**
 - **ESLint**
 - **Prettier**
+- **Jest**
 
 ## Component Structure
 
@@ -110,6 +112,9 @@ Website: <https://health-explorer-virid.vercel.app/>
 - **desktop**:
 
 <img src="public/images/README/desktop.gif" alt="desktop" width="720px">
+
+## Jest
+<img src="public/images/README/test.png" alt="test">
 
 ## Contact
 

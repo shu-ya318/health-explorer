@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@react-pdf/renderer": "^3.4.4",
@@ -29,21 +31,28 @@
     "react-instantsearch": "^7.12.4",
     "react-instantsearch-core": "^7.12.4",
     "react-spinners": "^0.14.1",
+    "ts-node": "^10.9.2",
     "uuid": "^10.0.0",
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.0.1",
     "@types/aos": "^3.0.7",
     "@types/file-saver": "^2.0.7",
+    "@types/jest": "^29.5.13",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "next-router-mock": "^0.9.13",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
+    "ts-jest": "^29.2.5",
     "typescript": "^5"
   }
 }
