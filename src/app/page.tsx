@@ -60,7 +60,7 @@ const HomePage: React.FC = () => {
   if (openLoading) {
     return (
       <div className="common-row-flex justify-center h-screen bg-[#1E94B4]">
-        <PuffLoader size="300px" color="#FFFFFF" />
+        <PuffLoader size="300px" color="#FFFFFF" data-testid="loader" />
       </div>
     );
   }
@@ -86,14 +86,14 @@ const HomePage: React.FC = () => {
             }}
           />
           <div className="absolute top-[77%] lg:left-[55%] md:left-[57%] sm:left-[61%] xxs:left-[60%] left-[65%] -translate-x-[80%] -translate-y-[80%] common-col-flex justify-between">
-            <div
+            <button
               onClick={scrollDown}
               data-aos="fade-up"
-              className="mt-22 cursor-pointer"
+              aria-label="開始探索" 
+              role="button"
+              className="mt-22 cursor-pointer sm:text-[50px] xxs:text-[30px] text-[26px] text-[#FFFFFF] text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]"
             >
-              <span className="sm:text-[50px] xxs:text-[30px] text-[26px] text-[#FFFFFF] text-shadow-[2px 2px 8px rgba(0,0,0,0.8)]">
-                開始探索
-              </span>
+              開始探索
               <br />
               <Image
                 src="/images/angles-down-solid.svg"
@@ -102,7 +102,7 @@ const HomePage: React.FC = () => {
                 height={66}
                 className="w-[36px] h-[66px] mx-auto mt-4 animate-bounce"
               />
-            </div>
+            </button>
           </div>
         </section>
         <section className="w-full h-auto flex flex-col bg-gradient-to-b from-[#FFFFFF] via-[#C3D8EA] to-[#77ACCC]">
