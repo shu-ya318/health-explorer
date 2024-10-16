@@ -8,6 +8,7 @@ import { AuthError } from "firebase/auth";
 interface SignInModalProps {
   onClose: () => void;
   onShowRegister: (visible: boolean) => void;
+  onSignInSuccess?: () => void;
 }
 
 const defaultEmail = "test1@healthExplorer.com";
@@ -16,6 +17,7 @@ const defaultPassword = "healthExplorer";
 const SignInModal: React.FC<SignInModalProps> = ({
   onClose,
   onShowRegister,
+  onSignInSuccess,
 }) => {
   const { signIn } = useAuth();
 
@@ -52,6 +54,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
       await signIn(emailInput.value, passwordInput.value);
       emailInput.value = "";
       passwordInput.value = "";
+      onSignInSuccess?.();
     } catch (error) {
       const err = error as AuthError;
       if (err.code === "auth/invalid-credential") {
