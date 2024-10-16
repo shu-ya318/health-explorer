@@ -60,6 +60,10 @@ const Footer: React.FC = () => {
             <SignInModal
               onClose={() => setIsSignInModalVisible(false)}
               onShowRegister={() => setIsRegisterModalVisible(true)}
+              onSignInSuccess={() => {
+                setIsSignInModalVisible(false);
+                router.push("/favorite");
+              }}
             />
           )}
           {isRegisterModalVisible && (
