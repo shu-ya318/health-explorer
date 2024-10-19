@@ -16,6 +16,7 @@ Website: <https://health-explorer-virid.vercel.app/>
 ## Frontend
 
 - **React Hooks**：
+
   - useState
   - useRef
   - useCallback
@@ -23,11 +24,12 @@ Website: <https://health-explorer-virid.vercel.app/>
   - useEffect
   - useContext
   - useReducer
+
 - **Custom Hooks**：
 
   - useAuth
-  - useInstitution
   - useFavorite
+  - useInstitution
 
 - **Next.js**：App Router, static resources optimization
 - **TypeScript**
@@ -51,18 +53,18 @@ Website: <https://health-explorer-virid.vercel.app/>
 
   - React Google Maps
   - React-pdf
+  - React Spinners
   - Animate.css
   - AOS
-  - React Spinners
 
 - **APIs**:
 
-  - NTPC Open Data: receives a list of 19 medical institutions from various divisions and cancer screening types.
+  - NTPC Open Data: receives a list of 20 medical institutions from various divisions and cancer screening types.
   - Google Maps API: obtains the latitude and longitude of all medical institutions, along with static and dynamic maps.
 
     Due to the vast amount of data and format inconsistencies, data is integrated using multiple throttle functions to ensure no loss occurs.
 
-    <img src="public/images/README/fetchAndFormatData.jpg" alt="fetchAndFormat_data" width="720px">
+    <img src="public/images/README/fetchAndFormatData.jpg" alt="fetchAndFormat_data" width="800px"  height="600px">
 
 ## Others
 
@@ -79,11 +81,17 @@ Website: <https://health-explorer-virid.vercel.app/>
 
 ## Features
 
+### Highlight: Member Bookmarking of Medical Institutions
+
+<img src="public/images/README/highlight1.jpg" alt="highlight_auth" width="720px">
+<img src="public/images/README/highlight2.jpg" alt="highlight_auth" width="720px">
+<img src="public/images/README/highlight3.jpg" alt="highlight_auth" width="720px">
+
 ### HomePage:
 
 <img src="public/images/README/HomePage.gif" alt="Home_page" width="720px">
 
-### CancerScreeningPage:
+### CancerScreeningPage:F
 
 <img src="public/images/README/CancerScreeningPage.gif" alt="CancerScreening_Page" width="720px">
 
@@ -114,6 +122,7 @@ Website: <https://health-explorer-virid.vercel.app/>
 <img src="public/images/README/desktop.gif" alt="desktop" width="720px">
 
 ## Jest
+
 <img src="public/images/README/test.png" alt="test">
 
 ## Contact
